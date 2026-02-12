@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Global Dealer Dashboard - UrbanMineAI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#19e66b",
+              "primary-dark": "#14b856",
+              "background-light": "#f6f8f7",
+              "background-dark": "#112117",
+              "surface-dark": "#1a2e23",
+              "surface-light": "#ffffff",
+              "surface-hover": "#233b2d",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #112117; }
+        ::-webkit-scrollbar-thumb { background: #233b2d; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #19e66b; }
+        .glass-panel {
+            background: rgba(26, 46, 35, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(25, 230, 107, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-100 font-display transition-colors duration-200">
+<div class="flex h-screen overflow-hidden">
+<aside class="hidden md:flex flex-col w-64 bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-white/5 h-full transition-colors z-20">
+<div class="p-6 flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center text-background-dark font-bold text-xl">U</div>
+<span class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">UrbanMine<span class="text-primary">AI</span></span>
+</div>
+<nav class="flex-1 px-4 space-y-2 mt-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/10 text-primary font-medium group transition-all" href="#">
+<span class="material-icons-round">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-all group" href="#">
+<span class="material-icons-round group-hover:text-primary transition-colors">inventory_2</span>
+                    Inventory
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-all group" href="#">
+<span class="material-icons-round group-hover:text-primary transition-colors">trending_up</span>
+                    Sales &amp; Analytics
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-all group" href="#">
+<span class="material-icons-round group-hover:text-primary transition-colors">handshake</span>
+                    Global Matches
+                    <span class="ml-auto bg-primary text-background-dark text-xs font-bold px-2 py-0.5 rounded-full">3</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white transition-all group" href="#">
+<span class="material-icons-round group-hover:text-primary transition-colors">settings</span>
+                    Settings
+                </a>
+</nav>
+<div class="p-4 border-t border-gray-200 dark:border-white/5">
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 cursor-pointer transition-colors">
+<img class="w-10 h-10 rounded-full object-cover ring-2 ring-primary/20" data-alt="Profile picture of dealer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV2foWd1G7lyUu71Ygsa4cEoeyVklZ9qoCr5l2NlR6JdoJ3HaEbWjrXqMceT0lcFo0v-d4cmbOoVpUTLDDbI34xq5EH-H4MfVVb-G4h8c8L9o7_bPysBCmBKx5cB19Vt45Q4gD_6NXGrPHAQvlmJnRoBmSMGt9h0wtFl21xhAWPYiLaZRNgWRKHBr3Kry3fqiGmnghaUCcad7u-h-tQrzAaXDbf-qkjFl39b-Fls6S6OFxLPyaQrQepII1lGBufz11JcEJP2Tp3ost"/>
+<div>
+<p class="text-sm font-medium text-gray-900 dark:text-white">Rajesh Kumar</p>
+<p class="text-xs text-gray-500 dark:text-gray-400">Global Partner</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col h-full overflow-hidden relative">
+<header class="h-16 flex items-center justify-between px-8 bg-white/50 dark:bg-background-dark/80 backdrop-blur-sm z-10 sticky top-0 border-b border-gray-200 dark:border-white/5">
+<div class="flex items-center text-gray-400 text-sm">
+<span class="material-icons-round text-lg mr-2">calendar_today</span>
+<span id="current-date">Oct 24, 2023</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden md:block w-64">
+<span class="material-icons-round absolute left-3 top-2.5 text-gray-400 text-lg">search</span>
+<input class="w-full bg-gray-100 dark:bg-white/5 border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-1 focus:ring-primary text-gray-900 dark:text-gray-100 placeholder-gray-500" placeholder="Search global inventory..." type="text"/>
+</div>
+<button class="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+<span class="material-icons-round text-gray-600 dark:text-gray-300">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8">
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 space-y-6">
+<div class="flex justify-between items-end">
+<div>
+<h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Good Morning, Rajesh</h1>
+<p class="text-gray-500 dark:text-gray-400 mt-1">Here's what's happening with your global inventory today.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<div class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-gray-100 dark:border-white/5 shadow-sm relative overflow-hidden group">
+<div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-icons-round text-6xl text-primary">account_balance_wallet</span>
+</div>
+<p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Inventory Value</p>
+<div class="flex items-baseline mt-2 gap-2">
+<span class="text-2xl font-bold text-gray-900 dark:text-white">$124,000</span>
+<span class="text-xs font-medium text-primary flex items-center">
+<span class="material-icons-round text-sm">trending_up</span> 12%
+                                    </span>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-gray-100 dark:border-white/5 shadow-sm relative overflow-hidden group">
+<div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-icons-round text-6xl text-primary">layers</span>
+</div>
+<p class="text-sm font-medium text-gray-500 dark:text-gray-400">Items Pending Grading</p>
+<div class="flex items-baseline mt-2 gap-2">
+<span class="text-2xl font-bold text-gray-900 dark:text-white">5</span>
+<span class="text-xs text-gray-500 dark:text-gray-500">Needs review</span>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-gray-100 dark:border-white/5 shadow-sm relative overflow-hidden group">
+<div class="absolute right-0 top-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-icons-round text-6xl text-primary">shopping_cart</span>
+</div>
+<p class="text-sm font-medium text-gray-500 dark:text-gray-400">Sales this Week</p>
+<div class="flex items-baseline mt-2 gap-2">
+<span class="text-2xl font-bold text-gray-900 dark:text-white">$42,500</span>
+<span class="text-xs font-medium text-primary flex items-center">
+<span class="material-icons-round text-sm">trending_up</span> 8%
+                                    </span>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-gray-100 dark:border-white/5 shadow-sm h-64 flex flex-col">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-semibold text-gray-900 dark:text-white">Global Sales Trends</h3>
+<select class="bg-transparent text-xs text-gray-500 dark:text-gray-400 border-none focus:ring-0 cursor-pointer">
+<option>Last 30 Days</option>
+<option>Last 7 Days</option>
+</select>
+</div>
+<div class="flex-1 w-full flex items-end justify-between gap-2 px-2">
+<div class="w-full bg-primary/20 rounded-t-sm h-[40%] hover:bg-primary/40 transition-colors relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">$12k</div>
+</div>
+<div class="w-full bg-primary/20 rounded-t-sm h-[60%] hover:bg-primary/40 transition-colors relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">$18k</div>
+</div>
+<div class="w-full bg-primary/20 rounded-t-sm h-[30%] hover:bg-primary/40 transition-colors relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">$9k</div>
+</div>
+<div class="w-full bg-primary/20 rounded-t-sm h-[80%] hover:bg-primary/40 transition-colors relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">$24k</div>
+</div>
+<div class="w-full bg-primary/20 rounded-t-sm h-[50%] hover:bg-primary/40 transition-colors relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">$15k</div>
+</div>
+<div class="w-full bg-primary/20 rounded-t-sm h-[75%] hover:bg-primary/40 transition-colors relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">$22k</div>
+</div>
+<div class="w-full bg-primary rounded-t-sm h-[65%] shadow-[0_0_15px_rgba(25,230,107,0.4)] relative group">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-primary text-background-dark font-bold text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">$19.5k</div>
+</div>
+</div>
+<div class="flex justify-between mt-2 text-xs text-gray-500 dark:text-gray-500 px-1">
+<span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+</div>
+</div>
+</div>
+<div class="lg:col-span-1">
+<div class="bg-gradient-to-br from-surface-dark to-[#1a3828] p-1 rounded-2xl h-full shadow-lg border border-white/5">
+<div class="bg-background-dark/90 backdrop-blur-xl rounded-xl p-6 h-full flex flex-col">
+<h2 class="text-xl font-bold text-white mb-2">Quick Actions</h2>
+<p class="text-gray-400 text-sm mb-8">Process new e-waste instantly with our AI grading tool.</p>
+<div class="flex-1 flex flex-col justify-center items-center gap-6">
+<button class="w-full group relative overflow-hidden rounded-xl bg-primary hover:bg-primary-dark transition-all duration-300 shadow-[0_0_20px_rgba(25,230,107,0.3)] hover:shadow-[0_0_30px_rgba(25,230,107,0.5)]">
+<div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+<div class="relative py-8 px-6 flex flex-col items-center justify-center text-background-dark">
+<span class="material-icons-round text-5xl mb-3 transform group-hover:scale-110 transition-transform">qr_code_scanner</span>
+<span class="font-bold text-xl uppercase tracking-wide">Scan Waste</span>
+<span class="text-sm mt-1 opacity-80 font-medium">AI Grading &amp; Estimation</span>
+</div>
+</button>
+<button class="w-full py-4 px-6 rounded-xl border border-white/10 hover:border-primary/50 hover:bg-white/5 flex items-center justify-center gap-3 text-gray-300 hover:text-white transition-all group">
+<span class="material-icons-round text-gray-500 group-hover:text-primary">edit_note</span>
+<span class="font-medium">Add Manual Item</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section>
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-xl font-bold text-gray-900 dark:text-white">Recent Global Inventory</h2>
+<a class="text-sm font-medium text-primary hover:text-primary-dark transition-colors flex items-center gap-1" href="#">
+                            View All <span class="material-icons-round text-sm">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-white dark:bg-surface-dark rounded-xl overflow-hidden border border-gray-100 dark:border-white/5 hover:border-primary/30 transition-all hover:shadow-lg group">
+<div class="relative h-48 bg-gray-800">
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Old computer motherboard circuit close up" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmL0dlfLtOuuyWoDy00-tvSIWGktNhQxlnCFFRsZU-thqKfG3i1ElL3VNjteOKv4Ph75BH4G4j9NcfrROW0WxMKdCnU7qQpql1hgpVtdy6PFJUUo6ugIAyODi9uEJHzPgg-bdmZzwwua7dN36ZeHwS8cOtGDRvdxvXNOyEDjD3USsO4drlywSq2aSEWyTrHeAq0mNktU2K6MHGoW8Ejus3DPw-vV4Sw-b3HrVzE6kTdMt7pv_gCL30lcuaMXYwGVVb_WRUdJdG7py7"/>
+<div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-xs font-bold text-primary border border-primary/20">
+                                    AI Grade: A
+                                </div>
+<div class="absolute top-3 right-3">
+<button class="bg-white/10 hover:bg-white/20 p-1.5 rounded-full backdrop-blur-md text-white transition-colors">
+<span class="material-icons-round text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-base font-semibold text-gray-900 dark:text-white line-clamp-1">Motherboard Scrap</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">PCB - Mixed Lot</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-primary">$10.25</p>
+<p class="text-[10px] text-gray-500">per kg</p>
+</div>
+</div>
+<div class="mt-4 flex items-center justify-between">
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-green-500/10 text-green-500 text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Active
+                                    </span>
+<span class="text-xs text-gray-400">2h ago</span>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-xl overflow-hidden border border-gray-100 dark:border-white/5 hover:border-primary/30 transition-all hover:shadow-lg group">
+<div class="relative h-48 bg-gray-800">
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Stack of old CRT monitors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBagDznAst1BR5bN7yAwjVpOrWvs6XqO0jHwUNtCtRCF4VJ_ySsGQ-XIP__PTYTRjsABerg5enQ94gLJ0OFujYIghxK3vdpPqD9JoImGOunwiw-OWycd_WT4D38MrFnG_ceG2FqsOkYSuFMceH0IzxU5J81GIruwYYYUs93Y59V3sz_7OfQxiFZhIXH2FVEeALyxARmuehYS5GgtTagxoLbLx0jlAHK-nL7tsVAVO3BXCnNvOP9_ptR93wfOzEKbbyWenvzmZliOijV"/>
+<div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-xs font-bold text-yellow-400 border border-yellow-400/20">
+                                    AI Grade: C
+                                </div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-base font-semibold text-gray-900 dark:text-white line-clamp-1">CRT Monitors</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">Display Units</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-primary">$5.50</p>
+<p class="text-[10px] text-gray-500">per unit</p>
+</div>
+</div>
+<div class="mt-4 flex items-center justify-between">
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-blue-500/10 text-blue-400 text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Negotiation
+                                    </span>
+<span class="text-xs text-gray-400">4h ago</span>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-xl overflow-hidden border border-gray-100 dark:border-white/5 hover:border-primary/30 transition-all hover:shadow-lg group">
+<div class="relative h-48 bg-gray-800">
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Pile of copper cables and wires" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtDE1pVCkgaBtHMkac7FpQhc36xdqHPaY0IaOJVyUiaETFRRPf6kVLP8lGD4gQ8mwGDniQInbfpNThl0ma6QSbIJvppW6jTgshK0rHtMU7PGk519yDaFJOIAUvb7CupICfh8qNgPjhGOufTWO_cyvTQn-z2GgGgNuxE-g9Q6z2iZUZKG6Sy6sbnLVXuJQKZTe8twacE_wrmuTgxnTmTZwCBMHGXNPFosZAgisoHCszH6D_zKlbrFU88PpVQwLMiPrzU36dKU3qcHSU"/>
+<div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-xs font-bold text-primary border border-primary/20">
+                                    AI Grade: B+
+                                </div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-base font-semibold text-gray-900 dark:text-white line-clamp-1">Copper Wiring</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">Insulated Wire</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-primary">$3.85</p>
+<p class="text-[10px] text-gray-500">per kg</p>
+</div>
+</div>
+<div class="mt-4 flex items-center justify-between">
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-green-500/10 text-green-500 text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Active
+                                    </span>
+<span class="text-xs text-gray-400">Yesterday</span>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-xl overflow-hidden border border-gray-100 dark:border-white/5 hover:border-primary/30 transition-all hover:shadow-lg group">
+<div class="relative h-48 bg-gray-800">
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Broken laptop parts and battery" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBctuyGb9bkC40IgDobKXeAgChpzuWb0PZDMCTl7vrEAiJV5FtnKAJ-Qfcd0gk7TaLQQnD4y7Kq9dvDhVGbaSvyKa8x2FqzWNUDyBzly0Rfq9p25fHEdwt1jG0uxj7jmADZIQJy8nzN4qauSpyuaWmpN8sYeF3ep5cBna3ZvsI_6qxRyv-jWzJ5rUc_Z1e1v6KM7t-hh7T_GIcp4i6ixQHeBU9PgcoE4yxPzC9jbDBQVKijfZf_N4ilaTcV0tvf7jT9pQ7KZyvtIov"/>
+<div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-xs font-bold text-orange-400 border border-orange-400/20">
+                                    AI Grade: B-
+                                </div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-base font-semibold text-gray-900 dark:text-white line-clamp-1">Laptop Batteries</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">Li-ion Cells</p>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-primary">$2.15</p>
+<p class="text-[10px] text-gray-500">per kg</p>
+</div>
+</div>
+<div class="mt-4 flex items-center justify-between">
+<span class="inline-flex items-center gap-1 px-2 py-1 rounded bg-gray-500/10 text-gray-400 text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span> Draft
+                                    </span>
+<span class="text-xs text-gray-400">2d ago</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<script>
+        // Simple script to set the current date
+        const dateElement = document.getElementById('current-date');
+        const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+        dateElement.textContent = new Date().toLocaleDateString('en-US', options);
+    </script>
+</body></html>

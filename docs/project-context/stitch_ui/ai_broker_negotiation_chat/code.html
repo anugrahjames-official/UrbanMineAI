@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Global AI Negotiation Chat - UrbanMineAI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#19e66b",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#112117",
+                        "surface-dark": "#182e21", // Slightly lighter than bg-dark for panels
+                        "surface-darker": "#0d1a12", // Darker for depth
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a4034; 
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #19e66b; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 font-display h-screen overflow-hidden flex selection:bg-primary selection:text-background-dark">
+<aside class="w-80 h-full bg-white dark:bg-surface-darker border-r border-gray-200 dark:border-white/5 flex flex-col z-20 shadow-xl">
+<div class="p-6 flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-background-dark font-bold">
+<span class="material-icons text-xl">recycling</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">UrbanMine<span class="text-primary">AI</span></h1>
+</div>
+<div class="px-4 mb-4">
+<div class="relative">
+<span class="absolute left-3 top-2.5 text-gray-400 material-icons text-sm">search</span>
+<input class="w-full bg-gray-100 dark:bg-white/5 border-none rounded-lg py-2 pl-9 pr-4 text-sm focus:ring-1 focus:ring-primary text-gray-300 placeholder-gray-500" placeholder="Search negotiations..." type="text"/>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-2 space-y-6">
+<div>
+<h3 class="px-4 text-xs font-semibold text-primary uppercase tracking-wider mb-2">Active Negotiations</h3>
+<ul class="space-y-1">
+<li>
+<a class="block p-3 rounded-lg bg-primary/10 border border-primary/20 transition-all group" href="#">
+<div class="flex justify-between items-start mb-1">
+<div class="flex items-center gap-2">
+<div class="relative">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="Portrait of a business man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3H50xNbldcvg7D1sK-Z04dwNLm9djjr3F97au_FQnR03cCCCqmfRino4LH1-rSc__h-Qqoi9s1scE-xISeU62Fv4P6tPjWADytGBs8JUdiVfLfR87mJwOzPG-Y7Woa-0pplE2OCk6uVXtGNcrbDbteZGMXJfCrse5-m5u4pOrprPUPQxbxah1q7P7r_TMLrknowphQ29Y9d8JVB3liBLFaAVgtr7QoZWrIuXgozKenqyNc_IwM5BvYqURUlzncHGC7v60NNXYvSyL"/>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-primary border-2 border-surface-darker rounded-full"></span>
+</div>
+<span class="font-medium text-sm text-white group-hover:text-primary transition-colors">Metro City E-Waste Hub</span>
+</div>
+<span class="text-xs text-primary font-medium">10:42 AM</span>
+</div>
+<p class="text-xs text-gray-400 line-clamp-1 pl-10">AI Broker: Counter offer sent for PCB Grade A...</p>
+</a>
+</li>
+<li>
+<a class="block p-3 rounded-lg hover:bg-white/5 transition-all group border border-transparent" href="#">
+<div class="flex justify-between items-start mb-1">
+<div class="flex items-center gap-2">
+<div class="relative">
+<div class="w-8 h-8 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs font-bold border border-purple-500/30">GM</div>
+<span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-yellow-500 border-2 border-surface-darker rounded-full"></span>
+</div>
+<span class="font-medium text-sm text-gray-200">Global Metal Recyclers</span>
+</div>
+<span class="text-xs text-gray-500">Yesterday</span>
+</div>
+<p class="text-xs text-gray-500 line-clamp-1 pl-10">Waiting for grading report analysis...</p>
+</a>
+</li>
+</ul>
+</div>
+<div>
+<h3 class="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Closed Deals</h3>
+<ul class="space-y-1 opacity-70">
+<li>
+<a class="block p-3 rounded-lg hover:bg-white/5 transition-all" href="#">
+<div class="flex justify-between items-start mb-1">
+<div class="flex items-center gap-2">
+<img class="w-8 h-8 rounded-full object-cover grayscale opacity-70" data-alt="Portrait of a professional woman" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkAlnuxyVzEXoDs82UA8R8sETfwwwRh63SeZaWW1aS02GKf27jwn6ew4t3w9g4TweyQ4v1tQ_FpYP6m5n6LOyzjxzmOXEIh4NkWJGIFpwnrdPsf32oWfPhbf2VhtOBJSg3_C91ZpeQQMqkTMwOioM0BHaFHCx1Hc3IcT-w3eY514pDK_7c9uznkX5qvoFDSyfRLeuXtgkoyWllR_0Aox9yPoids8OJml6ocBSZgRPovTT-i77BPh0jgQCXg6BKtrfJji74LJ2Zcevr"/>
+<span class="font-medium text-sm text-gray-400">Pacific Circuits Ltd</span>
+</div>
+<span class="text-xs text-gray-600">Oct 24</span>
+</div>
+<p class="text-xs text-gray-600 line-clamp-1 pl-10">Deal closed at $5,400.</p>
+</a>
+</li>
+</ul>
+</div>
+</div>
+<div class="p-4 border-t border-white/5 flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-emerald-600 flex items-center justify-center text-background-dark font-bold text-xs">
+                JD
+            </div>
+<div class="flex-1">
+<p class="text-sm font-medium text-white">John Doe</p>
+<p class="text-xs text-gray-500">Senior Broker</p>
+</div>
+<button class="text-gray-500 hover:text-white"><span class="material-icons text-lg">settings</span></button>
+</div>
+</aside>
+<main class="flex-1 flex flex-col h-full relative">
+<header class="h-16 border-b border-white/5 bg-background-dark/50 backdrop-blur-md flex items-center justify-between px-6 z-10 sticky top-0">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img class="w-10 h-10 rounded-full object-cover border-2 border-primary/20" data-alt="Portrait of active negotiation partner" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDJtyzXWAHAJu5DVVIGxD0D3n2mmVh_NyGtfJ5klQ6wUbRmfZIEblx6WDmHi3SkZ6JOtVbLgBnWSPsuiOu_lIjUX5HauomPSYK-GKKzrfaz3gZySqgNJ5-JBw-niXbF4JE1UZ5RIx7Jq0K6Ci_nXRxBTc2SAWzvIkctWza3QUoaVcQktKQbgMAjtoKDlkcHRNCL1fa13Z3KH7ep6G1pZo3Ni6jsBdozDTsTIQ2xM6XYFYCBy1JxWS0BFa_6Xjgq8PATI2GnsQnWrfJ"/>
+<div class="absolute -bottom-1 -right-1 bg-background-dark rounded-full p-0.5">
+<div class="w-3 h-3 bg-primary rounded-full animate-pulse shadow-[0_0_10px_#19e66b]"></div>
+</div>
+</div>
+<div>
+<h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        Metro City E-Waste Hub 
+                        <span class="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] text-gray-400 uppercase font-semibold tracking-wide">Negotiation #4492</span>
+</h2>
+<div class="flex items-center gap-3 text-xs">
+<span class="text-primary font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            Active Negotiation
+                        </span>
+<span class="text-gray-500">|</span>
+<span class="text-gray-400 flex items-center gap-1">
+<span class="material-icons text-[14px] text-yellow-500">verified</span>
+                            Trust Score: 92/100
+                        </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 text-sm font-medium transition-colors border border-white/5 flex items-center gap-2">
+<span class="material-icons text-sm">inventory_2</span>
+                    View Inventory
+                </button>
+<button class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 text-sm font-medium transition-colors border border-white/5 flex items-center gap-2">
+<span class="material-icons text-sm">history</span>
+                    Price History
+                </button>
+<button class="text-gray-400 hover:text-white transition-colors">
+<span class="material-icons">more_vert</span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-6 space-y-8 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]">
+<div class="flex justify-center">
+<span class="px-3 py-1 rounded-full bg-white/5 text-[10px] font-medium text-gray-500 border border-white/5 uppercase tracking-wide">Today, 10:23 AM</span>
+</div>
+<div class="flex gap-4 max-w-3xl">
+<img class="w-8 h-8 rounded-full object-cover mt-1" data-alt="User avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgpvYxVV7piM1an0t0dBtW2VhdG_cl1fLFMT9FFzZEOMceID8ewgy6t87GwOz9x_h91xRHbDUP8RsJ2-AqWd4iOH_nATHHLgoQG8Y01Ki3v5yJFzREvaWtulm7ZLTnvPgpI8I0z1FnEdC-BmLdVnDwK4F2YuH6ROpfw40PrENhyYw9NU6S00lT3NaA_Ce18k1CwJR6r6KuOG--lsmgfZ_JGMSxaI65eOBOgkGowcZscShUUFsjzz8eE9aJJHFxaGBGgFhscVpvpFec"/>
+<div class="flex flex-col gap-1">
+<div class="flex items-baseline gap-2">
+<span class="text-sm font-medium text-gray-300">Hub Logistics Manager</span>
+<span class="text-xs text-gray-600">10:23 AM</span>
+</div>
+<div class="p-4 rounded-xl rounded-tl-none bg-surface-dark border border-white/5 shadow-sm text-gray-200 text-sm leading-relaxed">
+<p>Hello team. We have collected approximately 500kg of mixed motherboard scrap from the tech park. Most of it is desktop motherboards, some server boards included.</p>
+<div class="mt-3 relative group overflow-hidden rounded-lg border border-white/10 w-64">
+<img class="w-full h-32 object-cover" data-alt="Pile of electronic circuit boards e-waste" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQ9LsPOqiRv0H6pmUfr-5l1_hNVipwtWdHqZmBdDs6T5xc02u9O5UR11WawAD3eWiUxTGaXTEcUsJk4jIvVAKvvei7Qzsv7cL65beCHDX48OBV_wYGi4FTNf39jKpPZ_iOfBGX5LUqOMjaMail6K6AO1ajQ1Tx9HSSeEFvxBaZVNkEESHMvsNlA5Hy4iEQ9Wxew_ZOgZg80EVMuw9BjXZ6UE5VK11X1Cpui_k9gglrFh7PvW_rLXD6tk0GjVvAYKlIJr_jww7iqtqe"/>
+<div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+<span class="material-icons text-white">visibility</span>
+</div>
+</div>
+<p class="mt-2 font-medium">We are looking for <span class="text-white">$10.50/kg</span>.</p>
+</div>
+</div>
+</div>
+<div class="flex flex-row-reverse gap-4 max-w-3xl ml-auto">
+<div class="w-8 h-8 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center text-primary mt-1 shadow-[0_0_10px_rgba(25,230,107,0.2)]">
+<span class="material-icons text-sm">smart_toy</span>
+</div>
+<div class="flex flex-col items-end gap-1">
+<div class="flex items-baseline gap-2">
+<span class="text-xs text-gray-600">10:24 AM</span>
+<span class="text-sm font-medium text-primary">UrbanMine AI Broker</span>
+</div>
+<div class="p-4 rounded-xl rounded-tr-none bg-primary/5 border border-primary/20 shadow-sm text-gray-200 text-sm leading-relaxed w-full">
+<div class="flex items-center gap-2 mb-2 text-xs text-primary font-semibold uppercase tracking-wider">
+<span class="material-icons text-sm">analytics</span> AI Analysis
+                        </div>
+<p>Based on the image grading, the quality is mixed (Grade B). The visible capacitors suggest older models.</p>
+<p class="mt-1">Global market rate for Grade B PCB is currently adjusting due to supply chain factors. <br/>System suggests a range of <span class="font-bold text-white">$9.20 - $9.80/kg</span>.</p>
+</div>
+</div>
+</div>
+<div class="flex flex-row-reverse gap-4 w-full ml-auto justify-center my-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+<div class="relative w-full max-w-md">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary to-emerald-600 rounded-2xl opacity-20 blur transition duration-1000 group-hover:opacity-100 group-hover:duration-200"></div>
+<div class="relative bg-surface-darker border border-primary/30 rounded-xl p-0 overflow-hidden shadow-2xl">
+<div class="bg-primary/10 border-b border-primary/20 p-4 flex justify-between items-center">
+<div class="flex items-center gap-2 text-primary font-bold">
+<span class="material-icons">gavel</span>
+                                Proposed Offer
+                            </div>
+<span class="text-xs text-primary/70 bg-primary/10 px-2 py-1 rounded border border-primary/20">Official Bid</span>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-end mb-6">
+<div>
+<p class="text-sm text-gray-400 mb-1">Price per Kg</p>
+<p class="text-3xl font-display font-bold text-white">$9.75<span class="text-lg text-gray-500 font-normal">/kg</span></p>
+</div>
+<div class="text-right">
+<p class="text-sm text-gray-400 mb-1">Total Estimated Value</p>
+<p class="text-xl font-display font-semibold text-emerald-400">$4,875.00</p>
+<p class="text-xs text-gray-500">for 500kg net weight</p>
+</div>
+</div>
+<div class="bg-background-dark/50 rounded-lg p-3 mb-6 border border-white/5">
+<div class="flex items-start gap-3">
+<span class="material-icons text-yellow-500 text-sm mt-0.5">warning</span>
+<p class="text-xs text-gray-300 leading-relaxed">
+                                        Condition: Subject to physical verification upon delivery. <br/>
+                                        Payment Terms: Net 30 days.
+                                    </p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<button class="py-2.5 px-4 rounded-lg border border-gray-600 text-gray-300 hover:bg-white/5 hover:text-white font-medium text-sm transition-colors flex items-center justify-center gap-2">
+<span class="material-icons text-sm">edit</span>
+                                    Counter
+                                </button>
+<button class="py-2.5 px-4 rounded-lg bg-primary hover:bg-green-400 text-background-dark font-bold text-sm transition-colors shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+<span class="material-icons text-sm">check_circle</span>
+                                    Send Offer
+                                </button>
+</div>
+</div>
+<div class="bg-background-dark p-2 text-center border-t border-white/5">
+<p class="text-[10px] text-gray-500 flex items-center justify-center gap-1">
+<span class="material-icons text-[10px]">auto_awesome</span>
+                                Generated by UrbanMine AI Broker based on global market index
+                            </p>
+</div>
+</div>
+</div>
+</div>
+<div class="h-4"></div>
+</div>
+<div class="border-t border-white/5 bg-surface-darker p-4 z-20">
+<div class="max-w-4xl mx-auto">
+<div class="flex items-center justify-between mb-2 px-1">
+<div class="flex gap-2">
+<button class="text-xs bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white px-3 py-1 rounded-full border border-white/5 transition-colors">Request new photos</button>
+<button class="text-xs bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white px-3 py-1 rounded-full border border-white/5 transition-colors">Schedule pickup</button>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs text-primary font-medium">AI Autopilot</span>
+<button class="w-8 h-4 bg-primary/20 rounded-full relative cursor-pointer border border-primary/30">
+<div class="absolute right-0.5 top-0.5 w-3 h-3 bg-primary rounded-full shadow-sm"></div>
+</button>
+</div>
+</div>
+<div class="relative flex items-end gap-2 bg-background-dark border border-white/10 rounded-xl p-2 focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/50 transition-all shadow-lg">
+<button class="p-2 text-gray-400 hover:text-primary transition-colors">
+<span class="material-icons">add_circle_outline</span>
+</button>
+<textarea class="w-full bg-transparent border-none text-gray-200 placeholder-gray-600 focus:ring-0 resize-none py-2.5 max-h-32 text-sm leading-relaxed scrollbar-hide" placeholder="Type your message or let AI draft a response... (Multi-language supported)" rows="1"></textarea>
+<div class="flex items-center gap-1 pb-1">
+<button class="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/5" title="Voice Input">
+<span class="material-icons text-xl">mic</span>
+</button>
+<button class="p-2 bg-primary hover:bg-green-400 text-background-dark rounded-lg transition-colors shadow-lg shadow-primary/20 flex items-center justify-center">
+<span class="material-icons text-xl">send</span>
+</button>
+</div>
+</div>
+<p class="text-center text-[10px] text-gray-600 mt-2">
+                    AI can make mistakes. Please verify financial details before accepting.
+                </p>
+</div>
+</div>
+</main>
+<script>
+        // Simple textarea auto-resize script for better UX presentation
+        const textarea = document.querySelector('textarea');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    </script>
+
+</body></html>

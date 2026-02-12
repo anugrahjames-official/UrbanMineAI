@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Recycler Procurement Center - UrbanMineAI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#19e66b",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#112117",
+                        "surface-dark": "#182e21", // Slightly lighter than bg-dark for cards
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for dark mode */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #112117; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a4032; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #19e66b; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 font-display min-h-screen flex overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-64 bg-white dark:bg-[#0c1811] border-r border-gray-200 dark:border-gray-800 flex-shrink-0 hidden lg:flex flex-col">
+<div class="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-800">
+<div class="flex items-center gap-2">
+<span class="material-icons-outlined text-primary text-3xl">recycling</span>
+<span class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">UrbanMine<span class="text-primary">AI</span></span>
+</div>
+</div>
+<nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-gray-900 dark:hover:text-primary transition-colors" href="#">
+<span class="material-icons-outlined">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary transition-colors" href="#">
+<span class="material-icons-outlined">gavel</span>
+<span class="font-medium">Procurement</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-gray-900 dark:hover:text-primary transition-colors" href="#">
+<span class="material-icons-outlined">inventory_2</span>
+<span class="font-medium">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-gray-900 dark:hover:text-primary transition-colors" href="#">
+<span class="material-icons-outlined">local_shipping</span>
+<span class="font-medium">Logistics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-gray-900 dark:hover:text-primary transition-colors" href="#">
+<span class="material-icons-outlined">analytics</span>
+<span class="font-medium">Market Trends</span>
+</a>
+<div class="pt-6 mt-6 border-t border-gray-200 dark:border-gray-800">
+<h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">System</h3>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-gray-900 dark:hover:text-primary transition-colors" href="#">
+<span class="material-icons-outlined">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-primary/10 hover:text-gray-900 dark:hover:text-primary transition-colors" href="#">
+<span class="material-icons-outlined">help_outline</span>
+<span class="font-medium">Support</span>
+</a>
+</div>
+</nav>
+<div class="p-4 border-t border-gray-200 dark:border-gray-800">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full border border-gray-600" data-alt="User profile photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtFkazF0zZ_1E_IS-T0m1Bs4yM58bDTxnrEPhjtKFMbFz5yjHcaczQzwzvSveqPSxAdvkDC_CT1BMZVhyFD0b0YpmYVAyrweTZMDckxiENl8bg5u7JlmT4NEoXVCRsVdFlnY5Eb5G9a2SkRneI72XFFyFBwl28rvxSl3BfbtUSXN-DngHjfEbjZN5_HFNyGieQhdy0ZIfkHsbRw6cOFMlhB29pYsT3QCZ34Zwxy47svz1Skq5VzdCGxyRnFvZfb8QvGL7jTOwxc8M6"/>
+<div>
+<p class="text-sm font-medium text-gray-900 dark:text-white">Alex Chen</p>
+<p class="text-xs text-gray-500 dark:text-gray-400">GreenCycle Kochi</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+<!-- Header -->
+<header class="h-16 flex items-center justify-between px-6 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0c1811]">
+<div class="flex items-center gap-4">
+<button class="lg:hidden text-gray-500 hover:text-primary">
+<span class="material-icons-outlined">menu</span>
+</button>
+<nav class="hidden sm:flex text-sm font-medium text-gray-500 dark:text-gray-400">
+<a class="hover:text-gray-900 dark:hover:text-white" href="#">Home</a>
+<span class="mx-2">/</span>
+<span class="text-gray-900 dark:text-white">Procurement Center</span>
+<span class="mx-2">/</span>
+<span class="text-primary">Live Bids</span>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden md:block">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-icons-outlined text-gray-500">search</span>
+</span>
+<input class="block w-64 pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg leading-5 bg-gray-50 dark:bg-background-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm" placeholder="Search batch ID, material..." type="text"/>
+</div>
+<button class="relative p-2 text-gray-500 dark:text-gray-400 hover:text-primary transition-colors">
+<span class="material-icons-outlined">notifications</span>
+<span class="absolute top-2 right-2 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-background-dark"></span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-auto p-6 scroll-smooth">
+<div class="max-w-8xl mx-auto space-y-6">
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-white dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col justify-between h-28 relative overflow-hidden group">
+<div class="absolute right-0 top-0 w-16 h-16 bg-primary/5 rounded-bl-full -mr-2 -mt-2 transition-transform group-hover:scale-110"></div>
+<div class="flex justify-between items-start z-10">
+<div>
+<p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Active Bids</p>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-1">14</h3>
+</div>
+<span class="material-icons-outlined text-primary bg-primary/10 p-2 rounded-lg">gavel</span>
+</div>
+<div class="mt-2 flex items-center text-xs">
+<span class="text-primary font-medium flex items-center">
+<span class="material-icons-outlined text-[14px] mr-0.5">trending_up</span>
+                                +2
+                            </span>
+<span class="text-gray-500 dark:text-gray-400 ml-1">new this hour</span>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col justify-between h-28 relative overflow-hidden">
+<div class="flex justify-between items-start z-10">
+<div>
+<p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Lots Won Today</p>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-1">3</h3>
+</div>
+<span class="material-icons-outlined text-green-500 bg-green-500/10 p-2 rounded-lg">check_circle</span>
+</div>
+<div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                            Total Weight: <span class="text-gray-900 dark:text-white font-medium">1.2 Tons</span>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col justify-between h-28 relative overflow-hidden">
+<div class="flex justify-between items-start z-10">
+<div>
+<p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Pending Delivery</p>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-1">8</h3>
+</div>
+<span class="material-icons-outlined text-amber-500 bg-amber-500/10 p-2 rounded-lg">local_shipping</span>
+</div>
+<div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                            Next arrival: <span class="text-gray-900 dark:text-white font-medium">14:00 PM</span>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col justify-between h-28 relative overflow-hidden">
+<div class="flex justify-between items-start z-10">
+<div>
+<p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Capital Deployed</p>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-1">₹4.2L</h3>
+</div>
+<span class="material-icons-outlined text-blue-500 bg-blue-500/10 p-2 rounded-lg">account_balance_wallet</span>
+</div>
+<div class="mt-2 flex items-center text-xs">
+<span class="text-red-400 font-medium flex items-center">
+<span class="material-icons-outlined text-[14px] mr-0.5">trending_down</span>
+                                12%
+                            </span>
+<span class="text-gray-500 dark:text-gray-400 ml-1">rem. budget</span>
+</div>
+</div>
+</div>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+<!-- Left Column: Bidding Interface (Takes 2/3 space on large screens) -->
+<div class="xl:col-span-2 space-y-6">
+<!-- High Value Lots Carousel -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+<span class="material-icons-outlined text-amber-500">star</span>
+                                    Premium Upcoming Lots
+                                </h2>
+<a class="text-sm text-primary hover:text-primary/80 font-medium" href="#">View All</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Card 1 -->
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-gray-800 p-4 flex gap-4 hover:border-primary/50 transition-colors cursor-pointer group">
+<div class="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-800 relative">
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Close up of computer motherboards and circuits" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkbEJCQQxdG12bpFAhWLaxUkFo6cCnjib2C3ltnePmU3efd4ZANUvbKA0wkOYJB4UBDH_uKlzASDzyx07zFpN0szFv-pvkupTP3pgAPpYMmzKM0UVSb1U93IE7C5fla_ehCGptnDdLRrNdOQRQPnneTIKP_rswmtxIXqkT6rPEu4rCBMgV4vMt-s6ha9ZBUEf8FzvUfR4ctbcRc2Rl5m3-vfewM7ilvdTw11zJ_WvwtEepI-SipOW-QDf_HA4BDr3TPQIfAvNLM-1r"/>
+<div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] text-center py-0.5 backdrop-blur-sm">
+                                            AI Grade: A+
+                                        </div>
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-bold text-gray-900 dark:text-white text-sm">Lot #8821 - Server PCBs</h3>
+<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-primary/20 text-primary border border-primary/20">VERIFIED</span>
+</div>
+<p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Enterprise grade server motherboards. High gold yield expected.</p>
+</div>
+<div class="flex items-end justify-between mt-2">
+<div>
+<p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase">Est. Value</p>
+<p class="text-sm font-bold text-gray-900 dark:text-white">₹45,000</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase">Starts In</p>
+<p class="text-sm font-mono text-amber-500 font-medium">00:45:21</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-gray-800 p-4 flex gap-4 hover:border-primary/50 transition-colors cursor-pointer group">
+<div class="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-800 relative">
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Pile of lithium ion batteries" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUFxJPO3sklarNbwBqtQoA42KmfBRMx8q2Kz75bnTv_WVwhfi_rZ0UWaOCq0A4vXZfQX8nWahNpLFp-nV211jMMP4s5NCho0c8FbLENat2FDGcpHcDjwYhLY2h8wTNOqufxrMX5uvjFbNAw5wBEfPTdFMvJ8b6idk9hgZWggS5kp9npmUI4EI81gVIDlUZ_4nMud_LPpvaFFcWaEX0-8WfQ7DLOkR1v9QBPyM5QXvb-Afk4lkIJh95tyrLYQLvnvzGVukwYohOJR6a"/>
+<div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] text-center py-0.5 backdrop-blur-sm">
+                                            AI Grade: B
+                                        </div>
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-bold text-gray-900 dark:text-white text-sm">Lot #902 - Li-Ion Cells</h3>
+<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-700 text-gray-300 border border-gray-600">UNSORTED</span>
+</div>
+<p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Mixed laptop battery cells. Moderate swelling detected in 5%.</p>
+</div>
+<div class="flex items-end justify-between mt-2">
+<div>
+<p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase">Est. Value</p>
+<p class="text-sm font-bold text-gray-900 dark:text-white">₹28,500</p>
+</div>
+<div class="text-right">
+<p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase">Starts In</p>
+<p class="text-sm font-mono text-amber-500 font-medium">02:10:05</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Live Bids Table Section -->
+<section class="bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-gray-800 flex flex-col h-[500px]">
+<!-- Filter Bar -->
+<div class="p-4 border-b border-gray-200 dark:border-gray-800 flex flex-wrap gap-3 items-center justify-between">
+<div class="flex items-center gap-2">
+<h2 class="text-lg font-bold text-gray-900 dark:text-white mr-2">Live Marketplace</h2>
+<span class="px-2 py-0.5 bg-green-500/10 text-green-500 text-xs font-bold rounded animate-pulse">LIVE</span>
+</div>
+<div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+<select class="bg-gray-50 dark:bg-background-dark border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-lg focus:ring-primary focus:border-primary py-1.5 pl-2 pr-8">
+<option>All Materials</option>
+<option>PCB</option>
+<option>Copper Wire</option>
+<option>Batteries</option>
+</select>
+<select class="bg-gray-50 dark:bg-background-dark border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-lg focus:ring-primary focus:border-primary py-1.5 pl-2 pr-8">
+<option>Any Volume</option>
+<option>&gt; 500kg</option>
+<option>&gt; 1 Ton</option>
+</select>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-700 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-background-dark transition-colors">
+<span class="material-icons-outlined text-[16px]">filter_list</span>
+                                        More
+                                    </button>
+</div>
+</div>
+<!-- Table -->
+<div class="overflow-auto flex-1">
+<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
+<thead class="bg-gray-50 dark:bg-[#13241b] sticky top-0 z-10">
+<tr>
+<th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider" scope="col">Batch Info</th>
+<th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider" scope="col">Composition</th>
+<th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider" scope="col">Weight</th>
+<th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider" scope="col">Current Bid</th>
+<th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider" scope="col">Time Left</th>
+<th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider" scope="col">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-surface-dark">
+<!-- Row 1 -->
+<tr class="hover:bg-gray-50 dark:hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="flex-shrink-0 h-10 w-10 rounded bg-gray-800 flex items-center justify-center">
+<span class="material-icons-outlined text-gray-400">cable</span>
+</div>
+<div class="ml-4">
+<div class="text-sm font-medium text-gray-900 dark:text-white">#104 - Mixed Cables</div>
+<div class="text-xs text-gray-500 dark:text-gray-400">Kochi Hub</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="w-32 h-2 bg-gray-700 rounded-full overflow-hidden flex">
+<div class="bg-amber-600 h-full" style="width: 60%" title="Copper"></div>
+<div class="bg-gray-400 h-full" style="width: 40%" title="PVC"></div>
+</div>
+<div class="text-[10px] text-gray-400 mt-1 flex gap-2">
+<span class="flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-amber-600"></div> 60% Cu</span>
+<span class="flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-gray-400"></div> 40% PVC</span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm text-gray-900 dark:text-white font-mono">500 kg</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm font-bold text-primary font-mono">₹12,500</div>
+<div class="text-[10px] text-green-400 flex items-center">
+<span class="material-icons-outlined text-[10px] mr-0.5">arrow_upward</span> 2.1%
+                                                </div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
+                                                    00:12:44
+                                                </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<button class="text-white bg-primary hover:bg-green-500 px-3 py-1.5 rounded text-xs font-bold transition-colors shadow-lg shadow-primary/20">
+                                                    Bid Now
+                                                </button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-gray-50 dark:hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="flex-shrink-0 h-10 w-10 rounded bg-gray-800 flex items-center justify-center">
+<span class="material-icons-outlined text-gray-400">memory</span>
+</div>
+<div class="ml-4">
+<div class="text-sm font-medium text-gray-900 dark:text-white">#108 - Smartphone PCBs</div>
+<div class="text-xs text-gray-500 dark:text-gray-400">Trivandrum Hub</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="w-32 h-2 bg-gray-700 rounded-full overflow-hidden flex">
+<div class="bg-yellow-500 h-full" style="width: 15%" title="Gold"></div>
+<div class="bg-green-600 h-full" style="width: 85%" title="FR4/Other"></div>
+</div>
+<div class="text-[10px] text-gray-400 mt-1 flex gap-2">
+<span class="flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-yellow-500"></div> High Yield</span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm text-gray-900 dark:text-white font-mono">120 kg</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm font-bold text-gray-900 dark:text-white font-mono">₹48,200</div>
+<div class="text-[10px] text-gray-500 dark:text-gray-400">No recent bids</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
+                                                    01:45:00
+                                                </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<button class="text-primary hover:text-white border border-primary hover:bg-primary px-3 py-1.5 rounded text-xs font-bold transition-colors">
+                                                    Place Bid
+                                                </button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-gray-50 dark:hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="flex-shrink-0 h-10 w-10 rounded bg-gray-800 flex items-center justify-center">
+<span class="material-icons-outlined text-gray-400">kitchen</span>
+</div>
+<div class="ml-4">
+<div class="text-sm font-medium text-gray-900 dark:text-white">#112 - Shredded Steel</div>
+<div class="text-xs text-gray-500 dark:text-gray-400">Kozhikode Yard</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="w-32 h-2 bg-gray-700 rounded-full overflow-hidden flex">
+<div class="bg-blue-400 h-full" style="width: 95%" title="Steel"></div>
+<div class="bg-gray-400 h-full" style="width: 5%" title="Contaminants"></div>
+</div>
+<div class="text-[10px] text-gray-400 mt-1 flex gap-2">
+<span class="flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div> 95% Fe</span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm text-gray-900 dark:text-white font-mono">2.5 Tons</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm font-bold text-gray-900 dark:text-white font-mono">₹85,000</div>
+<div class="text-[10px] text-green-400 flex items-center">
+<span class="material-icons-outlined text-[10px] mr-0.5">arrow_upward</span> 0.5%
+                                                </div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+                                                    1 Day
+                                                </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<button class="text-primary hover:text-white border border-primary hover:bg-primary px-3 py-1.5 rounded text-xs font-bold transition-colors">
+                                                    Place Bid
+                                                </button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-gray-50 dark:hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="flex items-center">
+<div class="flex-shrink-0 h-10 w-10 rounded bg-gray-800 flex items-center justify-center">
+<span class="material-icons-outlined text-gray-400">battery_charging_full</span>
+</div>
+<div class="ml-4">
+<div class="text-sm font-medium text-gray-900 dark:text-white">#115 - UPS Batteries</div>
+<div class="text-xs text-gray-500 dark:text-gray-400">Kochi Hub</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="w-32 h-2 bg-gray-700 rounded-full overflow-hidden flex">
+<div class="bg-gray-500 h-full" style="width: 80%" title="Lead"></div>
+<div class="bg-blue-300 h-full" style="width: 20%" title="Acid/Plastic"></div>
+</div>
+<div class="text-[10px] text-gray-400 mt-1 flex gap-2">
+<span class="flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-gray-500"></div> Lead Acid</span>
+</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm text-gray-900 dark:text-white font-mono">800 kg</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<div class="text-sm font-bold text-gray-900 dark:text-white font-mono">₹76,000</div>
+<div class="text-[10px] text-gray-500 dark:text-gray-400">Opening bid</div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+                                                    2 Days
+                                                </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+<button class="text-primary hover:text-white border border-primary hover:bg-primary px-3 py-1.5 rounded text-xs font-bold transition-colors">
+                                                    Place Bid
+                                                </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-3 border-t border-gray-200 dark:border-gray-800 text-xs text-center text-gray-500 dark:text-gray-400">
+                                Showing 4 of 28 active batches
+                            </div>
+</section>
+</div>
+<!-- Right Column: Analytics & Tools -->
+<div class="space-y-6">
+<!-- Market Widget -->
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-gray-800 p-6">
+<h3 class="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Feedstock Trends</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500 font-bold text-xs">Cu</div>
+<div>
+<p class="text-sm font-medium text-gray-900 dark:text-white">Copper</p>
+<p class="text-xs text-gray-500 dark:text-gray-400">Market Avg.</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-gray-900 dark:text-white">₹720/kg</p>
+<p class="text-xs text-green-500">+2.4%</p>
+</div>
+</div>
+<div class="h-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-amber-500 w-3/4"></div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center text-yellow-500 font-bold text-xs">Au</div>
+<div>
+<p class="text-sm font-medium text-gray-900 dark:text-white">Gold (e-waste)</p>
+<p class="text-xs text-gray-500 dark:text-gray-400">Recycled Grade</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-gray-900 dark:text-white">₹5,400/g</p>
+<p class="text-xs text-red-400">-0.8%</p>
+</div>
+</div>
+<div class="h-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-yellow-500 w-1/2"></div>
+</div>
+<div class="flex items-center justify-between pt-2">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 font-bold text-xs">Li</div>
+<div>
+<p class="text-sm font-medium text-gray-900 dark:text-white">Lithium</p>
+<p class="text-xs text-gray-500 dark:text-gray-400">Battery Grade</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-gray-900 dark:text-white">₹1,200/kg</p>
+<p class="text-xs text-green-500">+5.1%</p>
+</div>
+</div>
+<div class="h-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-blue-500 w-4/5"></div>
+</div>
+</div>
+</div>
+<!-- Map / Location Widget -->
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-gray-800 p-0 overflow-hidden relative h-48">
+<img class="w-full h-full object-cover opacity-60" data-alt="Dark styled map of Kerala region with data points" data-location="Kerala Map" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7-GCBpqA-bXvgQWZGqyShWVF-EKsx71m4p-luaOHO2dP279cOo7USj-hotEQSSgaVWtkgde4BepZ3rA5llCmYIKcHAg4dkYfl17E0c3rEcbWV8lJvmf4mIlAz2vJgCvJmGB510_QcpcB8PB22bsq3Yd8nlF2RTqN4rp1b2nslPOlTsXghzNjM9fZi60SGrQQjJrIR-rTJw-RPdyLg9d6tsmBWt3BrcjXo2Ylptc4Tcw6zRXatR4E4Cqiez02BHvEp8GT9EQGowNFc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dark via-transparent to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<h3 class="text-sm font-bold text-white mb-1">Source Map</h3>
+<p class="text-xs text-gray-300">High volume detected in <span class="text-primary font-medium">Kochi Zone A</span></p>
+</div>
+<button class="absolute top-3 right-3 bg-white/10 backdrop-blur-md p-1.5 rounded-lg text-white hover:bg-white/20 transition-colors">
+<span class="material-icons-outlined text-sm">open_in_full</span>
+</button>
+</div>
+<!-- Composition Donut (Simulated with CSS) -->
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-gray-800 p-6">
+<h3 class="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Available Composition</h3>
+<div class="flex items-center gap-6">
+<div class="relative w-24 h-24 rounded-full border-[12px] border-primary/20 flex items-center justify-center">
+<div class="absolute inset-0 rounded-full border-[12px] border-primary border-l-transparent border-b-transparent transform -rotate-45"></div>
+<div class="text-center">
+<span class="block text-xl font-bold text-gray-900 dark:text-white">64%</span>
+</div>
+</div>
+<div class="space-y-2 flex-1">
+<div class="flex items-center justify-between text-xs">
+<span class="flex items-center gap-2 text-gray-500 dark:text-gray-400"><span class="w-2 h-2 rounded-full bg-primary"></span> PCB</span>
+<span class="font-medium text-gray-900 dark:text-white">64%</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="flex items-center gap-2 text-gray-500 dark:text-gray-400"><span class="w-2 h-2 rounded-full bg-primary/40"></span> Plastic</span>
+<span class="font-medium text-gray-900 dark:text-white">22%</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="flex items-center gap-2 text-gray-500 dark:text-gray-400"><span class="w-2 h-2 rounded-full bg-primary/10"></span> Metals</span>
+<span class="font-medium text-gray-900 dark:text-white">14%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UrbanMineAI - Global Bounties Marketplace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#19e66b",
+                        "primary-dark": "#0ea348",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#112117",
+                        "surface-dark": "#1a2f23",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #112117; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1a2f23; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #19e66b; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-100 min-h-screen flex overflow-hidden">
+<aside class="w-64 bg-white dark:bg-surface-dark border-r border-gray-200 dark:border-primary/10 hidden md:flex flex-col h-screen fixed left-0 top-0 z-20">
+<div class="p-6 flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-background-dark font-bold text-xl">
+                U
+            </div>
+<span class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">UrbanMine<span class="text-primary">AI</span></span>
+</div>
+<nav class="flex-1 px-4 space-y-2 mt-4">
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-icons text-xl">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg bg-primary/20 text-primary dark:text-primary" href="#">
+<span class="material-icons text-xl">verified</span>
+                Bounties &amp; Market
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-icons text-xl">inventory_2</span>
+                My Inventory
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-icons text-xl">local_shipping</span>
+                Logistics
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-icons text-xl">analytics</span>
+                Analytics
+            </a>
+</nav>
+<div class="p-4 border-t border-gray-200 dark:border-primary/10">
+<div class="flex items-center gap-3 px-4 py-2">
+<img alt="User Profile" class="w-8 h-8 rounded-full" data-alt="User avatar placeholder" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5LRzFIKsw_HvUwhupMjYUNmBTPiB7iUB_MWF_V4HX1466EXrXN7M2aVosUDOg4ilN1wr5h8Py-tbMQQeZIf0cY435YZvThU-B3jlX7T0Ohlco2u89SzjGDpbQJqTQzINqSivGJMR2EbUhWYEZDTt4jZgCCpJl6YT8tti_HNaIs6VdxJOHxMS6FurIqdgl_tcxpaf9Lv7qdY2YbTK3OmZ5BdwAdGFNEICme9evNcWViDVoEkrTOHWVv3--4ChKi87f-4abywV1i50w"/>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-medium text-gray-900 dark:text-white truncate">David Chen</p>
+<p class="text-xs text-gray-500 dark:text-gray-400 truncate">London Dealer Hub</p>
+</div>
+<button class="text-gray-400 hover:text-white"><span class="material-icons text-sm">settings</span></button>
+</div>
+</div>
+</aside>
+<main class="flex-1 md:ml-64 relative overflow-y-auto h-screen">
+<header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/90 backdrop-blur-md border-b border-gray-200 dark:border-primary/10 px-8 py-4 flex items-center justify-between">
+<div>
+<h1 class="text-2xl font-bold text-gray-900 dark:text-white">Global Bounties Marketplace</h1>
+<p class="text-sm text-gray-500 dark:text-gray-400">Live buy requests from authorized recyclers worldwide</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block w-64">
+<span class="material-icons absolute left-3 top-2.5 text-gray-400 dark:text-gray-500 text-lg">search</span>
+<input class="w-full bg-white dark:bg-surface-dark border border-gray-200 dark:border-primary/20 text-gray-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block pl-10 p-2.5 placeholder-gray-400 dark:placeholder-gray-500" placeholder="Search materials..." type="text"/>
+</div>
+<button class="relative p-2 text-gray-500 dark:text-gray-400 hover:text-primary transition-colors">
+<span class="material-icons">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+</button>
+</div>
+</header>
+<section class="px-8 py-6 space-y-6">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-surface-dark p-4 rounded-xl border border-gray-200 dark:border-primary/10 shadow-sm">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3 pr-6 border-r border-gray-200 dark:border-primary/10">
+<label class="relative inline-flex items-center cursor-pointer group">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 dark:peer-focus:ring-primary/30 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+<span class="ml-3 text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
+<span class="material-icons text-primary text-base">auto_awesome</span>
+                                Match My Inventory
+                            </span>
+</label>
+</div>
+<div class="flex items-center gap-3">
+<select class="bg-gray-50 dark:bg-background-dark border border-gray-300 dark:border-primary/20 text-gray-900 dark:text-gray-300 text-sm rounded-lg focus:ring-primary focus:border-primary block w-auto p-2.5">
+<option selected="">All Materials</option>
+<option value="li-ion">Li-ion Batteries</option>
+<option value="pcb">PCBs (Grade A)</option>
+<option value="cables">Copper Cables</option>
+</select>
+<select class="bg-gray-50 dark:bg-background-dark border border-gray-300 dark:border-primary/20 text-gray-900 dark:text-gray-300 text-sm rounded-lg focus:ring-primary focus:border-primary block w-auto p-2.5">
+<option selected="">All Regions</option>
+<option value="na">North America</option>
+<option value="eu">Europe</option>
+<option value="apac">Asia Pacific</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-sm text-gray-500 dark:text-gray-400">Sort by:</span>
+<button class="text-sm font-medium text-primary hover:text-primary-dark transition-colors flex items-center">
+                        Highest Premium <span class="material-icons text-base ml-1">arrow_downward</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-gradient-to-br from-surface-dark to-background-dark border border-primary/20 rounded-xl p-5 relative overflow-hidden group">
+<div class="absolute right-0 top-0 w-24 h-24 bg-primary/5 rounded-full -mr-4 -mt-4 blur-xl group-hover:bg-primary/10 transition-all"></div>
+<p class="text-sm text-gray-400 font-medium mb-1">Total Active Volume Needed</p>
+<h3 class="text-2xl font-bold text-white">12,450 kg</h3>
+<div class="flex items-center mt-2 text-xs text-primary">
+<span class="material-icons text-sm mr-1">trending_up</span>
+<span>+8% vs last week</span>
+</div>
+</div>
+<div class="bg-gradient-to-br from-surface-dark to-background-dark border border-primary/20 rounded-xl p-5 relative overflow-hidden group">
+<div class="absolute right-0 top-0 w-24 h-24 bg-primary/5 rounded-full -mr-4 -mt-4 blur-xl group-hover:bg-primary/10 transition-all"></div>
+<p class="text-sm text-gray-400 font-medium mb-1">Average Market Premium</p>
+<h3 class="text-2xl font-bold text-white">+ 8.4%</h3>
+<div class="flex items-center mt-2 text-xs text-green-400">
+<span>Highest on PCBs</span>
+</div>
+</div>
+<div class="bg-gradient-to-br from-surface-dark to-background-dark border border-primary/20 rounded-xl p-5 relative overflow-hidden group">
+<div class="absolute right-0 top-0 w-24 h-24 bg-primary/5 rounded-full -mr-4 -mt-4 blur-xl group-hover:bg-primary/10 transition-all"></div>
+<p class="text-sm text-gray-400 font-medium mb-1">Matches Found</p>
+<h3 class="text-2xl font-bold text-white">3 Opportunities</h3>
+<div class="flex items-center mt-2 text-xs text-primary cursor-pointer hover:underline">
+<span>Review Auto-Matches</span>
+<span class="material-icons text-sm ml-1">arrow_forward</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-12">
+<article class="bg-white dark:bg-surface-dark rounded-xl border-2 border-primary/40 shadow-lg shadow-primary/5 overflow-hidden flex flex-col relative transition-transform hover:-translate-y-1 hover:shadow-primary/10">
+<div class="absolute top-0 right-0 bg-primary text-background-dark text-xs font-bold px-3 py-1 rounded-bl-lg z-10">
+                        AI MATCH: 98%
+                    </div>
+<div class="p-5 flex-1">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+<span class="material-icons text-gray-500 dark:text-gray-300 text-sm">recycling</span>
+</div>
+<div>
+<h4 class="text-sm font-semibold text-gray-900 dark:text-white">GreenCycle Global</h4>
+<div class="flex items-center text-[10px] text-primary">
+<span class="material-icons text-[12px] mr-0.5">verified</span> Authorized
+                                    </div>
+</div>
+</div>
+</div>
+<div class="mb-4">
+<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">Smartphone PCBs</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">Grade A Only • Min 50kg batch</p>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-4">
+<div class="bg-background-light dark:bg-background-dark p-2 rounded-lg border border-gray-200 dark:border-gray-700">
+<p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">Volume</p>
+<p class="font-mono text-sm font-bold text-gray-900 dark:text-white">500 kg</p>
+</div>
+<div class="bg-primary/10 p-2 rounded-lg border border-primary/20">
+<p class="text-[10px] text-primary uppercase tracking-wider">Premium</p>
+<p class="font-mono text-sm font-bold text-primary">+15% Rate</p>
+</div>
+</div>
+<div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 pt-3">
+<span class="flex items-center"><span class="material-icons text-sm mr-1">location_on</span> Singapore</span>
+<span class="flex items-center"><span class="material-icons text-sm mr-1">schedule</span> 4h 20m left</span>
+</div>
+</div>
+<div class="p-3 bg-gray-50 dark:bg-background-dark border-t border-gray-200 dark:border-gray-700 grid grid-cols-2 gap-2">
+<button class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">Negotiate</button>
+<button class="px-4 py-2 text-sm font-bold text-background-dark bg-primary hover:bg-primary-dark rounded-lg transition-colors shadow-md shadow-primary/20">Accept Deal</button>
+</div>
+</article>
+<article class="bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-primary/10 hover:border-primary/40 transition-all hover:-translate-y-1">
+<div class="p-5 flex-1">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+<span class="material-icons text-gray-500 dark:text-gray-300 text-sm">business</span>
+</div>
+<div>
+<h4 class="text-sm font-semibold text-gray-900 dark:text-white">EcoMetal Solutions</h4>
+<div class="flex items-center text-[10px] text-primary">
+<span class="material-icons text-[12px] mr-0.5">verified</span> Authorized
+                                    </div>
+</div>
+</div>
+</div>
+<div class="mb-4">
+<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">Li-ion Batteries</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">EV Modules • Disassembled</p>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-4">
+<div class="bg-background-light dark:bg-background-dark p-2 rounded-lg border border-gray-200 dark:border-gray-700">
+<p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">Volume</p>
+<p class="font-mono text-sm font-bold text-gray-900 dark:text-white">1,200 kg</p>
+</div>
+<div class="bg-primary/10 p-2 rounded-lg border border-primary/20">
+<p class="text-[10px] text-primary uppercase tracking-wider">Premium</p>
+<p class="font-mono text-sm font-bold text-primary">+8% Rate</p>
+</div>
+</div>
+<div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 pt-3">
+<span class="flex items-center"><span class="material-icons text-sm mr-1">location_on</span> New York</span>
+<span class="flex items-center"><span class="material-icons text-sm mr-1">schedule</span> 1d 2h left</span>
+</div>
+</div>
+<div class="p-3 bg-gray-50 dark:bg-background-dark border-t border-gray-200 dark:border-gray-700 grid grid-cols-2 gap-2">
+<button class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">Negotiate</button>
+<button class="px-4 py-2 text-sm font-bold text-background-dark bg-primary hover:bg-primary-dark rounded-lg transition-colors shadow-md shadow-primary/20">Accept Deal</button>
+</div>
+</article>
+<article class="bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-primary/10 hover:border-primary/40 transition-all hover:-translate-y-1">
+<div class="absolute top-0 right-0 bg-gray-700 text-gray-300 text-xs font-bold px-3 py-1 rounded-bl-lg z-10">
+                        Urgent
+                    </div>
+<div class="p-5 flex-1">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+<span class="material-icons text-gray-500 dark:text-gray-300 text-sm">factory</span>
+</div>
+<div>
+<h4 class="text-sm font-semibold text-gray-900 dark:text-white">Continental E-Waste</h4>
+<div class="flex items-center text-[10px] text-primary">
+<span class="material-icons text-[12px] mr-0.5">verified</span> Authorized
+                                    </div>
+</div>
+</div>
+</div>
+<div class="mb-4">
+<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">Copper Cables</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">Insulated • Mixed Gauge</p>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-4">
+<div class="bg-background-light dark:bg-background-dark p-2 rounded-lg border border-gray-200 dark:border-gray-700">
+<p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">Volume</p>
+<p class="font-mono text-sm font-bold text-gray-900 dark:text-white">300 kg</p>
+</div>
+<div class="bg-primary/10 p-2 rounded-lg border border-primary/20">
+<p class="text-[10px] text-primary uppercase tracking-wider">Premium</p>
+<p class="font-mono text-sm font-bold text-primary">+12% Rate</p>
+</div>
+</div>
+<div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 pt-3">
+<span class="flex items-center"><span class="material-icons text-sm mr-1">location_on</span> Berlin</span>
+<span class="flex items-center"><span class="material-icons text-sm mr-1">schedule</span> 2h remaining</span>
+</div>
+</div>
+<div class="p-3 bg-gray-50 dark:bg-background-dark border-t border-gray-200 dark:border-gray-700 grid grid-cols-2 gap-2">
+<button class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">Negotiate</button>
+<button class="px-4 py-2 text-sm font-bold text-background-dark bg-primary hover:bg-primary-dark rounded-lg transition-colors shadow-md shadow-primary/20">Accept Deal</button>
+</div>
+</article>
+<article class="bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-primary/10 hover:border-primary/40 transition-all hover:-translate-y-1 opacity-70 hover:opacity-100">
+<div class="p-5 flex-1">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+<span class="material-icons text-gray-500 dark:text-gray-300 text-sm">memory</span>
+</div>
+<div>
+<h4 class="text-sm font-semibold text-gray-900 dark:text-white">TechRecover Inc</h4>
+<div class="flex items-center text-[10px] text-gray-500">
+<span class="material-icons text-[12px] mr-0.5">pending</span> Pending Auth
+                                    </div>
+</div>
+</div>
+</div>
+<div class="mb-4">
+<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">Server RAM</h3>
+<p class="text-xs text-gray-500 dark:text-gray-400">DDR4 • Functional</p>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-4">
+<div class="bg-background-light dark:bg-background-dark p-2 rounded-lg border border-gray-200 dark:border-gray-700">
+<p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider">Volume</p>
+<p class="font-mono text-sm font-bold text-gray-900 dark:text-white">200 Units</p>
+</div>
+<div class="bg-primary/5 p-2 rounded-lg border border-primary/10">
+<p class="text-[10px] text-primary/80 uppercase tracking-wider">Price</p>
+<p class="font-mono text-sm font-bold text-primary/80">$120/Unit</p>
+</div>
+</div>
+<div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 pt-3">
+<span class="flex items-center"><span class="material-icons text-sm mr-1">location_on</span> London</span>
+<span class="flex items-center"><span class="material-icons text-sm mr-1">schedule</span> 12h left</span>
+</div>
+</div>
+<div class="p-3 bg-gray-50 dark:bg-background-dark border-t border-gray-200 dark:border-gray-700 grid grid-cols-2 gap-2">
+<button class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">Details</button>
+<button class="px-4 py-2 text-sm font-bold text-background-dark bg-gray-300 dark:bg-gray-600 cursor-not-allowed rounded-lg transition-colors">Locked</button>
+</div>
+</article>
+</div>
+</section>
+</main>
+<div class="fixed bottom-6 right-6 z-50 w-full max-w-sm transform transition-all ease-out duration-300 translate-y-0 opacity-100">
+<div class="bg-surface-dark border border-primary rounded-xl shadow-2xl overflow-hidden">
+<div class="bg-primary/20 p-4 border-b border-primary/20 flex justify-between items-start">
+<div class="flex gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+<span class="material-icons text-primary animate-pulse">auto_awesome</span>
+</div>
+<div>
+<h3 class="text-white font-bold">New Inventory Match!</h3>
+<p class="text-xs text-gray-300">AI found a high-value buyer.</p>
+</div>
+</div>
+<button class="text-gray-400 hover:text-white transition-colors">
+<span class="material-icons text-sm">close</span>
+</button>
+</div>
+<div class="p-5">
+<p class="text-sm text-gray-300 mb-4">
+                    Your <span class="text-white font-semibold">200kg Li-ion stock</span> matches a new request from <span class="text-white font-semibold">London Recyclers</span>.
+                </p>
+<div class="flex items-center justify-between bg-background-dark rounded-lg p-3 mb-4 border border-primary/10">
+<div>
+<span class="text-xs text-gray-500 block">Offer Price</span>
+<span class="text-lg font-mono font-bold text-white">$850/kg</span>
+</div>
+<div class="text-right">
+<span class="text-xs text-gray-500 block">Gain</span>
+<span class="text-sm font-bold text-primary">+5% Premium</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<button class="w-full py-2.5 px-4 rounded-lg border border-gray-600 text-gray-300 text-sm font-medium hover:bg-gray-700 hover:text-white transition-colors">
+                        Ignore
+                    </button>
+<button class="w-full py-2.5 px-4 rounded-lg bg-primary text-background-dark text-sm font-bold hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25">
+                        Quick Accept
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

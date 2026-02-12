@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>OEM Global Compliance Dashboard - UrbanMineAI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#19e66b",
+                        "primary-dark": "#14b856",
+                        "primary-light": "#66eda0",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#112117",
+                        "surface-dark": "#1a2e22",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #112117; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2d4536; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #19e66b; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-200 font-display min-h-screen flex flex-col md:flex-row antialiased">
+<aside class="w-full md:w-64 bg-white dark:bg-surface-dark border-b md:border-b-0 md:border-r border-gray-200 dark:border-white/5 flex-shrink-0 flex flex-col h-screen sticky top-0">
+<div class="p-6 flex items-center justify-between md:justify-start gap-3">
+<div class="h-8 w-8 rounded bg-primary flex items-center justify-center">
+<span class="material-icons text-background-dark font-bold text-xl">recycling</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">UrbanMine<span class="text-primary">AI</span></h1>
+</div>
+<nav class="flex-1 px-4 space-y-2 overflow-y-auto mt-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/10 text-primary border border-primary/20" href="#">
+<span class="material-icons">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
+<span class="material-icons">storefront</span>
+<span class="font-medium">Marketplace</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
+<span class="material-icons">description</span>
+<span class="font-medium">Compliance Docs</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
+<span class="material-icons">history_edu</span>
+<span class="font-medium">Audit Logs</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
+<span class="material-icons">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-gray-200 dark:border-white/5">
+<div class="flex items-center gap-3 p-2 rounded-lg bg-gray-100 dark:bg-white/5">
+<div class="h-10 w-10 rounded-full bg-gray-300 dark:bg-gray-600 overflow-hidden relative" data-alt="User profile avatar placeholder">
+<span class="absolute inset-0 flex items-center justify-center text-xs font-bold text-white">JD</span>
+</div>
+<div class="overflow-hidden">
+<p class="text-sm font-semibold text-gray-900 dark:text-white truncate">John Doe</p>
+<p class="text-xs text-gray-500 dark:text-gray-400 truncate">Samsung Electronics</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 overflow-y-auto p-4 md:p-8">
+<header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+<div>
+<h2 class="text-2xl font-bold text-gray-900 dark:text-white">OEM Global Compliance Dashboard</h2>
+<p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Fiscal Year 2023-24 • Global Operations</p>
+</div>
+<div class="flex items-center gap-3">
+<span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-500 text-xs font-medium border border-yellow-500/20">
+<span class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></span>
+                Deadline Approaching: Oct 31
+            </span>
+<button class="flex items-center gap-2 bg-primary hover:bg-primary-dark text-background-dark px-4 py-2 rounded-lg font-semibold transition-colors shadow-lg shadow-primary/20">
+<span class="material-icons text-sm">download</span>
+                Export Summary
+            </button>
+</div>
+</header>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="col-span-1 md:col-span-2 bg-white dark:bg-surface-dark rounded-xl p-6 border border-gray-200 dark:border-white/5 shadow-sm relative overflow-hidden group">
+<div class="absolute right-0 top-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -mr-10 -mt-10 transition-all group-hover:bg-primary/20"></div>
+<div class="flex items-start justify-between relative z-10">
+<div>
+<p class="text-sm font-medium text-gray-500 dark:text-gray-400">Overall Compliance Status</p>
+<h3 class="text-3xl font-bold text-gray-900 dark:text-white mt-1">65% <span class="text-lg font-normal text-gray-500 dark:text-gray-400">Complete</span></h3>
+<p class="text-xs text-gray-500 mt-4 max-w-xs">You have acquired 32,500 kg of credits out of the mandated 50,000 kg target.</p>
+</div>
+<div class="relative h-24 w-24 flex items-center justify-center">
+<svg class="transform -rotate-90 w-full h-full">
+<circle class="text-gray-200 dark:text-white/10" cx="48" cy="48" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary" cx="48" cy="48" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="87.92" stroke-width="8"></circle>
+</svg>
+<span class="material-icons absolute text-primary text-3xl">verified_user</span>
+</div>
+</div>
+<div class="mt-6 w-full bg-gray-200 dark:bg-white/10 rounded-full h-2 overflow-hidden">
+<div class="bg-primary h-2 rounded-full" style="width: 65%"></div>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-xl p-6 border border-gray-200 dark:border-white/5 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<p class="text-sm font-medium text-gray-500 dark:text-gray-400">Pending Verification</p>
+<span class="material-icons text-yellow-500 bg-yellow-500/10 p-1.5 rounded-lg">hourglass_empty</span>
+</div>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white">5,000 <span class="text-sm font-normal text-gray-500">kg</span></h3>
+</div>
+<div class="mt-4 flex items-center gap-2 text-xs text-yellow-500">
+<span>10% of target awaiting audit</span>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-xl p-6 border border-gray-200 dark:border-white/5 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<p class="text-sm font-medium text-gray-500 dark:text-gray-400">Est. Cost Savings</p>
+<span class="material-icons text-primary bg-primary/10 p-1.5 rounded-lg">savings</span>
+</div>
+<h3 class="text-2xl font-bold text-gray-900 dark:text-white">$ 2.8K</h3>
+</div>
+<div class="mt-4 flex items-center gap-2 text-xs text-primary">
+<span class="material-icons text-xs">trending_up</span>
+<span>12% vs last quarter</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+<div class="col-span-1 lg:col-span-2 bg-white dark:bg-surface-dark rounded-xl p-6 border border-gray-200 dark:border-white/5 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-bold text-lg text-gray-900 dark:text-white">EPR Credit Velocity</h3>
+<select class="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-sm rounded-lg p-2 text-gray-700 dark:text-gray-300 focus:outline-none focus:border-primary">
+<option>Last 6 Months</option>
+<option>Fiscal Year</option>
+</select>
+</div>
+<div class="h-64 w-full flex items-end justify-between gap-2 md:gap-4 relative pt-6 pl-8">
+<div class="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-400 pb-8">
+<span>10k</span>
+<span>7.5k</span>
+<span>5k</span>
+<span>2.5k</span>
+<span>0</span>
+</div>
+<div class="absolute left-8 right-0 top-0 h-full flex flex-col justify-between pb-8 pointer-events-none">
+<div class="border-t border-dashed border-gray-200 dark:border-white/5 w-full"></div>
+<div class="border-t border-dashed border-gray-200 dark:border-white/5 w-full"></div>
+<div class="border-t border-dashed border-gray-200 dark:border-white/5 w-full"></div>
+<div class="border-t border-dashed border-gray-200 dark:border-white/5 w-full"></div>
+<div class="border-t border-gray-200 dark:border-white/10 w-full"></div>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center group">
+<div class="w-full max-w-[40px] bg-primary/30 rounded-t-sm h-[30%] hover:bg-primary/50 transition-all relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 border border-white/10">3,000 kg</div>
+</div>
+<span class="text-xs text-gray-500 mt-2">Apr</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center group">
+<div class="w-full max-w-[40px] bg-primary/40 rounded-t-sm h-[45%] hover:bg-primary/60 transition-all relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 border border-white/10">4,500 kg</div>
+</div>
+<span class="text-xs text-gray-500 mt-2">May</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center group">
+<div class="w-full max-w-[40px] bg-primary/50 rounded-t-sm h-[40%] hover:bg-primary/70 transition-all relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 border border-white/10">4,000 kg</div>
+</div>
+<span class="text-xs text-gray-500 mt-2">Jun</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center group">
+<div class="w-full max-w-[40px] bg-primary/60 rounded-t-sm h-[60%] hover:bg-primary/80 transition-all relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 border border-white/10">6,000 kg</div>
+</div>
+<span class="text-xs text-gray-500 mt-2">Jul</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center group">
+<div class="w-full max-w-[40px] bg-primary/80 rounded-t-sm h-[75%] hover:bg-primary transition-all relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 border border-white/10">7,500 kg</div>
+</div>
+<span class="text-xs text-gray-500 mt-2">Aug</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center group">
+<div class="w-full max-w-[40px] bg-primary rounded-t-sm h-[85%] hover:brightness-110 transition-all relative shadow-[0_0_15px_rgba(25,230,107,0.3)]">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-dark text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 border border-white/10">8,500 kg</div>
+</div>
+<span class="text-xs text-gray-500 mt-2 font-bold text-primary">Sep</span>
+</div>
+</div>
+</div>
+<div class="col-span-1 bg-white dark:bg-surface-dark rounded-xl p-6 border border-gray-200 dark:border-white/5 shadow-sm">
+<div class="flex items-center gap-3 mb-6">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-icons text-primary">currency_exchange</span>
+</div>
+<div>
+<h3 class="font-bold text-lg text-gray-900 dark:text-white">Purchase Credits</h3>
+<p class="text-xs text-gray-500">Instant trade execution</p>
+</div>
+</div>
+<form class="space-y-4">
+<div>
+<label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Waste Category</label>
+<div class="relative">
+<select class="w-full bg-background-light dark:bg-background-dark border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white rounded-lg p-3 appearance-none focus:ring-1 focus:ring-primary focus:border-primary text-sm">
+<option>Li-ion Batteries</option>
+<option>Consumer Electronics (ITEW)</option>
+<option>Display Panels</option>
+</select>
+<span class="material-icons absolute right-3 top-3 text-gray-400 pointer-events-none text-sm">expand_more</span>
+</div>
+</div>
+<div>
+<label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Quantity Needed (kg)</label>
+<div class="relative">
+<input class="w-full bg-background-light dark:bg-background-dark border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white rounded-lg p-3 focus:ring-1 focus:ring-primary focus:border-primary text-sm" placeholder="0.00" type="number"/>
+<span class="absolute right-3 top-3 text-xs text-gray-500 font-medium">KG</span>
+</div>
+</div>
+<div class="p-3 bg-background-light dark:bg-background-dark rounded-lg border border-gray-200 dark:border-white/5">
+<div class="flex justify-between text-xs mb-1">
+<span class="text-gray-500">Market Rate:</span>
+<span class="text-gray-900 dark:text-white font-medium">$0.15 / kg</span>
+</div>
+<div class="flex justify-between text-sm font-bold">
+<span class="text-gray-500 dark:text-gray-400">Total Est:</span>
+<span class="text-primary">$ 0.00</span>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-primary-dark text-background-dark font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2" type="button">
+                    Execute Trade
+                    <span class="material-icons text-sm">arrow_forward</span>
+</button>
+<p class="text-center text-[10px] text-gray-400">
+                    *Trades are subject to real-time audit verification.
+                </p>
+</form>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-white/5 shadow-sm overflow-hidden">
+<div class="p-6 border-b border-gray-200 dark:border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<h3 class="font-bold text-lg text-gray-900 dark:text-white flex items-center gap-2">
+                Compliance Audit Logs
+                <span class="text-xs font-normal text-gray-500 px-2 py-0.5 bg-gray-100 dark:bg-white/10 rounded-full">Recent Activity</span>
+</h3>
+<div class="flex items-center gap-2">
+<div class="relative">
+<span class="material-icons absolute left-3 top-2.5 text-gray-400 text-sm">search</span>
+<input class="pl-9 pr-4 py-2 bg-background-light dark:bg-background-dark border border-gray-300 dark:border-white/10 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:border-primary w-full md:w-64" placeholder="Search Batch ID..." type="text"/>
+</div>
+<button class="p-2 bg-background-light dark:bg-background-dark border border-gray-300 dark:border-white/10 rounded-lg text-gray-500 hover:text-primary transition-colors">
+<span class="material-icons text-sm">filter_list</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-gray-50 dark:bg-white/5 text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
+<th class="p-4 font-semibold">Date</th>
+<th class="p-4 font-semibold">Batch ID</th>
+<th class="p-4 font-semibold">Waste Category</th>
+<th class="p-4 font-semibold">Credits (Kg)</th>
+<th class="p-4 font-semibold">Status</th>
+<th class="p-4 font-semibold text-right">Document</th>
+</tr>
+</thead>
+<tbody class="text-sm divide-y divide-gray-200 dark:divide-white/5">
+<tr class="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+<td class="p-4 text-gray-900 dark:text-white font-medium">Oct 24, 2023</td>
+<td class="p-4 text-gray-500 dark:text-gray-400 font-mono">#US-NY-992</td>
+<td class="p-4 text-gray-900 dark:text-white">Li-ion Batteries</td>
+<td class="p-4 text-gray-900 dark:text-white font-bold">500</td>
+<td class="p-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                Verified
+                            </span>
+</td>
+<td class="p-4 text-right">
+<button class="text-gray-400 hover:text-primary transition-colors" title="Download Compliance Document">
+<span class="material-icons">description</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+<td class="p-4 text-gray-900 dark:text-white font-medium">Oct 22, 2023</td>
+<td class="p-4 text-gray-500 dark:text-gray-400 font-mono">#EU-DE-985</td>
+<td class="p-4 text-gray-900 dark:text-white">Consumer Electronics</td>
+<td class="p-4 text-gray-900 dark:text-white font-bold">1,250</td>
+<td class="p-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                Verified
+                            </span>
+</td>
+<td class="p-4 text-right">
+<button class="text-gray-400 hover:text-primary transition-colors" title="Download Compliance Document">
+<span class="material-icons">description</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+<td class="p-4 text-gray-900 dark:text-white font-medium">Oct 18, 2023</td>
+<td class="p-4 text-gray-500 dark:text-gray-400 font-mono">#ASIA-JP-971</td>
+<td class="p-4 text-gray-900 dark:text-white">Display Panels</td>
+<td class="p-4 text-gray-900 dark:text-white font-bold">300</td>
+<td class="p-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
+<span class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></span>
+                                Pending
+                            </span>
+</td>
+<td class="p-4 text-right">
+<button class="text-gray-600 dark:text-gray-600 cursor-not-allowed" disabled="" title="Pending Approval">
+<span class="material-icons">lock_clock</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+<td class="p-4 text-gray-900 dark:text-white font-medium">Oct 15, 2023</td>
+<td class="p-4 text-gray-500 dark:text-gray-400 font-mono">#US-CA-964</td>
+<td class="p-4 text-gray-900 dark:text-white">Li-ion Batteries</td>
+<td class="p-4 text-gray-900 dark:text-white font-bold">2,100</td>
+<td class="p-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                Verified
+                            </span>
+</td>
+<td class="p-4 text-right">
+<button class="text-gray-400 hover:text-primary transition-colors" title="Download Compliance Document">
+<span class="material-icons">description</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+<td class="p-4 text-gray-900 dark:text-white font-medium">Oct 10, 2023</td>
+<td class="p-4 text-gray-500 dark:text-gray-400 font-mono">#EU-FR-952</td>
+<td class="p-4 text-gray-900 dark:text-white">Mixed E-Waste</td>
+<td class="p-4 text-gray-900 dark:text-white font-bold">850</td>
+<td class="p-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                Verified
+                            </span>
+</td>
+<td class="p-4 text-right">
+<button class="text-gray-400 hover:text-primary transition-colors" title="Download Compliance Document">
+<span class="material-icons">description</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-gray-200 dark:border-white/5 flex items-center justify-between">
+<p class="text-xs text-gray-500">Showing <span class="font-medium text-gray-900 dark:text-white">1-5</span> of <span class="font-medium text-gray-900 dark:text-white">24</span> results</p>
+<div class="flex gap-2">
+<button class="px-3 py-1 rounded-md border border-gray-200 dark:border-white/10 text-xs font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-50">Previous</button>
+<button class="px-3 py-1 rounded-md border border-gray-200 dark:border-white/10 text-xs font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5">Next</button>
+</div>
+</div>
+</div>
+</main>
+
+</body></html>

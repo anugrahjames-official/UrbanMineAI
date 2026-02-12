@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Profile &amp; Settings - UrbanMineAI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#19e66b",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#112117",
+                        "surface-dark": "#1a2e22", 
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #112117; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a4030; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #19e66b; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-100 min-h-screen flex flex-col">
+<nav class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-gray-200 dark:border-white/10">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between h-16">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-background-dark font-bold text-xl">
+                        U
+                    </div>
+<span class="font-bold text-xl tracking-tight text-gray-900 dark:text-white">UrbanMine<span class="text-primary">AI</span></span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors relative">
+<span class="material-icons-round">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border-2 border-primary/30">
+<img alt="Profile" class="h-full w-full object-cover" data-alt="Portrait of a smiling man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCH9BM3P7wB3JziHwiTF8hNy_6T1KSnNakEcNCktuEg3FhC27KdpewdHN0Pijte8GwcGWlX93s3DLNkgTBIN2_bCq9UTLuBxUdhT0JJV5g-eAjPoTYdIVLJjtJgFA0Aj5YgAYG_qm9Z4YZ3J6pjqX2WpzUI3oTuYSvAoMzdtB4pD9ozlPBrIPNHkLHpWgZyhEbnIw04yI2Bs3N-zz0rZ1Z6B_HmPQfbJmf2kRX0r9GhMxA9S0Vj2q3iQHCJugRMNNmGGsty9QSyioyh"/>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+<header class="mb-8">
+<h1 class="text-2xl font-bold text-gray-900 dark:text-white">Settings &amp; Profile</h1>
+<p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Manage your account details, trust score, and app preferences.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<div class="lg:col-span-4 space-y-6">
+<div class="bg-white dark:bg-surface-dark rounded-xl p-6 shadow-sm border border-gray-200 dark:border-white/5 relative overflow-hidden">
+<div class="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>
+<div class="flex flex-col items-center text-center">
+<div class="relative group">
+<div class="w-24 h-24 rounded-full p-1 border-2 border-primary/50 mb-4 relative overflow-hidden">
+<img alt="Rahul Nair Profile" class="w-full h-full object-cover rounded-full" data-alt="Close up portrait of a man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3uUBB784u91nQYsuf0yluoM4e2gJiV03pcvcCZnI_IqZE1X6rz2jLSSBaTX3S29lkyVOfNzK-WUzuiH6yd1gTrKQALSMn08-SH-6FpLtTW7XxjTLVplG4kUInWRK6jDCl-AZOLC5exC9Dgvt7BaMwBiUwDmy0gzP0URbZLNLjwzHlJlmtnE1-OfInbrb4qqZEdYNQIjOt4aW8Ppr57eJxC4zXm1vpHu6A-IiT_84-usjaZoXy-faKIn95-pLNLWQORQO7EqtudTdC"/>
+</div>
+<button class="absolute bottom-4 right-0 bg-background-dark text-primary p-1.5 rounded-full shadow-lg border border-primary/20 hover:bg-primary hover:text-background-dark transition-all">
+<span class="material-icons-round text-sm">edit</span>
+</button>
+</div>
+<h2 class="text-xl font-bold text-gray-900 dark:text-white">Rahul Nair</h2>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary mt-1 border border-primary/20">
+<span class="material-icons-round text-[14px]">verified</span>
+                            Authorized Aggregator
+                        </span>
+<div class="flex items-center justify-center gap-2 mt-4 text-sm text-gray-500 dark:text-gray-400">
+<span class="material-icons-round text-base">location_on</span>
+                            Singapore, SG
+                        </div>
+</div>
+<div class="mt-6 pt-6 border-t border-gray-100 dark:border-white/10">
+<div class="flex justify-between items-center mb-2">
+<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Trust Score</span>
+<span class="material-icons-round text-gray-400 text-sm cursor-help hover:text-primary transition-colors" title="Based on successful handovers and grading accuracy">info</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative w-16 h-16 flex-shrink-0">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-gray-200 dark:text-gray-700" cx="32" cy="32" fill="transparent" r="28" stroke="currentColor" stroke-width="6"></circle>
+<circle class="text-primary" cx="32" cy="32" fill="transparent" r="28" stroke="currentColor" stroke-dasharray="175.9" stroke-dashoffset="14" stroke-linecap="round" stroke-width="6"></circle>
+</svg>
+<span class="absolute inset-0 flex items-center justify-center text-sm font-bold text-gray-900 dark:text-white">92</span>
+</div>
+<div>
+<div class="text-lg font-bold text-primary">Excellent</div>
+<div class="text-xs text-gray-500 dark:text-gray-400">Top 5% of global collectors</div>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-gray-200 dark:border-white/5 text-center hover:border-primary/30 transition-colors cursor-pointer group">
+<span class="material-icons-round text-primary text-2xl mb-1 group-hover:scale-110 transition-transform">history</span>
+<div class="text-xl font-bold dark:text-white">128</div>
+<div class="text-xs text-gray-500 dark:text-gray-400">Transactions</div>
+</div>
+<div class="bg-white dark:bg-surface-dark p-4 rounded-xl border border-gray-200 dark:border-white/5 text-center hover:border-primary/30 transition-colors cursor-pointer group">
+<span class="material-icons-round text-primary text-2xl mb-1 group-hover:scale-110 transition-transform">recycling</span>
+<div class="text-xl font-bold dark:text-white">4.2T</div>
+<div class="text-xs text-gray-500 dark:text-gray-400">E-Waste Processed</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-8 space-y-6">
+<div class="bg-white dark:bg-surface-dark rounded-xl p-6 shadow-sm border border-gray-200 dark:border-white/5">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+<span class="material-icons-round text-primary">person_outline</span>
+                            Personal Information
+                        </h3>
+</div>
+<form class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-1">
+<label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Full Name</label>
+<input class="w-full bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-white/10 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-400" type="text" value="Rahul Nair"/>
+</div>
+<div class="space-y-1">
+<label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Business Name</label>
+<input class="w-full bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-white/10 rounded-lg px-4 py-2.5 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-400" type="text" value="Green Earth Logistics"/>
+</div>
+<div class="space-y-1">
+<label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Phone Number</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400 font-medium">+65</span>
+<input class="w-full bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-white/10 rounded-lg pl-12 pr-4 py-2.5 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-400" type="tel" value="6789 1234"/>
+</div>
+</div>
+<div class="space-y-1">
+<label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">User ID</label>
+<div class="flex items-center gap-2">
+<input class="w-full bg-gray-100 dark:bg-black/40 border border-gray-200 dark:border-white/5 rounded-lg px-4 py-2.5 text-gray-500 dark:text-gray-400 cursor-not-allowed" disabled="" type="text" value="USR-GL-2023-8842"/>
+<button class="text-gray-400 hover:text-primary transition-colors" type="button">
+<span class="material-icons-round text-lg">content_copy</span>
+</button>
+</div>
+</div>
+<div class="md:col-span-2 space-y-1">
+<label class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Location</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400">
+<span class="material-icons-round text-lg">map</span>
+</span>
+<input class="w-full bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-white/10 rounded-lg pl-10 pr-12 py-2.5 text-gray-900 dark:text-white focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder-gray-400" type="text" value="12 Marina Boulevard, MBFC Tower 3, Singapore 018982"/>
+<button class="absolute inset-y-0 right-0 pr-3 flex items-center text-primary font-medium hover:text-primary/80 text-sm" type="button">
+                                    Update
+                                </button>
+</div>
+</div>
+</form>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-xl p-6 shadow-sm border border-gray-200 dark:border-white/5">
+<h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-6">
+<span class="material-icons-round text-primary">tune</span>
+                        App Preferences
+                    </h3>
+<div class="space-y-6">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-gray-100 dark:border-white/5">
+<div>
+<h4 class="font-medium text-gray-900 dark:text-white">Appearance</h4>
+<p class="text-sm text-gray-500 dark:text-gray-400">Toggle between Light and Dark themes.</p>
+</div>
+<div class="mt-4 sm:mt-0 flex items-center gap-3">
+<span class="text-sm text-gray-500 dark:text-gray-400"><span class="material-icons-round text-sm align-middle">light_mode</span></span>
+<button class="relative w-12 h-6 rounded-full bg-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark">
+<span class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform transform translate-x-6 shadow-sm"></span>
+</button>
+<span class="text-sm font-medium text-gray-900 dark:text-white"><span class="material-icons-round text-sm align-middle">dark_mode</span></span>
+</div>
+</div>
+<div>
+<h4 class="font-medium text-gray-900 dark:text-white mb-4">Notifications</h4>
+<div class="space-y-3">
+<label class="flex items-center justify-between group cursor-pointer">
+<span class="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+<span class="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center text-green-500">
+<span class="material-icons-round text-lg">whatsapp</span>
+</span>
+                                        WhatsApp Alerts (New Leads)
+                                    </span>
+<input checked="" class="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary dark:bg-background-dark dark:checked:bg-primary transition-colors" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between group cursor-pointer">
+<span class="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+<span class="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
+<span class="material-icons-round text-lg">attach_money</span>
+</span>
+                                        Daily Price Updates
+                                    </span>
+<input checked="" class="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary dark:bg-background-dark dark:checked:bg-primary transition-colors" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between group cursor-pointer">
+<span class="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+<span class="w-8 h-8 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500">
+<span class="material-icons-round text-lg">admin_panel_settings</span>
+</span>
+                                        System &amp; Account Alerts
+                                    </span>
+<input class="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary dark:bg-background-dark dark:checked:bg-primary transition-colors" type="checkbox"/>
+</label>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col-reverse sm:flex-row sm:justify-between items-center gap-4 pt-4">
+<button class="flex items-center gap-2 text-red-500 hover:text-red-400 hover:bg-red-500/10 px-4 py-2 rounded-lg transition-colors text-sm font-medium w-full sm:w-auto justify-center">
+<span class="material-icons-round text-lg">logout</span>
+                        Sign Out
+                    </button>
+<div class="flex gap-3 w-full sm:w-auto">
+<button class="px-6 py-2.5 rounded-lg border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 font-medium text-sm w-full sm:w-auto transition-colors">
+                            Cancel
+                        </button>
+<button class="px-6 py-2.5 rounded-lg bg-primary text-background-dark font-semibold text-sm hover:bg-primary/90 shadow-lg shadow-primary/20 w-full sm:w-auto transition-all transform active:scale-95">
+                            Save Changes
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="mt-auto py-6 text-center text-xs text-gray-500 dark:text-gray-600 border-t border-gray-200 dark:border-white/5">
+<p>© 2023 UrbanMineAI. Enabling global circular economy for e-waste.</p>
+</footer>
+
+</body></html>

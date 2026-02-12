@@ -1,0 +1,295 @@
+{
+    "meta": {
+        "projectName": "UrbanMineAI",
+        "version": "1.0.0",
+        "lastUpdated": "2026-02-10",
+        "description": "Unified Design System Source of Truth extracted from Stitch UI context."
+    },
+    "foundational_tokens": {
+        "color_palette": {
+            "primary": {
+                "default": "#19e66b",
+                "hover": "rgba(25, 230, 107, 0.9)",
+                "light_accent": "rgba(25, 230, 107, 0.1)",
+                "glow": "rgba(25, 230, 107, 0.3)"
+            },
+            "background": {
+                "light": "#f6f8f7",
+                "dark": "#112117",
+                "dark_overlay": "rgba(17, 33, 23, 0.8)"
+            },
+            "surface": {
+                "light": "#ffffff",
+                "dark": "#1a2f23",
+                "darker": "#15261d",
+                "card_dark": "#1a2e22",
+                "input_dark": "#23362b"
+            },
+            "semantic": {
+                "success": "#34A853",
+                "warning": "#FBBC05",
+                "error": "#EA4335",
+                "info": "#4285F4",
+                "text_primary_dark": "#ffffff",
+                "text_secondary_dark": "#9ca3af",
+                "text_primary_light": "#1f2937",
+                "text_secondary_light": "#6b7280"
+            },
+            "gradients": {
+                "primary_card": "linear-gradient(135deg, #19e66b 0%, #16a34a 100%)",
+                "dark_overlay": "linear-gradient(to top, #1a2f23 0%, transparent 100%)"
+            }
+        },
+        "typography": {
+            "font_family": {
+                "primary": "'Inter', sans-serif",
+                "icons": "'Material Icons', 'Material Icons Round', 'Material Symbols Outlined'"
+            },
+            "weights": {
+                "light": 300,
+                "regular": 400,
+                "medium": 500,
+                "semibold": 600,
+                "bold": 700
+            },
+            "scale": {
+                "h1": {
+                    "size": "2.25rem",
+                    "line_height": "2.5rem",
+                    "weight": "700",
+                    "letter_spacing": "-0.025em"
+                },
+                "h2": {
+                    "size": "1.875rem",
+                    "line_height": "2.25rem",
+                    "weight": "700",
+                    "letter_spacing": "-0.025em"
+                },
+                "h3": {
+                    "size": "1.5rem",
+                    "line_height": "2rem",
+                    "weight": "600",
+                    "letter_spacing": "-0.025em"
+                },
+                "h4": {
+                    "size": "1.25rem",
+                    "line_height": "1.75rem",
+                    "weight": "600"
+                },
+                "body_large": {
+                    "size": "1.125rem",
+                    "line_height": "1.75rem",
+                    "weight": "400"
+                },
+                "body_default": {
+                    "size": "1rem",
+                    "line_height": "1.5rem",
+                    "weight": "400"
+                },
+                "body_small": {
+                    "size": "0.875rem",
+                    "line_height": "1.25rem",
+                    "weight": "400"
+                },
+                "caption": {
+                    "size": "0.75rem",
+                    "line_height": "1rem",
+                    "weight": "500",
+                    "letter_spacing": "0.05em",
+                    "text_transform": "uppercase"
+                },
+                "tiny": {
+                    "size": "0.625rem",
+                    "line_height": "0.75rem",
+                    "weight": "500"
+                }
+            }
+        },
+        "spacing_and_grid": {
+            "base_unit": "4px",
+            "grid_columns": 12,
+            "scale": {
+                "px": "1px",
+                "0.5": "2px",
+                "1": "4px",
+                "2": "8px",
+                "3": "12px",
+                "4": "16px",
+                "5": "20px",
+                "6": "24px",
+                "8": "32px",
+                "10": "40px",
+                "12": "48px",
+                "16": "64px",
+                "20": "80px",
+                "24": "96px"
+            },
+            "container": {
+                "max_width": "1280px",
+                "padding_x": "1rem",
+                "padding_x_md": "2rem",
+                "padding_x_lg": "4rem"
+            }
+        },
+        "elevation_and_depth": {
+            "shadows": {
+                "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+                "lg": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+                "glow_primary": "0 0 15px rgba(25, 230, 107, 0.3)",
+                "glow_primary_hover": "0 0 20px rgba(25, 230, 107, 0.5)"
+            },
+            "border_radius": {
+                "sm": "0.125rem",
+                "default": "0.25rem",
+                "md": "0.375rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "2xl": "1rem",
+                "3xl": "1.5rem",
+                "full": "9999px"
+            },
+            "effects": {
+                "glass_panel": {
+                    "background": "rgba(26, 47, 35, 0.7)",
+                    "backdrop_filter": "blur(10px)",
+                    "border": "1px solid rgba(25, 230, 107, 0.1)"
+                },
+                "card_hover": {
+                    "transform": "translateY(-2px)",
+                    "border_color": "rgba(25, 230, 107, 0.3)"
+                }
+            }
+        }
+    },
+    "component_specs": {
+        "buttons": {
+            "primary": {
+                "background": "{foundational_tokens.color_palette.primary.default}",
+                "text": "{foundational_tokens.color_palette.background.dark}",
+                "font_weight": "600",
+                "padding": "0.75rem 1.5rem",
+                "border_radius": "{foundational_tokens.elevation_and_depth.border_radius.xl}",
+                "hover": {
+                    "background": "rgba(25, 230, 107, 0.9)",
+                    "shadow": "{foundational_tokens.elevation_and_depth.shadows.glow_primary}"
+                },
+                "active": {
+                    "transform": "scale(0.98)"
+                }
+            },
+            "secondary": {
+                "background": "transparent",
+                "text": "{foundational_tokens.color_palette.semantic.text_secondary_dark}",
+                "border": "1px solid {foundational_tokens.color_palette.surface.darker}",
+                "hover": {
+                    "text": "{foundational_tokens.color_palette.semantic.text_primary_dark}",
+                    "background": "rgba(255, 255, 255, 0.05)"
+                }
+            },
+            "icon_button": {
+                "padding": "0.5rem",
+                "border_radius": "{foundational_tokens.elevation_and_depth.border_radius.full}",
+                "hover": {
+                    "background": "rgba(255, 255, 255, 0.1)"
+                }
+            }
+        },
+        "inputs": {
+            "default": {
+                "background": "{foundational_tokens.color_palette.surface.input_dark}",
+                "border": "1px solid rgba(255, 255, 255, 0.1)",
+                "text": "{foundational_tokens.color_palette.semantic.text_primary_dark}",
+                "placeholder": "{foundational_tokens.color_palette.semantic.text_secondary_dark}",
+                "padding": "0.75rem 1rem",
+                "border_radius": "{foundational_tokens.elevation_and_depth.border_radius.lg}",
+                "focus": {
+                    "ring": "2px solid {foundational_tokens.color_palette.primary.default}",
+                    "border": "transparent"
+                }
+            },
+            "with_icon": {
+                "padding_left": "2.5rem",
+                "icon_color": "{foundational_tokens.color_palette.semantic.text_secondary_dark}"
+            }
+        },
+        "cards": {
+            "default": {
+                "background": "{foundational_tokens.color_palette.surface.dark}",
+                "border": "1px solid rgba(25, 230, 107, 0.1)",
+                "border_radius": "{foundational_tokens.elevation_and_depth.border_radius.2xl}",
+                "padding": "1.5rem",
+                "shadow": "{foundational_tokens.elevation_and_depth.shadows.sm}"
+            },
+            "glass": {
+                "extends": "foundational_tokens.elevation_and_depth.effects.glass_panel",
+                "border_radius": "{foundational_tokens.elevation_and_depth.border_radius.2xl}"
+            }
+        },
+        "navigation": {
+            "sidebar_desktop": {
+                "width": "64px (collapsed) / 256px (expanded)",
+                "background": "{foundational_tokens.color_palette.surface.darker}",
+                "border_right": "1px solid rgba(25, 230, 107, 0.1)"
+            },
+            "bottom_bar_mobile": {
+                "position": "fixed bottom",
+                "background": "{foundational_tokens.color_palette.surface.dark}",
+                "border_top": "1px solid rgba(25, 230, 107, 0.1)",
+                "height": "64px"
+            },
+            "header": {
+                "height": "80px",
+                "background": "rgba(17, 33, 23, 0.5)",
+                "backdrop_filter": "blur(12px)",
+                "border_bottom": "1px solid rgba(25, 230, 107, 0.1)"
+            }
+        },
+        "status_badges": {
+            "padding": "0.125rem 0.5rem",
+            "font_size": "{foundational_tokens.typography.scale.caption.size}",
+            "border_radius": "{foundational_tokens.elevation_and_depth.border_radius.md}",
+            "variants": {
+                "success": {
+                    "background": "rgba(52, 168, 83, 0.1)",
+                    "text": "{foundational_tokens.color_palette.semantic.success}"
+                },
+                "warning": {
+                    "background": "rgba(251, 188, 5, 0.1)",
+                    "text": "{foundational_tokens.color_palette.semantic.warning}"
+                },
+                "error": {
+                    "background": "rgba(234, 67, 53, 0.1)",
+                    "text": "{foundational_tokens.color_palette.semantic.error}"
+                },
+                "primary": {
+                    "background": "rgba(25, 230, 107, 0.1)",
+                    "text": "{foundational_tokens.color_palette.primary.default}"
+                }
+            }
+        }
+    },
+    "design_principles": {
+        "vibe": "Eco-Futurism / High-Tech Sustainability. The interface feels organic yet precise, using deep greens and stark blacks contrasted by neon highlights to evoke a sense of clean energy and advanced technology.",
+        "structural_rules": [
+            "Use rounded corners (lg/xl/2xl) on all interactive elements to soften the tech aesthetic.",
+            "Employ glassmorphism and blurs for overlays and floating panels to maintain context.",
+            "Use the primary green (#19e66b) sparsely for high-impact actions and status indicators; avoid overusing it on large backgrounds.",
+            "Maintain high contrast text for accessibility, especially in dark mode.",
+            "Use whitespace generously to separate content groups without relying heavily on borders."
+        ],
+        "interaction_patterns": [
+            "Hover states should include a subtle lift (translate-y) and glow or border highlight.",
+            "Active states should depress (scale down) slightly.",
+            "Transitions should be smooth (duration-300) and uniform."
+        ],
+        "mobile_first_strategy": [
+            "Primary navigation moves to the bottom bar on mobile.",
+            "Touch targets must be at least 44px (p-3/p-4).",
+            "Hide secondary information in drawers or behind 'View All' links on smaller screens."
+        ]
+    },
+    "instructions_for_ai": {
+        "usage_guidelines": "When generating new UI components, always reference 'foundational_tokens' for raw values. Do not introduce new colors or fonts outside this system. Stick to the 'component_specs' for layout and styling consistency. If a new component is needed, derive its style from the closest existing component (e.g., a new modal should follow the 'glass' card style).",
+        "drift_prevention": "Check against 'design_principles' before finalizing any layout. Ensure the 'Eco-Futurism' vibe is maintained. Do not default to standard Bootstrap/Material Design looks; enforce the custom radius and color palette defined here."
+    }
+}
