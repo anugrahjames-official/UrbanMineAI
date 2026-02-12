@@ -123,12 +123,34 @@
     border-color: rgba(25, 230, 107, 0.3);
   }
 
+
   .autofill-dark:-webkit-autofill,
   .autofill-dark:-webkit-autofill:hover,
   .autofill-dark:-webkit-autofill:focus {
     -webkit-text-fill-color: white !important;
     -webkit-box-shadow: 0 0 0px 1000px #23362b inset !important;
     transition: background-color 5000s ease-in-out 0s;
+  }
+
+  .glow-text {
+    text-shadow: 0 0 20px rgba(25, 230, 107, 0.3);
+  }
+
+  .neon-border {
+    box-shadow: 0 0 10px rgba(25, 230, 107, 0.2), inset 0 0 10px rgba(25, 230, 107, 0.05);
+  }
+
+  .primary-glow:hover {
+    box-shadow: 0 0 25px rgba(25, 230, 107, 0.5);
+  }
+
+  .circuit-bg {
+    background-image:
+      linear-gradient(to right, rgba(25, 230, 107, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(25, 230, 107, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
   }
 }
 
