@@ -1,67 +1,143 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { google } from '@ai-sdk/google';
+import { streamText, tool } from 'ai';
+import { z } from 'zod';
+import { createClient } from '@/lib/supabase/server';
 
-type ChatMessage = { role: "user" | "assistant"; text: string };
-
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY!);
+export const maxDuration = 30;
 
 export async function POST(req: Request) {
-  try {
-    const body = (await req.json()) as {
-      messages: ChatMessage[];
-      context?: {
-        liveRates?: Record<string, number>;
-        itemSummary?: string;
-      };
-    };
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    const messages = Array.isArray(body.messages) ? body.messages : [];
-    const lastUser = [...messages].reverse().find((m) => m.role === "user")?.text ?? "";
+    if (!user) {
+        return new Response('Unauthorized', { status: 401 });
+    }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const { messages, transactionId } = await req.json();
 
-    const prompt = [
-      "You are UrbanMineAI Broker Agent.",
-      "Goal: negotiate a fair deal for an e-waste lot using live rates and grading summary.",
-      "Respond conversationally and concisely. Prefer numbers and clear next steps.",
-      "When proposing a price, always provide a price-per-kg and a total for the lot, and a short justification.",
-      "",
-      "Context:",
-      body.context?.itemSummary ? `- Item: ${body.context.itemSummary}` : "- Item: (not provided)",
-      body.context?.liveRates ? `- LiveRates: ${JSON.stringify(body.context.liveRates)}` : "- LiveRates: (not provided)",
-      "",
-      "Conversation (most recent last):",
-      ...messages.slice(-12).map((m) => `${m.role.toUpperCase()}: ${m.text}`),
-      "",
-      `USER: ${lastUser}`,
-      "ASSISTANT:",
-    ].join("\n");
+    if (!transactionId) {
+        return new Response('Transaction ID is required', { status: 400 });
+    }
 
-    const streamResult = await model.generateContentStream(prompt);
+    // Fetch Transaction Context
+    const { data: transaction, error: txError } = await supabase
+        .from('transactions')
+        .select(`
+      *,
+      items (*)
+    `)
+        .eq('id', transactionId)
+        .single();
 
-    const encoder = new TextEncoder();
-    const stream = new ReadableStream<Uint8Array>({
-      async start(controller) {
-        try {
-          for await (const chunk of streamResult.stream) {
-            const text = chunk.text();
-            if (text) controller.enqueue(encoder.encode(text));
-          }
-          controller.close();
-        } catch (e) {
-          controller.error(e);
-        }
-      },
+    if (txError || !transaction) {
+        return new Response('Transaction not found', { status: 404 });
+    }
+
+    // Fetch Market Prices (optional, for context)
+    const { data: marketPrices } = await supabase
+        .from('market_prices')
+        .select('*');
+
+    // Construct System Context
+    const item = transaction.items?.[0] || {}; // Assuming single item for now or handling arrays
+    const itemMetadata = item.metadata as any || {};
+
+    const systemContext = `
+    You are the "UrbanMine AI Broker", an autonomous negotiation agent for e-waste recycling.
+    You are negotiating with a Dealer (User) on behalf of a Recycler/Aggregator hub.
+
+    **Transaction Context:**
+    - Item: ${itemMetadata.category || 'Unknown E-waste'}
+    - Weight: ${itemMetadata.weight || 'Unknown'}
+    - Grade: ${itemMetadata.grade || 'Ungraded'}
+    - Current Price Offer: $${transaction.price_total}
+    - Status: ${transaction.status}
+
+    **Market Context:**
+    ${marketPrices?.map(p => `- ${p.name} (${p.symbol}): $${p.price}/${p.unit}`).join('\n') || 'Market data unavailable.'}
+
+    **Goals:**
+    1. Negotiate a fair price for the e-waste based on grade and market rates.
+    2. If the user offers a price comfortably within margin (e.g. +/- 10% of current offer), accept it using 'update_price'.
+    3. If the user agrees to the price, finalize the deal using 'close_deal'.
+    4. Be professional, concise, and use data to back up your arguments.
+    5. Do not hallucinate values. Use the provided context.
+
+    **Tone:** Professional, Efficient, "Eco-Futuristic".
+  `;
+
+    // Persist User Message
+    const lastUserMessage = messages[messages.length - 1];
+    if (lastUserMessage.role === 'user') {
+        await supabase.from('messages').insert({
+            transaction_id: transactionId,
+            role: 'user',
+            content: lastUserMessage.content,
+        });
+    }
+
+    const result = streamText({
+        model: google('gemini-1.5-flash'),
+        system: systemContext,
+        messages,
+        tools: {
+            update_price: tool({
+                description: 'Update the proposed price for the transaction.',
+                parameters: z.object({
+                    price: z.number().describe('The new price value in USD.'),
+                    reason: z.string().describe('Reason for the price update.'),
+                }),
+                execute: async ({ price, reason }) => {
+                    // Update transaction price in DB
+                    const { error } = await supabase
+                        .from('transactions')
+                        .update({ price_total: price })
+                        .eq('id', transactionId);
+
+                    if (error) throw new Error('Failed to update price');
+                    return `Price updated to $${price}. Reason: ${reason}`;
+                },
+            }),
+            close_deal: tool({
+                description: 'Finalize the deal and mark it as agreed.',
+                parameters: z.object({
+                    final_price: z.number().describe('The final agreed price.'),
+                }),
+                execute: async ({ final_price }) => {
+                    const { error } = await supabase
+                        .from('transactions')
+                        .update({
+                            price_total: final_price,
+                            status: 'agreed'
+                        })
+                        .eq('id', transactionId);
+
+                    if (error) throw new Error('Failed to close deal');
+                    return `Deal finalized at $${final_price}. Please proceed to payment/logistics.`;
+                },
+            }),
+        },
+        onFinish: async ({ text, toolCalls, toolResults }) => {
+            // Persist Assistant Message
+            // For text
+            if (text) {
+                await supabase.from('messages').insert({
+                    transaction_id: transactionId,
+                    role: 'assistant',
+                    content: text,
+                });
+            }
+
+            // Note: Complex handling might be needed for tool calls storage if we want full history replay with tools,
+            // but for MVP, storing the text response or a summary is often sufficient, 
+            // or we can store tool calls in a separate field if 'messages' schema supports it.
+            // Given the simple schema 'content', we'll rely on the text response typically summarizing the action 
+            // or the client handling the tool interactions state locally during the session.
+            // However, standard persisted history usually just needs the text conversation. 
+            // If the tool execution result generates a message, it might be separate.
+            // For this MVP, we largely trust `text`.
+        },
     });
 
-    return new Response(stream, {
-      headers: {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "no-store",
-      },
-    });
-  } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : "Broker error";
-    return new Response(msg, { status: 500 });
-  }
+    return result.toDataStreamResponse();
 }
-

@@ -1,12 +1,24 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 
 export async function getRecyclerDashboardStats() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return null
+
+    // Verify user is a recycler
+    const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+    if (profile?.role !== 'recycler') {
+        return null
+    }
 
     // Active Bids: Count of transactions where recycler is buyer and status is negotiating
     const { count: activeBids } = await supabase
@@ -58,6 +70,7 @@ interface ItemMetadata {
     weight?: string;
     estimatedValue?: string | number;
     grade?: string;
+    reeContent?: Array<{ name: string; value: string; percentage: number }>;
 }
 
 export async function getMarketplaceItems() {
@@ -77,14 +90,16 @@ export async function getMarketplaceItems() {
         const userLoc = (item.users as any)?.location
 
         return {
-            id: item.id.substring(0, 8), // Short ID
+            id: item.id, // Full UUID
+            shortId: item.id.substring(0, 8), // Short ID for display
             title: meta?.category || 'Unknown Item',
             location: userLoc || 'Unknown Location',
             weight: meta?.weight || 'N/A',
             value: meta?.estimatedValue || 'Unknown',
             created_at: item.created_at,
             grade: meta?.grade || 'N/A',
-            image: item.image_url
+            image: item.image_url,
+            composition: meta?.reeContent || []
         }
     }) || []
 }
@@ -131,4 +146,66 @@ export async function getRecyclerLogistics() {
         .order('created_at', { ascending: true })
 
     return deliveries || []
+}
+
+export async function placeBid(itemId: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) throw new Error("Unauthorized")
+
+    // Verify user is a recycler
+    const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+    if (profile?.role !== 'recycler') {
+        throw new Error("Unauthorized. Only recyclers can place bids.")
+    }
+
+    // Get item details
+    const { data: item } = await supabase
+        .from('items')
+        .select('user_id, metadata')
+        .eq('id', itemId)
+        .single()
+
+    if (!item) throw new Error("Item not found")
+
+    // Check if open transaction exists
+    const { data: existing } = await supabase
+        .from('transactions')
+        .select('id')
+        .eq('buyer_id', user.id)
+        .contains('item_ids', [itemId])
+        .in('status', ['negotiating', 'agreed', 'pending'])
+        .single()
+
+    if (existing) {
+        redirect(`/recycler/negotiate/${existing.id}`)
+    }
+
+    // Create new transaction
+    const { data: transaction, error } = await supabase
+        .from('transactions')
+        .insert({
+            supplier_id: item.user_id, // Dealer
+            buyer_id: user.id, // Recycler
+            item_ids: [itemId],
+            price_total: 0, // Initial bid 0 or parsed from metadata
+            status: 'negotiating',
+            // Ensure we're passing a plain object for jsonb
+            material_breakdown: { ...(item.metadata as any) }
+        })
+        .select()
+        .single()
+
+    if (error) {
+        console.error("Bid Error Details:", error)
+        throw new Error(`Failed to place bid: ${error.message}`)
+    }
+
+    redirect(`/recycler/negotiate/${transaction.id}`)
 }

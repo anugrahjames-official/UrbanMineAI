@@ -25,6 +25,7 @@ export interface UserProfile {
     email_updates: boolean;
     security_alerts: boolean;
     isVerified: boolean;
+    avatar_url?: string | null;
 }
 
 import { checkTrustDecay } from './trust';
@@ -122,7 +123,8 @@ export async function getUserProfile(): Promise<UserProfile> {
         security_alerts: profile.security_alerts ?? true,
         percentile,
         totalUsers,
-        isVerified
+        isVerified,
+        avatar_url: profile.avatar_url
     }
 }
 
@@ -173,7 +175,7 @@ export async function updateUserProfile(data: Partial<Pick<UserProfile, 'first_n
     return { success: true }
 }
 
-export async function updateUserFullProfile(data: Partial<Pick<UserProfile, 'first_name' | 'middle_name' | 'last_name' | 'business_name' | 'location' | 'theme_dark' | 'push_notifications' | 'email_updates' | 'security_alerts'>>) {
+export async function updateUserFullProfile(data: Partial<Pick<UserProfile, 'first_name' | 'middle_name' | 'last_name' | 'business_name' | 'location' | 'theme_dark' | 'push_notifications' | 'email_updates' | 'security_alerts' | 'avatar_url'>>) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -194,4 +196,14 @@ export async function updateUserFullProfile(data: Partial<Pick<UserProfile, 'fir
     revalidatePath('/')
 
     return { success: true }
+}
+
+export async function signOut() {
+    const supabase = await createClient()
+    await supabase.auth.signOut()
+
+    const { revalidatePath } = await import('next/cache')
+    revalidatePath('/')
+
+    redirect('/login')
 }

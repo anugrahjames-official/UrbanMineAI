@@ -8,6 +8,17 @@ export async function getOEMComplianceStats() {
 
     if (!user) return null
 
+    // Verify user is an OEM
+    const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+    if (profile?.role !== 'oem') {
+        return null
+    }
+
     // Pending Verification: negotiated or agreed deals that are not yet paid/completed?
     // Or strictly "Docs" pending verification? The dashboard says "Docs".
     // But we don't have a docs verif flow yet. Let's use Transactions in 'agreed' state as "Pending Verification" implies pending finalization.
@@ -59,6 +70,17 @@ export async function getComplianceLogs() {
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return []
+
+    // Verify user is an OEM
+    const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+    if (profile?.role !== 'oem') {
+        return []
+    }
 
     // Fetch transactions as logs
     const { data: logs } = await supabase

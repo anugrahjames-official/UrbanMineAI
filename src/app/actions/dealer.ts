@@ -2,10 +2,15 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 import { getUserProfile } from './user'
 
 interface ItemMetadata {
     category?: string;
+    classification?: string;
+    title?: string;
+    description?: string;
+    location?: string;
     weight?: string;
     estimatedValue?: string | number;
     grade?: string;
@@ -51,7 +56,8 @@ export async function getDealerInventory() {
         const meta = item.metadata as unknown as ItemMetadata
         return {
             id: item.id,
-            title: meta?.category || 'Unknown Item',
+            title: meta?.title || meta?.classification || meta?.category || 'Unknown Item',
+            description: meta?.description,
             weight: meta?.weight || 'N/A',
             value: meta?.estimatedValue || '$0',
             grade: meta?.grade || 'Ungraded',
@@ -80,7 +86,7 @@ export async function getRecentDealerInventory() {
         const meta = item.metadata as unknown as ItemMetadata
         return {
             id: item.id,
-            title: meta?.category || 'Unknown Item',
+            title: meta?.title || meta?.classification || meta?.category || 'Unknown Item',
             weight: meta?.weight || 'N/A',
             value: meta?.estimatedValue || '$0',
             grade: meta?.grade || 'Ungraded',
@@ -140,7 +146,10 @@ export async function getDealerAnalytics() {
 
         // E-Waste Weight Calculation
         if (meta?.weight) {
-            const weightVal = parseFloat(meta.weight.replace(/[^0-9.]/g, ''))
+            const weightVal = typeof meta.weight === 'string'
+                ? parseFloat(meta.weight.replace(/[^0-9.]/g, ''))
+                : Number(meta.weight);
+
             if (!isNaN(weightVal)) totalEwasteWeight += weightVal
         }
 
@@ -149,7 +158,7 @@ export async function getDealerAnalytics() {
         }
 
         // Composition
-        const category = meta?.category || 'Other'
+        const category = meta?.classification || meta?.title || meta?.category || 'Other'
         composition[category] = (composition[category] || 0) + 1
         totalItems++
     })
@@ -204,4 +213,166 @@ export async function getDealerAnalytics() {
         weeklyLabels: last7DaysLabels,
         composition: compositionData
     }
+}
+
+export async function publishItems(itemIds: string[]) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        throw new Error("Unauthorized")
+    }
+
+    // Verify user is a dealer
+    const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+    if (profile?.role !== 'dealer') {
+        throw new Error("Unauthorized. Only dealers can publish items.")
+    }
+
+    const { error } = await supabase
+        .from('items')
+        .update({ status: 'listed' })
+        .in('id', itemIds)
+        .eq('user_id', user.id) // Ensure user owns the items
+
+    if (error) {
+        console.error('Error publishing items:', error)
+        throw new Error("Failed to publish items")
+    }
+
+    revalidatePath('/dealer/inventory')
+    revalidatePath('/dealer/dashboard')
+    revalidatePath('/marketplace')
+
+    return { success: true }
+}
+
+export async function unpublishItems(itemIds: string[]) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        throw new Error("Unauthorized")
+    }
+
+    // Verify user is a dealer
+    const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+    if (profile?.role !== 'dealer') {
+        throw new Error("Unauthorized. Only dealers can unpublish items.")
+    }
+
+    const { error } = await supabase
+        .from('items')
+        .update({ status: 'pending' })
+        .in('id', itemIds)
+        .eq('user_id', user.id) // Ensure user owns the items
+
+    if (error) {
+        console.error('Error unpublishing items:', error)
+        throw new Error("Failed to unpublish items")
+    }
+
+    revalidatePath('/dealer/inventory')
+    revalidatePath('/dealer/dashboard')
+    revalidatePath('/marketplace')
+
+    return { success: true }
+}
+
+export async function updateItemMetadata(itemId: string, metadata: Partial<ItemMetadata>) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        throw new Error("Unauthorized")
+    }
+
+    // Verify user is a dealer
+    const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+    if (profile?.role !== 'dealer') {
+        throw new Error("Unauthorized. Only dealers can update item metadata.")
+    }
+
+    // First fetch existing metadata to merge
+    const { data: item, error: fetchError } = await supabase
+        .from('items')
+        .select('metadata')
+        .eq('id', itemId)
+        .eq('user_id', user.id)
+        .single()
+
+    if (fetchError || !item) {
+        console.error('Error fetching item for update:', fetchError)
+        throw new Error("Item not found")
+    }
+
+    const currentMetadata = item.metadata as unknown as ItemMetadata
+    const newMetadata = { ...currentMetadata, ...metadata }
+
+    const { error: updateError } = await supabase
+        .from('items')
+        .update({ metadata: newMetadata })
+        .eq('id', itemId)
+        .eq('user_id', user.id)
+
+    if (updateError) {
+        console.error('Error updating item metadata:', updateError)
+        throw new Error("Failed to update item")
+    }
+
+    revalidatePath('/dealer/inventory')
+    revalidatePath('/dealer/dashboard')
+
+    return { success: true }
+}
+
+export async function deleteInventoryItem(itemId: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        throw new Error("Unauthorized")
+    }
+
+    // Verify user is a dealer
+    const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+    if (profile?.role !== 'dealer') {
+        throw new Error("Unauthorized. Only dealers can delete items.")
+    }
+
+    const { error } = await supabase
+        .from('items')
+        .delete()
+        .eq('id', itemId)
+        .eq('user_id', user.id) // Ensure user owns the item
+
+    if (error) {
+        console.error('Error deleting item:', error)
+        throw new Error("Failed to delete item")
+    }
+
+    revalidatePath('/dealer/inventory')
+    revalidatePath('/dealer/dashboard')
+
+    return { success: true }
 }

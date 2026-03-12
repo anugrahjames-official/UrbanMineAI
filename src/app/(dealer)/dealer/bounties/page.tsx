@@ -11,7 +11,8 @@ import { getLivePrices } from "@/services/pricing";
 type BountyRow = {
   id: string;
   material: string;
-  quantity_kg: number;
+  quantity: number;
+  unit: string;
   price_floor: number | null;
   status: "open" | "filled" | "expired";
   expires_at: string | null;
@@ -41,7 +42,7 @@ export default function BountiesPage() {
           getLivePrices(),
           supabase
             .from("bounties")
-            .select("id, material, quantity_kg, price_floor, status, expires_at, created_at, recycler_id, min_grade, recycler:users(business_name, trust_flags, role)")
+            .select("id, material, quantity, unit, price_floor, status, expires_at, created_at, recycler_id, min_grade, recycler:users(business_name, trust_flags, role)")
             .eq("status", "open")
             .order("created_at", { ascending: false })
             .limit(24),
@@ -155,6 +156,7 @@ export default function BountiesPage() {
             const flags = Array.isArray(b.recycler?.trust_flags) ? b.recycler.trust_flags : [];
             const isVerified = flags.includes('verified');
             const companyName = b.recycler?.business_name || `Recycler ${b.recycler_id.slice(0, 4)}`;
+            const unit = b.unit || 'kg';
 
             return (
               <BountyCard
@@ -164,9 +166,9 @@ export default function BountiesPage() {
                 company={companyName}
                 isVerified={isVerified}
                 material={b.material}
-                sub={`${b.min_grade ? `${b.min_grade} • ` : ""}Min lot ${Number(b.quantity_kg).toFixed(0)}kg`}
-                volume={`${Number(b.quantity_kg).toFixed(0)} kg`}
-                premium={b.price_floor ? `$${Number(b.price_floor).toFixed(0)}/kg` : "+ Premium"}
+                sub={`${b.min_grade ? `${b.min_grade} • ` : ""}Min lot ${Number(b.quantity).toFixed(0)}${unit}`}
+                volume={`${Number(b.quantity).toFixed(0)} ${unit}`}
+                premium={b.price_floor ? `$${Number(b.price_floor).toFixed(0)}/${unit}` : "+ Premium"}
                 location="Kerala"
                 timeLeft={b.expires_at ? "Limited" : "Open"}
               />

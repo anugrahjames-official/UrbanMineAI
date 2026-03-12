@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UrbanMineAI - Global E-Waste Marketplace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        :root {
+            --obsidian-green: #112117;
+            --neon-green: #19e66b;
+            --neon-green-dim: #19e66b33;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --card-surface: rgba(17, 33, 23, 0.7);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--obsidian-green);
+            color: white;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(25, 230, 107, 0.08) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(25, 230, 107, 0.05) 0%, transparent 20%);
+        }
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+        }
+        .glass-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(25, 230, 107, 0.3);
+        }
+        .text-neon {
+            color: var(--neon-green);
+        }
+        .bg-neon {
+            background-color: var(--neon-green);
+        }
+        .border-neon {
+            border-color: var(--neon-green);
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-[#19e66b] selection:text-[#112117]">
+<header class="sticky top-0 z-50 glass-panel border-b border-white/10">
+<div class="max-w-[1600px] mx-auto px-6 h-20 flex items-center justify-between gap-8">
+<div class="flex items-center gap-2 shrink-0 cursor-pointer">
+<span class="material-symbols-outlined text-neon text-4xl">recycling</span>
+<div class="flex flex-col">
+<span class="text-xl font-bold tracking-tight leading-none text-white">UrbanMine<span class="text-neon">AI</span></span>
+<span class="text-[10px] text-white/60 tracking-widest uppercase">Global Exchange</span>
+</div>
+</div>
+<div class="flex-1 flex items-center gap-8 justify-center">
+<div class="flex items-center gap-1 bg-white/5 p-1 rounded-full border border-white/10">
+<button class="px-5 py-2 rounded-full text-sm font-medium bg-[#19e66b] text-[#112117] transition-all shadow-lg shadow-[#19e66b]/20">Listings</button>
+<button class="px-5 py-2 rounded-full text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 transition-all">Bounties</button>
+<button class="px-5 py-2 rounded-full text-sm font-medium text-white/70 hover:text-white hover:bg-white/5 transition-all">My Bids</button>
+</div>
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/40 group-focus-within:text-neon transition-colors">search</span>
+<input class="w-full bg-[#0a140f]/50 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder-white/30 focus:outline-none focus:border-[#19e66b]/50 focus:ring-1 focus:ring-[#19e66b]/50 transition-all" placeholder="Search components, REE type, or sellers..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4 shrink-0">
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/20 text-sm font-medium hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined text-[20px]">add_task</span>
+                    Post Bounty
+                </button>
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#19e66b] text-[#112117] text-sm font-bold hover:bg-[#16cc5f] transition-all neon-glow shadow-lg shadow-[#19e66b]/20">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+                    List Item
+                </button>
+<div class="h-8 w-[1px] bg-white/10 mx-2"></div>
+<div class="relative cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 border border-white/20 overflow-hidden">
+<img alt="User" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB03UqAP0LnXFdTDqnTxun6r4oJd9Pdionxwu19H1hp0oppJHHdnjWOWmwPbEBr6wZj_8KiNwDJ37c1Yyg8VEYxQYhjkDqWdXso1qICHI9mcTgbouGw6XXOv5sMJr0pK4Kjr9G-1Hq3M31cr2xA_yBuPSeved-xPrTBaWy5qYeWg9tuX9jsWRGoZu-YtoLrdJL-Bd87pyEWe4yMDZpR9V2qfeQEm8TuFS-mceI3H8jWpFR-NoyjOiI1hEWIi4s2X3ch7LfgVIpFha5c"/>
+</div>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-neon rounded-full border-2 border-[#112117]"></div>
+</div>
+</div>
+</div>
+<div class="border-t border-white/5 bg-[#112117]/80 backdrop-blur-sm">
+<div class="max-w-[1600px] mx-auto px-6 h-12 flex items-center gap-6 overflow-x-auto scrollbar-hide text-xs font-medium text-white/60">
+<div class="flex items-center gap-2 text-white">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+<span>Filters:</span>
+</div>
+<button class="flex items-center gap-1 hover:text-neon transition-colors whitespace-nowrap">
+                    Material Type <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<button class="flex items-center gap-1 hover:text-neon transition-colors whitespace-nowrap">
+                    Region <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<button class="flex items-center gap-1 hover:text-neon transition-colors whitespace-nowrap">
+                    Purity Grade <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<button class="flex items-center gap-1 hover:text-neon transition-colors whitespace-nowrap">
+                    Verification Level <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<div class="h-4 w-[1px] bg-white/10 mx-2"></div>
+<button class="px-3 py-1 rounded-full bg-white/5 border border-white/10 hover:border-neon/50 transition-colors flex items-center gap-1 text-neon/80">
+                    High REE Content <span class="material-symbols-outlined text-[14px]">close</span>
+</button>
+<button class="px-3 py-1 rounded-full bg-white/5 border border-white/10 hover:border-neon/50 transition-colors flex items-center gap-1">
+                    Verified Sellers <span class="material-symbols-outlined text-[14px]">close</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-1 max-w-[1600px] mx-auto w-full px-6 py-8 grid grid-cols-12 gap-8">
+<aside class="col-span-12 lg:col-span-3 space-y-6">
+<div class="glass-card rounded-2xl p-5 relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-24 h-24 bg-neon/10 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-semibold tracking-wide uppercase text-white/90 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                        Live Market Ticker
+                    </h3>
+<span class="text-[10px] text-white/40">LME Updated</span>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors">
+<div class="flex flex-col">
+<span class="text-xs text-white/50 font-medium">Gold (Au)</span>
+<span class="text-sm font-bold text-white">$2,048.50 <span class="text-[10px] font-normal text-white/50">/oz</span></span>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-xs text-[#19e66b] flex items-center">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +0.4%
+                            </span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors">
+<div class="flex flex-col">
+<span class="text-xs text-white/50 font-medium">Neodymium (Nd)</span>
+<span class="text-sm font-bold text-white">$98.20 <span class="text-[10px] font-normal text-white/50">/kg</span></span>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-xs text-red-400 flex items-center">
+<span class="material-symbols-outlined text-[14px]">trending_down</span> -1.2%
+                            </span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors">
+<div class="flex flex-col">
+<span class="text-xs text-white/50 font-medium">Cobalt (Co)</span>
+<span class="text-sm font-bold text-white">$33.15 <span class="text-[10px] font-normal text-white/50">/kg</span></span>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-xs text-[#19e66b] flex items-center">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +2.1%
+                            </span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors">
+<div class="flex flex-col">
+<span class="text-xs text-white/50 font-medium">Palladium (Pd)</span>
+<span class="text-sm font-bold text-white">$1,150.00 <span class="text-[10px] font-normal text-white/50">/oz</span></span>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-xs text-[#19e66b] flex items-center">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +0.8%
+                            </span>
+</div>
+</div>
+</div>
+</div>
+<div class="glass-card rounded-2xl p-5 relative overflow-hidden">
+<div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-20"></div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-semibold tracking-wide uppercase text-white/90 flex items-center gap-2">
+<span class="material-symbols-outlined text-neon text-[18px]">smart_toy</span>
+                        AI Matches
+                    </h3>
+</div>
+<div class="space-y-4">
+<div class="group cursor-pointer">
+<div class="flex gap-3 mb-2">
+<div class="w-12 h-12 rounded-lg bg-gray-800 overflow-hidden relative">
+<img alt="CPU" class="object-cover w-full h-full opacity-80 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC99TDYHmWgqNdK-nHl-JPKcGShlaI1xu868_AaVxNABf6KaKSefhhnTXnM3ex9YPrOCcWTG-Q9VWbgs8Mi2vKHyDp_80YGGWYUxtXb29cp131xUllhZ-7qudrjXFrydRRF397CvYhxkeXFsihDi1m0gQVwsnAKD4oOPdr58YJ5WuINqy_TuGtOA0TabgRU9mYnsPNRE7wgDFJDSUolciPogxt-7dVGpj1drRYjyd1-EZ0HbgWB5wNF4mZHrdyzu4Iw5tt7rvc3Ct-P"/>
+</div>
+<div>
+<h4 class="text-sm font-medium text-white group-hover:text-neon transition-colors">Server CPUs Lot</h4>
+<p class="text-xs text-white/50">Match: 98% • High Gold</p>
+</div>
+</div>
+<div class="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-neon w-[98%] shadow-[0_0_10px_#19e66b]"></div>
+</div>
+</div>
+<div class="group cursor-pointer">
+<div class="flex gap-3 mb-2">
+<div class="w-12 h-12 rounded-lg bg-gray-800 overflow-hidden relative">
+<img alt="Battery" class="object-cover w-full h-full opacity-80 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCG_1YG110oErite7AFaFl3L-2u41bPuYyqaIS4rpm-Ye8FwYcNBrq6Sf-Mu1cZNZ3HukLr3uYc7-j2NArNdHJSR2aheIRXhcO6sKAEfINzwN2Ojv3NhaxZHgBLRP-yWCkmQT62bs_oPU6EnYh9IkixP51a10Fj3WfNB8hVUTLz5BobSJS4MYu1O7fQsudiYcm2GfPJ1mg-6TOxm3wAHm0LaLn1dBNnIAlerA5GYiPtD4DqzYQIL7WGwsA3z6qNcBzPTSLISqm6Pm6y"/>
+</div>
+<div>
+<h4 class="text-sm font-medium text-white group-hover:text-neon transition-colors">EV Battery Cells</h4>
+<p class="text-xs text-white/50">Match: 94% • High Lithium</p>
+</div>
+</div>
+<div class="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-neon w-[94%] shadow-[0_0_10px_#19e66b]"></div>
+</div>
+</div>
+</div>
+<button class="w-full mt-5 py-2 rounded-lg border border-white/10 text-xs font-medium text-white/60 hover:text-white hover:bg-white/5 transition-all">
+                    View All Recommendations
+                </button>
+</div>
+<div class="rounded-2xl p-5 bg-gradient-to-br from-indigo-900/40 to-purple-900/40 border border-white/10 relative overflow-hidden">
+<div class="relative z-10">
+<h3 class="text-lg font-bold text-white mb-1">Scale Up?</h3>
+<p class="text-xs text-white/70 mb-3">Get Verified Recycler status for bulk access.</p>
+<a class="text-xs font-bold text-neon hover:text-white transition-colors flex items-center gap-1" href="#">
+                        Apply Now <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+<div class="absolute -bottom-4 -right-4 w-24 h-24 bg-white/5 rounded-full blur-xl"></div>
+</div>
+</aside>
+<section class="col-span-12 lg:col-span-9">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-2xl font-bold text-white">Latest Listings</h2>
+<div class="flex items-center gap-3">
+<span class="text-sm text-white/40">Sort by:</span>
+<select class="bg-transparent text-sm text-white font-medium focus:outline-none cursor-pointer border-none p-0 pr-6">
+<option>Newest First</option>
+<option>Highest Value</option>
+<option>Distance</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<article class="glass-card rounded-[24px] overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+<div class="relative h-48 overflow-hidden">
+<img alt="PCB Boards" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5CunmGm8l_1Ta42IZKZh9LMDz2l4lNYhBfQCLaUeG2P2mTz3bOnceA_EkICeP99V5_gimXghEOjuwcKxjPE3jsWWGRMoefdeiB8KyxKhIRryOuAsQKgMoKdeq3OP0Hj_PE7He4KaFkiX63TPjS94CrX9c_p8646eG3r98nAwu8eq0bMGEdtap8vdq-ACzXMd1hu8tCd-clmqRyPehYU-Iqu5k30iUYB0ITvasQcORKGCdpK-a6R9OzSUSLrgsnEG3VFu3sQweLK11"/>
+<div class="absolute top-3 left-3 bg-[#112117]/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
+<span class="text-[10px] font-bold tracking-wider text-white uppercase">Live Auction</span>
+</div>
+<div class="absolute bottom-3 right-3 flex gap-2">
+<span class="bg-black/60 backdrop-blur-md text-neon text-[10px] font-bold px-2 py-1 rounded-md border border-neon/20 shadow-[0_0_10px_rgba(25,230,107,0.2)]">High Gold</span>
+<span class="bg-black/60 backdrop-blur-md text-white/80 text-[10px] font-bold px-2 py-1 rounded-md border border-white/10">Grade A</span>
+</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-lg font-bold text-white leading-tight mb-1">High-Grade Telecom PCB Lot</h3>
+<p class="text-xs text-white/50 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span> Kochi, Kerala
+                                </p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 my-4">
+<div class="bg-white/5 rounded-lg p-2 text-center border border-white/5">
+<span class="block text-[10px] text-white/40 uppercase">Est. Value</span>
+<span class="block text-sm font-bold text-white">$450 - $600</span>
+</div>
+<div class="bg-white/5 rounded-lg p-2 text-center border border-white/5">
+<span class="block text-[10px] text-white/40 uppercase">Weight</span>
+<span class="block text-sm font-bold text-white">25 kg</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-white/10">
+<div class="flex flex-col">
+<span class="text-[10px] text-white/40 uppercase font-medium">Current Bid</span>
+<span class="text-lg font-bold text-neon">$420.00</span>
+</div>
+<button class="bg-white hover:bg-gray-100 text-[#112117] font-bold py-2 px-6 rounded-xl text-sm transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                                Bid Now
+                            </button>
+</div>
+</div>
+</article>
+<article class="glass-card rounded-[24px] overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+<div class="relative h-48 overflow-hidden">
+<img alt="HDD Magnets" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDT0rygpBhMyNwZcLX04u4TTfYp7fOR2Sck2sPvPDrKLCYBJg1TbAOLUk7EVjYlL98esOtdqi5XkHlWKNoNzfX4jYxMGuf4DK2q2ku1xbu4lcZ1-oXx1yj4AvfHCTctX8Q3r9jbO_bszFqAl4zYNj8ZnNfOYnsaFa4KioXxzYXX2mncsCe9h3A_NlzM9-SwvDdy1hBc29dqlGtpH9fxasy8aldCBJWZaBa7BIQ5stcDDkp_YGERGp1OJBVT0oSvXiN6QjhgcSMJFVSB"/>
+<div class="absolute bottom-3 right-3 flex gap-2">
+<span class="bg-black/60 backdrop-blur-md text-blue-300 text-[10px] font-bold px-2 py-1 rounded-md border border-blue-400/20 shadow-[0_0_10px_rgba(147,197,253,0.2)]">Rare Earth</span>
+<span class="bg-black/60 backdrop-blur-md text-white/80 text-[10px] font-bold px-2 py-1 rounded-md border border-white/10">Neodymium</span>
+</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-lg font-bold text-white leading-tight mb-1">Extracted HDD Magnets</h3>
+<p class="text-xs text-white/50 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span> Trivandrum, Kerala
+                                </p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 my-4">
+<div class="bg-white/5 rounded-lg p-2 text-center border border-white/5">
+<span class="block text-[10px] text-white/40 uppercase">Est. Value</span>
+<span class="block text-sm font-bold text-white">$120 - $150</span>
+</div>
+<div class="bg-white/5 rounded-lg p-2 text-center border border-white/5">
+<span class="block text-[10px] text-white/40 uppercase">Weight</span>
+<span class="block text-sm font-bold text-white">5 kg</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-white/10">
+<div class="flex flex-col">
+<span class="text-[10px] text-white/40 uppercase font-medium">Current Bid</span>
+<span class="text-lg font-bold text-white">$115.00</span>
+</div>
+<button class="bg-white hover:bg-gray-100 text-[#112117] font-bold py-2 px-6 rounded-xl text-sm transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                                Bid Now
+                            </button>
+</div>
+</div>
+</article>
+<article class="glass-card rounded-[24px] overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+<div class="relative h-48 overflow-hidden">
+<img alt="Smartphones" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApkc6n6_oTspyEDyhao_Fq1qKZSjSB4RjMr5WC90aYzRydXmy3beb_9Fu3VgezGUqb1pHz_wfjkHfRI1K_21xt4oPXLA988YtP3WOgL2eYzdapKgdxA9Xz2SDAsMXHO3rbiw2M-_zfEEL6Wsp8yHiURP9Jq9QUt1cfOa_2nZo4ifSr7s2Yfjie3D0DE22gB8PGrgRtGZGfKZ1R6YFVBL2LKInLYSr_Ij60CZ27tdUvZwy8dSQ4BET-8K-Iwu7qSPGR_FYq4t-UH28h"/>
+<div class="absolute top-3 left-3 bg-[#112117]/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-neon animate-pulse"></span>
+<span class="text-[10px] font-bold tracking-wider text-white uppercase">Ending Soon</span>
+</div>
+<div class="absolute bottom-3 right-3 flex gap-2">
+<span class="bg-black/60 backdrop-blur-md text-purple-300 text-[10px] font-bold px-2 py-1 rounded-md border border-purple-400/20">Mixed Lot</span>
+</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-lg font-bold text-white leading-tight mb-1">Old Gen Smartphones (Broken)</h3>
+<p class="text-xs text-white/50 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span> Calicut, Kerala
+                                </p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 my-4">
+<div class="bg-white/5 rounded-lg p-2 text-center border border-white/5">
+<span class="block text-[10px] text-white/40 uppercase">Est. Value</span>
+<span class="block text-sm font-bold text-white">$800 - $950</span>
+</div>
+<div class="bg-white/5 rounded-lg p-2 text-center border border-white/5">
+<span class="block text-[10px] text-white/40 uppercase">Quantity</span>
+<span class="block text-sm font-bold text-white">200 Units</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-white/10">
+<div class="flex flex-col">
+<span class="text-[10px] text-white/40 uppercase font-medium">Current Bid</span>
+<span class="text-lg font-bold text-neon">$815.00</span>
+</div>
+<button class="bg-white hover:bg-gray-100 text-[#112117] font-bold py-2 px-6 rounded-xl text-sm transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                                Bid Now
+                            </button>
+</div>
+</div>
+</article>
+<article class="glass-card rounded-[24px] overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+<div class="relative h-48 overflow-hidden">
+<img alt="Processors" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCg9GUVw3St6HLr0WciACtZgJ4cmfoeRk4kLc-NCT8vCFcSMdKVncGH75EGTZGXvbmPmIw4-UZYtZKX2JMYvIsZVf3V7uKs8OV-MUB7Ro_WZ-8CYA8eFvmBVsiT5msT2-PQYR1hbT6FZXMAqzQ10Bn3sqHbpeLYjmUcFu8oDf2bATVuFvKJH_4uCOKMHwguzBXCOMuSr7WNT22YJQj6QFIAkIwCckc1C6kWo5lpQWEewxlMWRHmi6BRJBEntVtKBhTgnRow2n1UWzWE"/>
+<div class="absolute bottom-3 right-3 flex gap-2">
+<span class="bg-black/60 backdrop-blur-md text-neon text-[10px] font-bold px-2 py-1 rounded-md border border-neon/20 shadow-[0_0_10px_rgba(25,230,107,0.2)]">Pure Gold Pins</span>
+</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-lg font-bold text-white leading-tight mb-1">Ceramic Processors (Vintage)</h3>
+<p class="text-xs text-white/50 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span> Thrissur, Kerala
+                                </p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 my-4">
+<div class="bg-white/5 rounded-lg p-2 text-center border border-white/5">
+<span class="block text-[10px] text-white/40 uppercase">Est. Value</span>
+<span class="block text-sm font-bold text-white">$2,100</span>
+</div>
+<div class="bg-white/5 rounded-lg p-2 text-center border border-white/5">
+<span class="block text-[10px] text-white/40 uppercase">Weight</span>
+<span class="block text-sm font-bold text-white">2.5 kg</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-white/10">
+<div class="flex flex-col">
+<span class="text-[10px] text-white/40 uppercase font-medium">Buy Now</span>
+<span class="text-lg font-bold text-white">$2,250.00</span>
+</div>
+<button class="bg-white hover:bg-gray-100 text-[#112117] font-bold py-2 px-6 rounded-xl text-sm transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                                Buy Now
+                            </button>
+</div>
+</div>
+</article>
+<article class="glass-card rounded-[24px] overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+<div class="relative h-48 overflow-hidden">
+<img alt="Server RAM" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyzddXVzyjGf1uIFMa2_trg25uUduKpK-SL4jXonOWYX0qdCV7VgDRodyPzyoHxVu9sV9pZ3qh8nWIKLaBlFgUw4wS7JuxiiObIrEoZhtniS8-RtOAl0gGNfjScu6M3JeMTlZv5NRUtWd7R93Z1zH0tbjDUDKP-pshYBljh_c9hKEdA_vY-VyzTU-LF61IZOBTL0f5VXKu8rous_ikqDML518dgV6dOzXRE2S_rtGBG0e-9JruOhbHJseUDiiONqMuQqUpZxZvOgKS"/>
+<div class="absolute bottom-3 right-3 flex gap-2">
+<span class="bg-black/60 backdrop-blur-md text-yellow-300 text-[10px] font-bold px-2 py-1 rounded-md border border-yellow-400/20">Gold Fingers</span>
+</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-lg font-bold text-white leading-tight mb-1">Server RAM Modules (DDR3/4)</h3>
+<p class="text-xs text-white/50 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span> Kochi, Kerala
+                                </p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 my-4">
+<div class="bg-white/5 rounded-lg p-2 text-center border border-white/5">
+<span class="block text-[10px] text-white/40 uppercase">Est. Value</span>
+<span class="block text-sm font-bold text-white">$300 - $350</span>
+</div>
+<div class="bg-white/5 rounded-lg p-2 text-center border border-white/5">
+<span class="block text-[10px] text-white/40 uppercase">Weight</span>
+<span class="block text-sm font-bold text-white">8 kg</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-white/10">
+<div class="flex flex-col">
+<span class="text-[10px] text-white/40 uppercase font-medium">Current Bid</span>
+<span class="text-lg font-bold text-neon">$290.00</span>
+</div>
+<button class="bg-white hover:bg-gray-100 text-[#112117] font-bold py-2 px-6 rounded-xl text-sm transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                                Bid Now
+                            </button>
+</div>
+</div>
+</article>
+<article class="glass-card rounded-[24px] overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+<div class="relative h-48 overflow-hidden">
+<img alt="Cables" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVH9twnQvdJV2XYYwtIpbQ0rMQv0Sw9xDcv5zFmvgT-xS6mtd-GAhPjMefJGKIOcFnoemv36_hFrgOQtGzLgJhImbebYow8eWhhV5ALP3AOJ7mJ7ee86B1fwXUKTWd5NIwIUlseT5dEl2u9pW3iaBxq2ox5hTu2dq70rkIZUXSpOwkfRiYq93C0AoZ3UbOGhmYwwpNcef8E334eTLBVWcgV0Qlrtl_l8kwWfSHHDcvtsB8NlNdsk84fr_FEY5XP2Pbfjnjt5E6sqcb"/>
+<div class="absolute bottom-3 right-3 flex gap-2">
+<span class="bg-black/60 backdrop-blur-md text-orange-300 text-[10px] font-bold px-2 py-1 rounded-md border border-orange-400/20">Copper Core</span>
+</div>
+</div>
+<div class="p-5">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h3 class="text-lg font-bold text-white leading-tight mb-1">Insulated Copper Wire (Clean)</h3>
+<p class="text-xs text-white/50 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span> Kannur, Kerala
+                                </p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2 my-4">
+<div class="bg-white/5 rounded-lg p-2 text-center border border-white/5">
+<span class="block text-[10px] text-white/40 uppercase">Est. Value</span>
+<span class="block text-sm font-bold text-white">$650</span>
+</div>
+<div class="bg-white/5 rounded-lg p-2 text-center border border-white/5">
+<span class="block text-[10px] text-white/40 uppercase">Weight</span>
+<span class="block text-sm font-bold text-white">50 kg</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-white/10">
+<div class="flex flex-col">
+<span class="text-[10px] text-white/40 uppercase font-medium">Buy Now</span>
+<span class="text-lg font-bold text-white">$680.00</span>
+</div>
+<button class="bg-white hover:bg-gray-100 text-[#112117] font-bold py-2 px-6 rounded-xl text-sm transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                                Buy Now
+                            </button>
+</div>
+</div>
+</article>
+</div>
+<div class="mt-8 flex justify-center">
+<button class="px-8 py-3 rounded-xl border border-white/10 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 transition-all">
+                    Load More Listings
+                </button>
+</div>
+</section>
+</main>
+<footer class="border-t border-white/10 bg-[#0a140f] py-8 mt-auto">
+<div class="max-w-[1600px] mx-auto px-6 text-center text-white/40 text-xs">
+<p>© 2024 UrbanMineAI. Powered by Agentic AI &amp; Eco-Futurism.</p>
+</div>
+</footer>
+
+</body></html>

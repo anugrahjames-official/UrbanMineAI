@@ -1,6 +1,7 @@
 "use client";
 
-import { Recycle, LayoutDashboard, Camera, MessageSquare, Box, BarChart3, Settings, ShieldCheck } from "@/components/icons";
+import { Recycle, LayoutDashboard, Camera, MessageSquare, Box, BarChart3, Settings, ShieldCheck, CheckCircle } from "@/components/icons";
+import { UserAvatar } from "@/components/ui/UserAvatar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -84,17 +85,13 @@ export function DealerSidebar({ profile }: { profile: any }) {
             <div className="p-4 border-t border-white/5">
                 <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer group">
                     <div className="relative">
-                        <img
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3Fqyq5WpNTQOdnQRjcQOjnBIw8iOwnNS44BJj7OEThFPk4vD8KCbmE-sgJYJIvGzcRRjbpGAHnqw0kD1F6buW0FeyxGfscwsrsLoY-7JDOj1-84vuvH1RgAr8_h50Sy6F9fuK3BhKZfxGrymIHO3xKmwMq7_hUp0pqQlTfCSLmoOyFWhk7cL4SpsPFaCHgOz8zEnE57175ywNbSb5aWO42yes5Y_wgNPEYk4_vSWyyPTvZTN1g8DA7UGfhtJttVJGHuKl0mprcnX_"
-                            className="w-10 h-10 rounded-full border-2 border-primary/50 object-cover"
-                            alt="Profile"
-                        />
+                        <UserAvatar user={profile} className="w-10 h-10" />
                         <div className="absolute bottom-0 right-0 w-3 h-3 bg-primary border-2 border-surface-darker rounded-full" />
                     </div>
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1">
                             <p className="text-sm font-semibold truncate text-white">{profile.name}</p>
-                            {profile.isVerified && <ShieldCheck size={14} className="text-primary" fill="currentColor" />}
+                            {profile.isVerified && <CheckCircle size={14} className="text-primary" fill="currentColor" />}
                         </div>
                         <p className="text-[10px] text-primary">Trust: {profile.trust_score}</p>
                     </div>

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>UrbanMineAI | Eco-Futurist E-Waste Recovery</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#19e66b",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#112117",
+                        "surface-dark": "rgba(26, 47, 35, 0.7)",
+                        "glass-border": "rgba(255, 255, 255, 0.1)",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "2xl": "2rem", "full": "9999px"},
+                    backgroundImage: {
+                        'grid-pattern': "linear-gradient(to right, #19e66b05 1px, transparent 1px), linear-gradient(to bottom, #19e66b05 1px, transparent 1px)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(26, 47, 35, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(25, 230, 107, 0.1);
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 20px rgba(25, 230, 107, 0.3);
+        }
+
+        .neon-border {
+            box-shadow: 0 0 10px rgba(25, 230, 107, 0.2), inset 0 0 10px rgba(25, 230, 107, 0.05);
+        }
+
+        .primary-glow:hover {
+            box-shadow: 0 0 25px rgba(25, 230, 107, 0.5);
+        }
+
+        /* Custom Scrollbar for a tech feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #112117; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #19e66b; 
+            border-radius: 4px;
+        }
+        
+        .circuit-bg {
+            background-size: 40px 40px;
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-100 antialiased selection:bg-primary selection:text-background-dark min-h-screen flex flex-col">
+<!-- Navbar -->
+<nav class="fixed w-full z-50 top-0 left-0 border-b border-white/5 glass-panel">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-20">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center text-background-dark font-bold">
+<span class="material-icons text-lg">memory</span>
+</div>
+<span class="text-xl font-bold tracking-tight text-white">UrbanMine<span class="text-primary">AI</span></span>
+</div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-sm font-medium text-slate-300 hover:text-primary transition-colors" href="#">Platform</a>
+<a class="text-sm font-medium text-slate-300 hover:text-primary transition-colors" href="#">Marketplace</a>
+<a class="text-sm font-medium text-slate-300 hover:text-primary transition-colors" href="#">Impact</a>
+<a class="text-sm font-medium text-slate-300 hover:text-primary transition-colors" href="#">Partners</a>
+</div>
+<div class="flex items-center gap-4">
+<a class="text-sm font-medium text-white hover:text-primary transition-colors hidden sm:block" href="#">Log in</a>
+<a class="px-5 py-2.5 text-sm font-semibold rounded-full border border-primary text-primary hover:bg-primary hover:text-background-dark transition-all duration-300" href="#">
+                        Get Started
+                    </a>
+</div>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+<!-- Background Elements -->
+<div class="absolute inset-0 bg-grid-pattern circuit-bg opacity-30 pointer-events-none"></div>
+<div class="absolute top-1/4 right-0 w-1/2 h-full bg-primary/5 blur-[120px] rounded-full pointer-events-none"></div>
+<!-- AR HUD Overlays -->
+<div class="absolute top-32 left-10 w-64 h-64 border-l border-t border-primary/20 opacity-50 pointer-events-none"></div>
+<div class="absolute bottom-20 right-10 w-32 h-32 border-r border-b border-primary/20 opacity-50 pointer-events-none"></div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid lg:grid-cols-2 gap-12 items-center">
+<!-- Hero Content -->
+<div class="space-y-8">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-mono uppercase tracking-wider">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                    System Online: Global Formalization
+                </div>
+<h1 class="text-5xl lg:text-7xl font-bold text-white tracking-tight leading-[1.1]">
+                    Unlocking the Future of <br/>
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-400 glow-text">Critical Minerals</span>
+</h1>
+<p class="text-xl text-slate-400 max-w-lg leading-relaxed">
+                    Agentic AI-driven E-Waste recovery formalizing the informal sector. Turn waste into wealth with precision computer vision and automated brokerage.
+                </p>
+<div class="flex flex-col sm:flex-row gap-4 pt-4">
+<button class="group relative px-8 py-4 bg-primary text-background-dark font-bold text-lg rounded-full overflow-hidden transition-all duration-300 primary-glow flex items-center justify-center gap-3">
+<span class="material-icons group-hover:rotate-12 transition-transform">qr_code_scanner</span>
+                        Scan &amp; Value Now
+                        <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+</button>
+<button class="px-8 py-4 border border-slate-600 hover:border-primary text-white font-medium text-lg rounded-full transition-colors duration-300 flex items-center justify-center gap-2 group">
+<span class="material-icons group-hover:text-primary transition-colors">play_circle</span>
+                        View Demo
+                    </button>
+</div>
+</div>
+<!-- Hero Visual (3D/AR Concept) -->
+<div class="relative lg:h-[600px] w-full flex items-center justify-center">
+<!-- Abstract AR Card -->
+<div class="relative w-full aspect-square max-w-md">
+<!-- Background Image for 3D render -->
+<div class="absolute inset-0 rounded-2xl overflow-hidden glass-panel border border-primary/20 shadow-2xl">
+<img alt="Circuit board visualization" class="w-full h-full object-cover opacity-60 mix-blend-screen" data-alt="Abstract 3D render of circuit board traces glowing green in dark space" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAO6NuCcMizxfxqJRZoIx-Sdbc11b34uLev9vYzQ9au45tf3kFGkCQfDT2ai0ivBtLiDBwT0ve-u4RbSUUpkC48gNFxYG8M7emMmAJlTDIW_XzC_t-VpLG_QJYXcMs3xYyNiiEEiXIbmMePrSRyUUIoEJwpp11_B4FcVSDuZIZpnD2vw4xYnVF3lh3oEA1g0hG4H7oWCsF4lQVP_rmj5j92nOMbrt46a6a9OeX7FSKquWiHv7URMfO4g78TTzWxlM4qgrd_ICJyaRC"/>
+<!-- AR Overlay UI -->
+<div class="absolute inset-0 p-6 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div class="font-mono text-xs text-primary/80 border border-primary/30 p-2 bg-black/40 rounded">
+                                    ID: CPU-X99<br/>
+                                    GRADE: A+
+                                </div>
+<span class="material-icons text-primary animate-pulse">center_focus_weak</span>
+</div>
+<!-- Bounding Box Central -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border-2 border-primary/50 rounded-lg flex items-center justify-center">
+<div class="absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 border-primary"></div>
+<div class="absolute -top-1 -right-1 w-3 h-3 border-t-2 border-r-2 border-primary"></div>
+<div class="absolute -bottom-1 -left-1 w-3 h-3 border-b-2 border-l-2 border-primary"></div>
+<div class="absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 border-primary"></div>
+<div class="bg-primary/20 backdrop-blur-sm px-3 py-1 rounded text-white text-sm font-bold">
+                                    Au: 0.2g | Cu: 14g
+                                </div>
+</div>
+<div class="space-y-2">
+<div class="h-1 w-full bg-slate-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-3/4"></div>
+</div>
+<div class="flex justify-between text-xs font-mono text-slate-300">
+<span>RECOVERY PROBABILITY</span>
+<span class="text-primary">94%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Problem Stats Section -->
+<section class="py-20 bg-background-dark relative">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Stat Card 1 -->
+<div class="group p-8 rounded-2xl glass-panel hover:bg-surface-dark transition-all duration-300 border-l-4 border-l-transparent hover:border-l-primary relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-icons text-8xl text-primary">warning</span>
+</div>
+<div class="relative z-10">
+<div class="text-4xl lg:text-5xl font-bold text-white mb-2 font-display">1.75M</div>
+<div class="text-primary font-mono text-sm uppercase tracking-wider mb-4">Tonnes Generated</div>
+<p class="text-slate-400 text-sm">Annual e-waste generation continues to surge, creating massive environmental pressure.</p>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="group p-8 rounded-2xl glass-panel hover:bg-surface-dark transition-all duration-300 border-l-4 border-l-transparent hover:border-l-primary relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-icons text-8xl text-primary">trending_down</span>
+</div>
+<div class="relative z-10">
+<div class="text-4xl lg:text-5xl font-bold text-white mb-2 font-display">90%</div>
+<div class="text-primary font-mono text-sm uppercase tracking-wider mb-4">Informal Leakage</div>
+<p class="text-slate-400 text-sm">Most valuable materials are lost to informal sectors with low recovery rates.</p>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="group p-8 rounded-2xl glass-panel hover:bg-surface-dark transition-all duration-300 border-l-4 border-l-transparent hover:border-l-primary relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-icons text-8xl text-primary">battery_alert</span>
+</div>
+<div class="relative z-10">
+<div class="text-4xl lg:text-5xl font-bold text-white mb-2 font-display">CRITICAL</div>
+<div class="text-primary font-mono text-sm uppercase tracking-wider mb-4">REE Deficit</div>
+<p class="text-slate-400 text-sm">Supply chains face severe shortages of Rare Earth Elements needed for tech.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Agentic Workflow Section -->
+<section class="py-24 relative overflow-hidden">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-20">
+<span class="text-primary font-mono text-sm uppercase tracking-widest">Process Architecture</span>
+<h2 class="text-3xl md:text-5xl font-bold text-white mt-4">The Agentic Workflow</h2>
+</div>
+<div class="relative">
+<!-- Vertical Neon Line -->
+<div class="absolute left-1/2 top-0 bottom-0 w-1 bg-slate-800 -translate-x-1/2 hidden md:block">
+<div class="w-full h-1/2 bg-gradient-to-b from-primary via-primary to-transparent opacity-50"></div>
+</div>
+<div class="space-y-24">
+<!-- Step 1: The Sorter -->
+<div class="relative flex flex-col md:flex-row items-center gap-12">
+<div class="flex-1 text-center md:text-right order-2 md:order-1">
+<h3 class="text-2xl font-bold text-white mb-2">01. The Sorter</h3>
+<h4 class="text-primary font-mono text-sm mb-4">COMPUTER VISION NODE</h4>
+<p class="text-slate-400">Advanced ML models identify component grades instantly via mobile scanning. Detects gold, palladium, and copper content with 98% accuracy.</p>
+</div>
+<div class="relative z-10 w-24 h-24 rounded-2xl bg-background-dark border border-primary shadow-[0_0_30px_rgba(25,230,107,0.3)] flex items-center justify-center order-1 md:order-2 shrink-0">
+<span class="material-icons text-4xl text-primary">visibility</span>
+</div>
+<div class="flex-1 order-3">
+<div class="glass-panel p-6 rounded-xl border border-white/5 relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+<div class="flex items-center gap-4 text-slate-300 font-mono text-xs">
+<span class="block w-2 h-2 bg-green-500 rounded-full"></span>
+<span>Scanning...</span>
+<span class="ml-auto opacity-50">CV-MODEL-V4.2</span>
+</div>
+<div class="mt-4 h-24 bg-slate-900/50 rounded border border-white/5 relative overflow-hidden">
+<img alt="Scanning Visualization" class="w-full h-full object-cover opacity-30" data-alt="Digital scan lines over dark tech background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYKkYrUWakQwOYU82D1cUvc6yeSHsg7zae5PBLeWANFVePObzhxBb82VrBL9RUwzdgCIVErLaB9ue9M72zwABJpiiRLzR1HTUdZyCLD6NKzXKAmSaacJmyc-4TkghrgGRj9LNsKCBbeSQI5qPQCjSdc3hCsqlswCWs0qRS1Bd4FdmdcrNsacZ9sfOlLjqYcIpO6R2bLnf7yGjkAsuM0K6hlrGjCIHWYY_1kI6WycjWG1jB4PNMMblkCikPah8NDyx51TYWX4xs4f0A"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-full h-[1px] bg-primary shadow-[0_0_10px_#19e66b]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Step 2: The Broker -->
+<div class="relative flex flex-col md:flex-row items-center gap-12">
+<div class="flex-1 order-3 md:order-1">
+<div class="glass-panel p-6 rounded-xl border border-white/5 relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+<div class="flex flex-col gap-3">
+<div class="flex justify-between items-center text-xs font-mono text-slate-400">
+<span>OFFER: #8821</span>
+<span class="text-primary">MATCHED</span>
+</div>
+<div class="flex items-center justify-between bg-slate-900/50 p-3 rounded border border-primary/20">
+<span class="text-white text-sm">Recycler X</span>
+<span class="text-primary font-bold">$450.00</span>
+</div>
+<div class="flex items-center justify-between bg-slate-900/30 p-3 rounded border border-white/5 opacity-60">
+<span class="text-white text-sm">Scrap Dealer Y</span>
+<span class="text-slate-400">$410.00</span>
+</div>
+</div>
+</div>
+</div>
+<div class="relative z-10 w-24 h-24 rounded-2xl bg-background-dark border border-primary shadow-[0_0_30px_rgba(25,230,107,0.3)] flex items-center justify-center order-1 md:order-2 shrink-0">
+<span class="material-icons text-4xl text-primary">handshake</span>
+</div>
+<div class="flex-1 text-center md:text-left order-2 md:order-3">
+<h3 class="text-2xl font-bold text-white mb-2">02. The Broker</h3>
+<h4 class="text-primary font-mono text-sm mb-4">AUTONOMOUS NEGOTIATION</h4>
+<p class="text-slate-400">Connects informal collectors with certified recyclers. Our AI negotiates fair market pricing in real-time based on LME spot prices.</p>
+</div>
+</div>
+<!-- Step 3: The Compliance Officer -->
+<div class="relative flex flex-col md:flex-row items-center gap-12">
+<div class="flex-1 text-center md:text-right order-2 md:order-1">
+<h3 class="text-2xl font-bold text-white mb-2">03. The Compliance Officer</h3>
+<h4 class="text-primary font-mono text-sm mb-4">AUTOMATED ESG AUDIT</h4>
+<p class="text-slate-400">Generates immutable chain-of-custody documentation. Ensures every transaction meets Basel Convention and local e-waste regulations.</p>
+</div>
+<div class="relative z-10 w-24 h-24 rounded-2xl bg-background-dark border border-primary shadow-[0_0_30px_rgba(25,230,107,0.3)] flex items-center justify-center order-1 md:order-2 shrink-0">
+<span class="material-icons text-4xl text-primary">verified_user</span>
+</div>
+<div class="flex-1 order-3">
+<div class="glass-panel p-6 rounded-xl border border-white/5 relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary/5 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+<div class="space-y-3">
+<div class="flex items-center gap-3">
+<span class="material-icons text-primary text-xl">description</span>
+<span class="text-white font-medium">Manifest_A29.pdf</span>
+</div>
+<div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-full"></div>
+</div>
+<div class="flex justify-between text-xs text-slate-400 font-mono">
+<span>VERIFICATION COMPLETE</span>
+<span>100%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Stakeholder Interface -->
+<section class="py-24 bg-background-dark/50 border-t border-white/5">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-16">
+<h2 class="text-3xl font-bold text-white">Ecosystem Integration</h2>
+<p class="text-slate-400 mt-4">Tailored solutions for every node in the circular economy.</p>
+</div>
+<!-- Tabs -->
+<div class="flex flex-wrap justify-center gap-4 mb-12">
+<button class="px-8 py-3 rounded-full bg-primary text-background-dark font-bold hover:bg-opacity-90 transition shadow-[0_0_15px_rgba(25,230,107,0.4)]">
+                    Scrap Dealers
+                </button>
+<button class="px-8 py-3 rounded-full border border-white/10 text-slate-300 font-medium hover:border-primary/50 hover:text-white transition bg-white/5">
+                    Recyclers
+                </button>
+<button class="px-8 py-3 rounded-full border border-white/10 text-slate-300 font-medium hover:border-primary/50 hover:text-white transition bg-white/5">
+                    OEMs
+                </button>
+</div>
+<!-- Active Tab Content -->
+<div class="glass-panel rounded-3xl p-8 md:p-12 relative overflow-hidden">
+<!-- Decorative background blob -->
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="grid md:grid-cols-2 gap-12 items-center relative z-10">
+<div>
+<h3 class="text-2xl md:text-3xl font-bold text-white mb-6">Empower the Informal Sector</h3>
+<ul class="space-y-6">
+<li class="flex items-start gap-4">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-1">
+<span class="material-icons text-primary text-sm">payments</span>
+</div>
+<div>
+<h4 class="text-white font-semibold">Fair Pricing Models</h4>
+<p class="text-slate-400 text-sm mt-1">Instant valuation based on real metal content, not just weight.</p>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-1">
+<span class="material-icons text-primary text-sm">storefront</span>
+</div>
+<div>
+<h4 class="text-white font-semibold">Digital Storefront</h4>
+<p class="text-slate-400 text-sm mt-1">Showcase inventory to global buyers without intermediaries.</p>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-1">
+<span class="material-icons text-primary text-sm">security</span>
+</div>
+<div>
+<h4 class="text-white font-semibold">Safe Payments</h4>
+<p class="text-slate-400 text-sm mt-1">Secure escrow services ensuring you get paid upon delivery.</p>
+</div>
+</li>
+</ul>
+<div class="mt-8">
+<a class="text-primary font-semibold hover:text-emerald-300 inline-flex items-center gap-2" href="#">
+                                Learn about dealer benefits <span class="material-icons text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+<div class="relative h-80 rounded-xl overflow-hidden border border-white/10 group">
+<img alt="Scrap Dealer holding e-waste" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" data-alt="Person holding electronic circuit board in hands with gloved hands" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCR_YHu_Z45jQiIOegQ2ZyEpGAr1lrIRpU7urNJi3p3_jTtPsJVeWNW_iI7gXMYPK5Q9g3bcgaCsXIdcvcZ7AnHziTHDcmK03RJ3LY9A6xkQqcyaAb-UldQ2WPLMM94SZ0cFU7wq7Ci4mvW-HgauHgZ0qFZPtARS7cNSDr89bdMYN0-DWrOQmU13SB4v-xaP7tIyCzkvZFfQQRVeZkmKWILS7fQ5U_srqgKG4Tv2vpraxCSgzqUNs9eS4YO583dMZtEU7EgIi7I_DYm"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent"></div>
+<div class="absolute bottom-6 left-6 right-6">
+<div class="bg-black/60 backdrop-blur-md p-4 rounded-lg border border-primary/30">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-mono text-slate-300">RECENT TRANSACTION</span>
+<span class="text-xs font-bold text-primary">COMPLETED</span>
+</div>
+<div class="text-white font-bold text-lg">Batch #3928: Motherboards</div>
+<div class="text-slate-300 text-sm mt-1">+12% Value vs Local Market</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-black py-16 border-t border-white/10">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+<div class="col-span-2 md:col-span-1">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-icons text-primary">memory</span>
+<span class="text-xl font-bold text-white">UrbanMine<span class="text-primary">AI</span></span>
+</div>
+<p class="text-slate-400 text-sm mb-6">Formalizing the future of circular critical minerals through Agentic AI.</p>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-background-dark transition-colors" href="#">
+<span class="font-bold text-sm">Li</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-background-dark transition-colors" href="#">
+<span class="font-bold text-sm">X</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-background-dark transition-colors" href="#">
+<span class="font-bold text-sm">Ig</span>
+</a>
+</div>
+</div>
+<div>
+<h4 class="text-white font-bold mb-6">Platform</h4>
+<ul class="space-y-4 text-sm text-slate-400">
+<li><a class="hover:text-primary transition-colors" href="#">The Sorter</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Marketplace</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Compliance Cloud</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">API Access</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold mb-6">Fellowships</h4>
+<ul class="space-y-4 text-sm text-slate-400">
+<li><a class="hover:text-primary transition-colors" href="#">Sustainability Grants</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Academic Research</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Hardware Accelerator</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Global Impact Fund</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold mb-6">Contact</h4>
+<ul class="space-y-4 text-sm text-slate-400">
+<li class="flex items-center gap-2">
+<span class="material-icons text-primary text-sm">email</span>
+                            hello@urbanmine.ai
+                        </li>
+<li class="flex items-center gap-2">
+<span class="material-icons text-primary text-sm">place</span>
+                            Singapore | Nairobi | London
+                        </li>
+</ul>
+</div>
+</div>
+<div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="text-slate-500 text-sm">
+                    © 2023 UrbanMineAI Inc. All rights reserved.
+                </div>
+<div class="flex gap-6 text-sm text-slate-500">
+<a class="hover:text-white transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-white transition-colors" href="#">Terms of Service</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

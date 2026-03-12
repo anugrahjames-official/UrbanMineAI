@@ -241,7 +241,7 @@ function InventoryItemCard({
         </div>
         <div className="flex items-center justify-between pt-3 border-t border-white/5">
           <div>
-            <p className="text-[8px] text-gray-500 uppercase tracking-widest">Est. Value</p>
+            <p className="text-[8px] text-gray-500 uppercase tracking-widest">Est. Value / kg</p>
             <p className="text-lg font-bold text-primary">{value}</p>
           </div>
           <Button variant="primary" size="sm" className="h-8 w-8 p-0 rounded-lg">

@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/anugr/Serious_Projects/UrbanMineAI/src/app/marketplace/layout.tsx"],"sourcesContent":["import { icons } from 'lucide-react';\r\nimport { Metadata } from 'next';\r\n\r\nexport const metadata: Metadata = {\r\n    title: 'UrbanMineAI | Marketplace',\r\n    description: 'Global E-Waste Marketplace',\r\n};\r\n\r\nexport default function MarketplaceLayout({\r\n    children,\r\n}: {\r\n    children: React.ReactNode;\r\n}) {\r\n    return (\r\n        <div className=\"min-h-screen bg-[#112117] text-white selection:bg-[#19e66b] selection:text-[#112117]\">\r\n            {children}\r\n        </div>\r\n    );\r\n}\r\n"],"names":[],"mappings":";;;;;;;;AAGO,MAAM,WAAqB;IAC9B,OAAO;IACP,aAAa;AACjB;AAEe,SAAS,kBAAkB,EACtC,QAAQ,EAGX;IACG,qBACI,8OAAC;QAAI,WAAU;kBACV;;;;;;AAGb"}}]
+}

@@ -1,0 +1,155 @@
+module.exports = [
+"[project]/src/app/actions/oem.ts [app-rsc] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+/* __next_internal_action_entry_do_not_use__ [{"0044c799c4be2a67903b235e43e20b7f7013d277d3":"getOEMComplianceStats","00502c13a683362fc6971748bde857cfb445c24b24":"getComplianceLogs"},"",""] */ __turbopack_context__.s([
+    "getComplianceLogs",
+    ()=>getComplianceLogs,
+    "getOEMComplianceStats",
+    ()=>getOEMComplianceStats
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/build/webpack/loaders/next-flight-loader/server-reference.js [app-rsc] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/supabase/server.ts [app-rsc] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$action$2d$validate$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/build/webpack/loaders/next-flight-loader/action-validate.js [app-rsc] (ecmascript)");
+;
+;
+async function getOEMComplianceStats() {
+    const supabase = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["createClient"])();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+    // Verify user is an OEM
+    const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
+    if (profile?.role !== 'oem') {
+        return null;
+    }
+    // Pending Verification: negotiated or agreed deals that are not yet paid/completed?
+    // Or strictly "Docs" pending verification? The dashboard says "Docs".
+    // But we don't have a docs verif flow yet. Let's use Transactions in 'agreed' state as "Pending Verification" implies pending finalization.
+    const { count: pendingVerification } = await supabase.from('transactions').select('*', {
+        count: 'exact',
+        head: true
+    }).eq('buyer_id', user.id).in('status', [
+        'negotiating',
+        'agreed'
+    ]);
+    // Credits Acquired: Sum of quantity from completed transactions
+    // We need to parse material_breakdown or use a simplified quantity field if added.
+    // For now, let's assume `price_total` maps roughly to quantity or just count deals as a proxy if we can't parse JSON easily in SQL here.
+    // Better: Fetch completed transactions and sum up client-side.
+    const { data: completedDeals } = await supabase.from('transactions').select('material_breakdown, price_total').eq('buyer_id', user.id).in('status', [
+        'paid',
+        'completed'
+    ]);
+    let creditsAcquired = 0;
+    completedDeals?.forEach((deal)=>{
+        // Try to parse breakdown if it exists, else use a fallback (e.g. 1 unit per deal? or price/10?)
+        // Let's just use price as a proxy for "volume" if breakdown is missing for MVP.
+        // Or if we have `items` linked, we could sum their weight.
+        // Simplified: just return 0 if no explicit data, or count deals.
+        // Let's try to sum 'quantity' if we had it.
+        // Actually, let's just count the number of completed deals * 100 as "credits" for demo purposes 
+        // until we have strict weight tracking in transactions.
+        creditsAcquired += 100; // Mock multiplier for demo 'real' data
+    });
+    // Target is hardcoded for now
+    const target = 10000;
+    const compliancePercentage = Math.min(Math.round(creditsAcquired / target * 100), 100);
+    // Savings: Mock calculation based on credits
+    const savings = creditsAcquired * 0.15 // $0.15 per unit?
+    ;
+    return {
+        compliancePercentage,
+        pendingVerification: pendingVerification || 0,
+        creditsAcquired,
+        savings
+    };
+}
+async function getComplianceLogs() {
+    const supabase = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["createClient"])();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+    // Verify user is an OEM
+    const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();
+    if (profile?.role !== 'oem') {
+        return [];
+    }
+    // Fetch transactions as logs
+    const { data: logs } = await supabase.from('transactions').select('*, supplier:users!supplier_id(email)').eq('buyer_id', user.id).order('created_at', {
+        ascending: false
+    }).limit(5);
+    return logs?.map((log)=>({
+            id: log.id,
+            created_at: log.created_at,
+            status: [
+                'paid',
+                'completed'
+            ].includes(log.status) ? 'verified' : 'pending',
+            supplier: log.supplier,
+            metadata: {
+                category: 'E-Waste Batch',
+                quantity: 100 // Placeholder
+            }
+        })) || [];
+}
+;
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$action$2d$validate$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["ensureServerEntryExports"])([
+    getOEMComplianceStats,
+    getComplianceLogs
+]);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getOEMComplianceStats, "0044c799c4be2a67903b235e43e20b7f7013d277d3", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getComplianceLogs, "00502c13a683362fc6971748bde857cfb445c24b24", null);
+}),
+"[project]/.next-internal/server/app/(oem)/oem/compliance/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/user.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions/trust.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/app/actions/oem.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript) <locals>", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$user$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/actions/user.ts [app-rsc] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$trust$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/actions/trust.ts [app-rsc] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$oem$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/actions/oem.ts [app-rsc] (ecmascript)");
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+}),
+"[project]/.next-internal/server/app/(oem)/oem/compliance/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/user.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/app/actions/trust.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/app/actions/oem.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "0044c799c4be2a67903b235e43e20b7f7013d277d3",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$oem$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getOEMComplianceStats"],
+    "00502c13a683362fc6971748bde857cfb445c24b24",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$oem$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getComplianceLogs"],
+    "00804f3bca03d4e8b2546992547559fe9fe735e3ce",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$user$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getUserProfile"],
+    "00be0b054483bc70febc46b4ee078e0538b259606c",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$user$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["signOut"],
+    "4024173ba24ddc1da9856e6a3918604e42937b6371",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$trust$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["checkTrustDecay"],
+    "4034f9f716c4434f93c97c30385544f5829bb0391f",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$trust$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getTrustHistory"],
+    "4061013bf137d7bf53d768bfff216f02339193b78d",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$user$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["updateUserProfile"],
+    "406dcbb35001a96f1c253baa6f62c36d41e56d01e7",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$user$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["updatePreferences"],
+    "40de652dd4d1a02daaa82af749e19dd6e1e864d475",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$user$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["updateUserFullProfile"],
+    "60dbdb81d8868ead85805d51037ac756ea94662e60",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$trust$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["submitAppeal"],
+    "7c60c18975286d50cc4f95a5bc8b61279accfa23a0",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$trust$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["updateTrustScore"]
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f28$oem$292f$oem$2f$compliance$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$src$2f$app$2f$actions$2f$user$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29222c$__ACTIONS_MODULE1__$3d3e$__$225b$project$5d2f$src$2f$app$2f$actions$2f$trust$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29222c$__ACTIONS_MODULE2__$3d3e$__$225b$project$5d2f$src$2f$app$2f$actions$2f$oem$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i('[project]/.next-internal/server/app/(oem)/oem/compliance/page/actions.js { ACTIONS_MODULE0 => "[project]/src/app/actions/user.ts [app-rsc] (ecmascript)", ACTIONS_MODULE1 => "[project]/src/app/actions/trust.ts [app-rsc] (ecmascript)", ACTIONS_MODULE2 => "[project]/src/app/actions/oem.ts [app-rsc] (ecmascript)" } [app-rsc] (server actions loader, ecmascript) <locals>');
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$user$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/actions/user.ts [app-rsc] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$trust$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/actions/trust.ts [app-rsc] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$oem$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/actions/oem.ts [app-rsc] (ecmascript)");
+}),
+];
+
+//# sourceMappingURL=_959c1990._.js.map

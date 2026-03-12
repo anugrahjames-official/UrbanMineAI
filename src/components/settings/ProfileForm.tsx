@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { User, Copy, MapPin } from '@/components/icons'
+import { User, Copy, MapPin, CheckCircle } from '@/components/icons'
 import { type UserProfile, updateUserFullProfile } from '@/app/actions/user'
 import { toast } from 'sonner'
 import { SignOutButton } from '@/components/auth/SignOutButton'
@@ -87,7 +87,12 @@ export function ProfileForm({ user }: ProfileFormProps) {
                     <div className="p-2 rounded-lg bg-primary/10">
                         <User size={18} className="text-primary" />
                     </div>
-                    <h3 className="text-lg font-semibold text-white">Personal Information</h3>
+                    <div className="flex items-center gap-2">
+                        <h3 className="text-lg font-semibold text-white">Personal Information</h3>
+                        {user.isVerified && (
+                            <CheckCircle size={18} className="text-primary" fill="currentColor" />
+                        )}
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

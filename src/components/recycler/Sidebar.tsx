@@ -1,6 +1,8 @@
 "use client";
 
-import { Recycle, LayoutDashboard, Gavel, Box, LocalShipping, BarChart3, Settings, HelpCircle, ShieldCheck } from "@/components/icons";
+import { Recycle, LayoutDashboard, Gavel, Box, LocalShipping, BarChart3, Settings, HelpCircle, CheckCircle } from "@/components/icons";
+import { UserAvatar } from "@/components/ui/UserAvatar";
+import { UserProfile } from "@/app/actions/user";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -13,7 +15,7 @@ const recyclerNavItems = [
     { name: "Market Trends", href: "/recycler/trends", icon: BarChart3 },
 ];
 
-export function RecyclerSidebar({ profile }: { profile: any }) {
+export function RecyclerSidebar({ profile }: { profile: UserProfile }) {
     const pathname = usePathname();
 
     return (
@@ -76,17 +78,13 @@ export function RecyclerSidebar({ profile }: { profile: any }) {
             <div className="p-4 border-t border-white/5">
                 <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer group">
                     <div className="relative">
-                        <img
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtFkazF0zZ_1E_IS-T0m1Bs4yM58bDTxnrEPhjtKFMbFz5yjHcaczQzwzvSveqPSxAdvkDC_CT1BMZVhyFD0b0YpmYVAyrweTZMDckxiENl8bg5u7JlmT4NEoXVCRsVdFlnY5Eb5G9a2SkRneI72XFFyFBwl28rvxSl3BfbtUSXN-DngHjfEbjZN5_HFNyGieQhdy0ZIfkHsbRw6cOFMlhB29pYsT3QCZ34Zwxy47svz1Skq5VzdCGxyRnFvZfb8QvGL7jTOwxc8M6"
-                            className="w-10 h-10 rounded-full border-2 border-primary/50 object-cover"
-                            alt="Profile"
-                        />
+                        <UserAvatar user={profile} className="w-10 h-10" />
                         <div className="absolute bottom-0 right-0 w-3 h-3 bg-primary border-2 border-surface-darker rounded-full" />
                     </div>
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1">
                             <p className="text-sm font-semibold truncate text-white">{profile.name}</p>
-                            {profile.isVerified && <ShieldCheck size={14} className="text-primary" fill="currentColor" />}
+                            {profile.isVerified && <CheckCircle size={14} className="text-primary" fill="currentColor" />}
                         </div>
                         <p className="text-[10px] text-primary">Trust Score: {profile.trust_score}</p>
                     </div>

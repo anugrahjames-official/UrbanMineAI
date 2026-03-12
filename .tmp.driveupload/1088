@@ -1,0 +1,3 @@
+{
+  "/(dealer)/dealer/chat/[transactionId]/page": "app/(dealer)/dealer/chat/[transactionId]/page.js"
+}

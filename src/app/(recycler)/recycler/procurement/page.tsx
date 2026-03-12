@@ -1,4 +1,5 @@
 import { getRecyclerProcurement } from "@/app/actions/recycler";
+import { getUserProfile } from "@/app/actions/user";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Search, Filter } from "lucide-react";
@@ -14,7 +15,9 @@ interface Bounty {
 }
 
 export default async function RecyclerProcurementPage() {
-  const bounties = await getRecyclerProcurement();
+  const bountiesPromise = getRecyclerProcurement();
+  const userProfilePromise = getUserProfile();
+  const [bounties, userProfile] = await Promise.all([bountiesPromise, userProfilePromise]);
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
@@ -23,7 +26,7 @@ export default async function RecyclerProcurementPage() {
           <h1 className="text-2xl md:text-3xl font-bold text-white">Procurement</h1>
           <p className="text-sm text-gray-400 mt-1">Manage buy orders and open bounties.</p>
         </div>
-        <BountyModal />
+        <BountyModal defaultLocation={userProfile.location || undefined} />
       </header>
 
       <Card className="p-0 border-white/5 overflow-hidden">
@@ -52,13 +55,13 @@ export default async function RecyclerProcurementPage() {
                       {bounty.title || bounty.material || "Untitled Bounty"}
                     </h3>
                     <p className="text-sm text-gray-400">
-                      {bounty.material} • {bounty.quantity_kg} kg • {bounty.min_grade || "Any Grade"}
+                      {bounty.material} • {bounty.quantity} {bounty.unit || 'kg'} • {bounty.min_grade || "Any Grade"}
                     </p>
                   </div>
                   <div className="flex items-center gap-6">
                     <div className="text-right">
                       <p className="font-bold text-primary">
-                        {bounty.price_floor ? `$${bounty.price_floor}/kg` : "Negotiable"}
+                        {bounty.price_floor ? `$${bounty.price_floor}/${bounty.unit || 'kg'}` : "Negotiable"}
                       </p>
                       <span className="text-xs uppercase tracking-widest text-gray-500">{bounty.status}</span>
                     </div>

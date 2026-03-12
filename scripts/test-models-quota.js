@@ -3,7 +3,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 require("dotenv").config({ path: ".env.local" });
 
 const modelsToTest = [
-    "gemini-2.5-flash",
+    "gemini-2.5-flash-lite",
     "gemini-flash-latest",
     "gemini-2.0-flash-lite-001",
     "gemini-1.5-flash-latest", // Just in case

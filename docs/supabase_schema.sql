@@ -78,7 +78,8 @@ create table if not exists public.bounties (
   recycler_id uuid references public.users(id) not null,
   material text not null,
   min_grade text,
-  quantity_kg numeric(10, 2) not null,
+  quantity numeric(10, 2) not null,
+  unit text not null default 'kg',
   price_floor numeric(10, 2),
   status text default 'open' check (status in ('open', 'filled', 'expired')),
   expires_at timestamp with time zone,
@@ -150,4 +151,19 @@ drop policy if exists "Users view own appeals" on public.appeals;
 create policy "Users view own appeals" on public.appeals for select using (auth.uid() = user_id);
 
 drop policy if exists "Users create own appeals" on public.appeals;
-create policy "Users create own appeals" on public.appeals for insert with check (auth.uid() = user_id);
+
+-- Market Prices Cache
+create table if not exists public.market_prices (
+  symbol text primary key,
+  name text not null,
+  price numeric(12, 2) not null,
+  currency text default 'USD',
+  unit text default 'kg',
+  change numeric(5, 2) default 0,
+  last_updated timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Allow public read access (for now, or restric to authenticated)
+alter table public.market_prices enable row level security;
+drop policy if exists "Anyone can read market prices" on public.market_prices;
+create policy "Anyone can read market prices" on public.market_prices for select using (true);

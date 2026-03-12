@@ -7,9 +7,11 @@ import { cn } from "@/lib/utils";
 import { getRecyclerDashboardStats, getMarketplaceItems } from "@/app/actions/recycler";
 import { getLivePrices } from "@/services/pricing";
 import { formatDistanceToNow } from 'date-fns';
+import BidButton from "@/components/recycler/BidButton";
 
 interface MarketplaceItemData {
   id: string;
+  shortId: string;
   title: string;
   location: string;
   weight: string;
@@ -17,6 +19,7 @@ interface MarketplaceItemData {
   created_at: string;
   grade: string;
   image: string;
+  composition: Array<{ name: string; value: string; percentage: number }>;
 }
 
 export default async function RecyclerDashboard() {
@@ -75,7 +78,8 @@ export default async function RecyclerDashboard() {
                 {marketplaceItems.slice(0, 2).map((item) => (
                   <LotCard
                     key={item.id}
-                    id={item.id}
+                    id={item.shortId}
+                    fullId={item.id}
                     title={item.title}
                     desc={`${item.weight} at ${item.location}. Grade: ${item.grade}`}
                     grade={item.grade}
@@ -126,12 +130,13 @@ export default async function RecyclerDashboard() {
                       <MarketRow
                         key={item.id}
                         id={item.id}
+                        shortId={item.shortId}
                         title={item.title}
                         loc={item.location}
                         weight={item.weight}
                         bid={item.value.toString()}
                         time={formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
-                        comp={[]} // Composition parsing logic not yet implemented
+                        comp={item.composition}
                         icon={<Icons.Cable size={18} className="text-gray-400" />} // Default icon
                       />
                     ))
@@ -263,6 +268,7 @@ function SummaryCard({
 
 function LotCard({
   id,
+  fullId,
   title,
   desc,
   grade,
@@ -271,6 +277,7 @@ function LotCard({
   image,
 }: {
   id: string;
+  fullId: string;
   title: string;
   desc: string;
   grade: string;
@@ -307,15 +314,27 @@ function LotCard({
             <p className="text-sm font-mono text-warning font-bold">{time}</p>
           </div>
         </div>
+        <div className="mt-4">
+          <BidButton itemId={fullId} />
+        </div>
       </div>
     </GlassCard>
   );
 }
 
-type CompSlice = { w: number; color: string; label: string };
+type CompItem = { name: string; value: string; percentage: number };
+
+const elementColors: Record<string, string> = {
+  Au: 'bg-yellow-400', Gold: 'bg-yellow-400',
+  Ag: 'bg-gray-300', Silver: 'bg-gray-300',
+  Cu: 'bg-orange-500', Copper: 'bg-orange-500',
+  Pd: 'bg-blue-400', Palladium: 'bg-blue-400',
+  Al: 'bg-gray-400', Aluminum: 'bg-gray-400',
+};
 
 function MarketRow({
   id,
+  shortId,
   title,
   loc,
   weight,
@@ -325,12 +344,13 @@ function MarketRow({
   icon,
 }: {
   id: string;
+  shortId: string;
   title: string;
   loc: string;
   weight: string;
   bid: string;
   time: string;
-  comp: CompSlice[];
+  comp: CompItem[];
   icon: React.ReactNode;
 }) {
   return (
@@ -341,21 +361,25 @@ function MarketRow({
             {icon}
           </div>
           <div>
-            <p className="font-bold text-white">{id} - {title}</p>
+            <p className="font-bold text-white">{shortId} - {title}</p>
             <p className="text-[10px] text-gray-500 flex items-center gap-1"><Icons.MapPin size={10} /> {loc}</p>
           </div>
         </div>
       </td>
       <td className="px-6 py-4">
         <div className="w-32 h-1.5 bg-white/5 rounded-full overflow-hidden flex">
-          {comp.map((c: CompSlice, i: number) => (
-            <div key={i} className={c.color} style={{ width: `${c.w}%` }} />
+          {comp.map((c, i) => (
+            <div
+              key={i}
+              className={elementColors[c.name] || 'bg-gray-600'}
+              style={{ width: `${c.percentage}%` }}
+            />
           ))}
         </div>
-        <div className="text-[10px] text-gray-500 mt-2 flex gap-3 font-bold">
-          {comp.map((c: CompSlice, i: number) => (
+        <div className="text-[10px] text-gray-500 mt-2 flex gap-3 font-bold flex-wrap w-32">
+          {comp.slice(0, 3).map((c, i) => (
             <span key={i} className="flex items-center gap-1">
-              <div className={cn("w-1.5 h-1.5 rounded-full", c.color)} /> {c.label}
+              <div className={cn("w-1.5 h-1.5 rounded-full", elementColors[c.name] || 'bg-gray-600')} /> {c.name}
             </span>
           ))}
         </div>
@@ -373,7 +397,7 @@ function MarketRow({
         </span>
       </td>
       <td className="px-6 py-4 text-right">
-        <Button size="sm" className="h-8 text-[10px] font-bold shadow-glow-primary px-4">Bid Now</Button>
+        <BidButton itemId={id} />
       </td>
     </tr>
   );

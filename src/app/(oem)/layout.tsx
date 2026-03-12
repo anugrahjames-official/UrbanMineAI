@@ -2,12 +2,16 @@
 import { getUserProfile } from "@/app/actions/user";
 import { DashboardHeader } from "@/components/layout/DashboardHeader";
 import { OEMSidebar } from "@/components/oem/Sidebar";
+import { requireRole } from "@/lib/auth";
 
 export default async function OEMLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Verify user has oem role, redirect if not
+  await requireRole(['oem']);
+
   const profile = await getUserProfile();
 
   return (

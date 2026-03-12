@@ -25,6 +25,7 @@ import { getDealerProfile, getDealerAnalytics } from "@/app/actions/dealer";
 import { getUserProfile } from "@/app/actions/user";
 import Link from "next/link";
 import { ProfileForm } from "@/components/settings/ProfileForm";
+import { AvatarUpload } from "@/components/settings/AvatarUpload";
 
 export default async function DealerSettingsPage() {
   const profile = await getDealerProfile();
@@ -45,24 +46,10 @@ export default async function DealerSettingsPage() {
             <div className="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-primary/10 rounded-full blur-3xl opacity-50" />
 
             <div className="flex flex-col items-center text-center space-y-4">
-              <div className="relative group">
-                <div className="w-24 h-24 rounded-full p-1 border-2 border-primary/50 relative">
-                  <div className="w-full h-full rounded-full overflow-hidden bg-surface-dark flex items-center justify-center">
-                    {profile.name ? (
-                      <img
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name)}&background=19e66b&color=112117&bold=true&size=128`}
-                        alt={profile.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <User className="text-primary/50" size={40} />
-                    )}
-                  </div>
-                  <button className="absolute bottom-0 right-0 bg-background-dark text-primary p-1.5 rounded-full shadow-lg border border-primary/20 hover:bg-primary hover:text-background-dark transition-all transform hover:scale-110">
-                    <SettingsIcon size={12} />
-                  </button>
-                </div>
-              </div>
+              <AvatarUpload
+                user={userFullProfile}
+                dealerName={profile.name}
+              />
 
               <div className="space-y-1">
                 <div className="flex items-center gap-2">

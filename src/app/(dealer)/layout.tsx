@@ -1,12 +1,16 @@
 import { getUserProfile } from "@/app/actions/user";
 import { DealerSidebar, MobileNav } from "@/components/dealer/Sidebar";
 import { DashboardHeader } from "@/components/layout/DashboardHeader";
+import { requireRole } from "@/lib/auth";
 
 export default async function DealerLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Verify user has dealer role, redirect if not
+  await requireRole(['dealer']);
+
   // Fetch user profile on the server
   const profile = await getUserProfile();
 

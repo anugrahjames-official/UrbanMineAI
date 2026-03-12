@@ -1,0 +1,195 @@
+module.exports = [
+"[externals]/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js [external] (next/dist/compiled/next-server/app-route-turbo.runtime.dev.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/compiled/next-server/app-route-turbo.runtime.dev.js", () => require("next/dist/compiled/next-server/app-route-turbo.runtime.dev.js"));
+
+module.exports = mod;
+}),
+"[externals]/next/dist/compiled/next-server/app-page-turbo.runtime.dev.js [external] (next/dist/compiled/next-server/app-page-turbo.runtime.dev.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/compiled/next-server/app-page-turbo.runtime.dev.js", () => require("next/dist/compiled/next-server/app-page-turbo.runtime.dev.js"));
+
+module.exports = mod;
+}),
+"[externals]/next/dist/server/app-render/work-unit-async-storage.external.js [external] (next/dist/server/app-render/work-unit-async-storage.external.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/server/app-render/work-unit-async-storage.external.js", () => require("next/dist/server/app-render/work-unit-async-storage.external.js"));
+
+module.exports = mod;
+}),
+"[externals]/next/dist/server/app-render/work-async-storage.external.js [external] (next/dist/server/app-render/work-async-storage.external.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/server/app-render/work-async-storage.external.js", () => require("next/dist/server/app-render/work-async-storage.external.js"));
+
+module.exports = mod;
+}),
+"[externals]/next/dist/shared/lib/no-fallback-error.external.js [external] (next/dist/shared/lib/no-fallback-error.external.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/shared/lib/no-fallback-error.external.js", () => require("next/dist/shared/lib/no-fallback-error.external.js"));
+
+module.exports = mod;
+}),
+"[externals]/next/dist/server/app-render/after-task-async-storage.external.js [external] (next/dist/server/app-render/after-task-async-storage.external.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/server/app-render/after-task-async-storage.external.js", () => require("next/dist/server/app-render/after-task-async-storage.external.js"));
+
+module.exports = mod;
+}),
+"[project]/src/lib/supabase/server.ts [app-route] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "createClient",
+    ()=>createClient
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$ssr$2f$dist$2f$module$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i("[project]/node_modules/@supabase/ssr/dist/module/index.js [app-route] (ecmascript) <locals>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$ssr$2f$dist$2f$module$2f$createServerClient$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/@supabase/ssr/dist/module/createServerClient.js [app-route] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$headers$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/headers.js [app-route] (ecmascript)");
+;
+;
+async function createClient() {
+    const cookieStore = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$headers$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["cookies"])();
+    return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$ssr$2f$dist$2f$module$2f$createServerClient$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createServerClient"])(("TURBOPACK compile-time value", "https://uappfhfaqptdhhcifyro.supabase.co"), ("TURBOPACK compile-time value", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcHBmaGZhcXB0ZGhoY2lmeXJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0ODg5MzgsImV4cCI6MjA4NjA2NDkzOH0.crkjUsdQ3YW6amYJjGWaIGB9ZwxMyOyME3PQLxdR5Pw"), {
+        cookies: {
+            getAll () {
+                return cookieStore.getAll();
+            },
+            setAll (cookiesToSet) {
+                try {
+                    cookiesToSet.forEach(({ name, value, options })=>cookieStore.set(name, value, options));
+                } catch  {
+                // The `setAll` method was called from a Server Component.
+                // This can be ignored if you have middleware refreshing
+                // user sessions.
+                }
+            }
+        }
+    });
+}
+}),
+"[project]/src/services/metals.ts [app-route] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "fetchAndCacheMetalPrices",
+    ()=>fetchAndCacheMetalPrices
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/supabase/server.ts [app-route] (ecmascript)");
+;
+const API_KEY = process.env.METALS_DEV_API_KEY;
+const BASE_URL = 'https://api.metals.dev/v1/latest';
+const CURRENCIES = 'USD'; // Default currency
+// Common metals mapping: API Symbol -> Display Name
+const METAL_MAP = {
+    'gold': 'Gold',
+    'silver': 'Silver',
+    'platinum': 'Platinum',
+    'palladium': 'Palladium',
+    'copper': 'Copper',
+    'aluminum': 'Aluminum',
+    'lead': 'Lead',
+    'nickel': 'Nickel',
+    'zinc': 'Zinc',
+    'tin': 'Tin',
+    'lithium': 'Lithium',
+    'cobalt': 'Cobalt'
+};
+async function fetchAndCacheMetalPrices() {
+    if (!API_KEY) {
+        console.warn('METALS_DEV_API_KEY is missing. Skipping live price fetch.');
+        return;
+    }
+    try {
+        const response = await fetch(`${BASE_URL}?api_key=${API_KEY}&currency=${CURRENCIES}&unit=kg`, {
+            next: {
+                revalidate: 3600
+            } // Cache for 1 hour
+        });
+        if (!response.ok) {
+            throw new Error(`Metals API Error: ${response.statusText}`);
+        }
+        const data = await response.json();
+        const supabase = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createClient"])();
+        if (data.status === 'success') {
+            const updates = Object.entries(data.metals).map(([key, pricePerKg])=>{
+                // Determine standard unit based on metal type
+                let standardUnit = 'kg';
+                let price = pricePerKg;
+                // Precious metals usually traded in troy ounces
+                const isPrecious = /gold|silver|platinum|palladium|rhodium|iridium|ruthenium|osmium/i.test(key);
+                if (isPrecious) {
+                    standardUnit = 'toz';
+                    // Convert kg price to toz price
+                    // 1 kg = 32.1507465686 toz
+                    // Price/toz = Price/kg / 32.1507465686
+                    price = pricePerKg / 32.1507465686;
+                }
+                // Format Name: Use map or capitalize key
+                const name = METAL_MAP[key] || key.split('_').map((w)=>w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                // Simple mock change calculation
+                const change = (Math.random() * 5 - 2.5).toFixed(2);
+                return {
+                    symbol: key.toUpperCase(),
+                    name,
+                    price: Number(price.toFixed(2)),
+                    currency: data.currency,
+                    unit: standardUnit,
+                    change: Number(change),
+                    last_updated: new Date().toISOString()
+                };
+            });
+            const { error } = await supabase.rpc('cache_market_prices', {
+                updates
+            });
+            if (error) console.error('Error caching metal prices:', error);
+        }
+    } catch (error) {
+        console.error('Failed to fetch metal prices:', error);
+    }
+}
+}),
+"[project]/src/app/api/debug/metals/route.ts [app-route] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "GET",
+    ()=>GET
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/server.js [app-route] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$services$2f$metals$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/services/metals.ts [app-route] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/supabase/server.ts [app-route] (ecmascript)");
+;
+;
+;
+async function GET() {
+    try {
+        const supabase = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$supabase$2f$server$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["createClient"])();
+        // Check session/auth if needed, or keep it open for quick debugging
+        const { data: { user } } = await supabase.auth.getUser();
+        console.log('Starting manual metal price fetch...');
+        await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$services$2f$metals$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["fetchAndCacheMetalPrices"])();
+        // Verify cache
+        const { data: cached } = await supabase.from('market_prices').select('*').order('last_updated', {
+            ascending: false
+        });
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            status: 'success',
+            message: 'Metal prices fetched and cached',
+            user: user?.email || 'unauthenticated',
+            cachedCount: cached?.length || 0,
+            latest: cached?.[0] || null
+        });
+    } catch (error) {
+        console.error('Debug Route Error:', error);
+        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
+            status: 'error',
+            message: error.message
+        }, {
+            status: 500
+        });
+    }
+}
+}),
+];
+
+//# sourceMappingURL=%5Broot-of-the-server%5D__85db2841._.js.map

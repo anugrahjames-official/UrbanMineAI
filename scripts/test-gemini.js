@@ -10,12 +10,12 @@ async function testGemini() {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash-lite" });
 
     const prompt = "Explain what electronic waste is in 1 sentence.";
 
     try {
-        console.log("Testing gemini-2.5-flash...");
+        console.log("Testing gemini-2.5-flash-lite...");
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = response.text();

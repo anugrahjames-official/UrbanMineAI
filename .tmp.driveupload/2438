@@ -1,0 +1,27 @@
+module.exports = [
+"[project]/.next-internal/server/app/(dealer)/dealer/scan/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/dealer-dashboard.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript) <locals>", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$dealer$2d$dashboard$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/actions/dealer-dashboard.ts [app-rsc] (ecmascript)");
+;
+;
+;
+}),
+"[project]/.next-internal/server/app/(dealer)/dealer/scan/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/dealer-dashboard.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "002cab00ccb2597b81b89b8e5334bd103a1f4e17e4",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$dealer$2d$dashboard$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getRecentInventory"],
+    "00400e3606af01c25168c780dbefa190d93a9f7b1f",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$dealer$2d$dashboard$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getDashboardStats"],
+    "00ade7ed4b8ca8457978641111c98a595de8a1d878",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$dealer$2d$dashboard$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getDealerProfile"]
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f28$dealer$292f$dealer$2f$scan$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$src$2f$app$2f$actions$2f$dealer$2d$dashboard$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i('[project]/.next-internal/server/app/(dealer)/dealer/scan/page/actions.js { ACTIONS_MODULE0 => "[project]/src/app/actions/dealer-dashboard.ts [app-rsc] (ecmascript)" } [app-rsc] (server actions loader, ecmascript) <locals>');
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$actions$2f$dealer$2d$dashboard$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/actions/dealer-dashboard.ts [app-rsc] (ecmascript)");
+}),
+];
+
+//# sourceMappingURL=_next-internal_server_app_%28dealer%29_dealer_scan_page_actions_f9506e8b.js.map

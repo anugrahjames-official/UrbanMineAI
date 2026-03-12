@@ -1,6 +1,8 @@
 "use client";
 
-import { Recycle, ShieldCheck, FileText, History, Settings, HelpCircle } from "@/components/icons";
+import { Recycle, ShieldCheck, FileText, History, Settings, HelpCircle, CheckCircle } from "@/components/icons";
+import { UserAvatar } from "@/components/ui/UserAvatar";
+import { UserProfile } from "@/app/actions/user";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -11,7 +13,7 @@ const oemNavItems = [
     { name: "Audit Logs", href: "/oem/audit", icon: History },
 ];
 
-export function OEMSidebar({ profile }: { profile: any }) {
+export function OEMSidebar({ profile }: { profile: UserProfile }) {
     const pathname = usePathname();
 
     return (
@@ -83,15 +85,13 @@ export function OEMSidebar({ profile }: { profile: any }) {
             <div className="p-4 border-t border-white/5">
                 <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 cursor-pointer group">
                     <div className="relative">
-                        <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary border border-primary/50">
-                            {profile.first_name?.[0] || profile.email[0].toUpperCase()}
-                        </div>
+                        <UserAvatar user={profile} className="w-10 h-10" />
                         <div className="absolute bottom-0 right-0 w-3 h-3 bg-primary border-2 border-surface-dark rounded-full" />
                     </div>
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1">
                             <p className="text-sm font-semibold truncate text-white">{profile.name}</p>
-                            {profile.isVerified && <ShieldCheck size={14} className="text-primary" fill="currentColor" />}
+                            {profile.isVerified && <CheckCircle size={14} className="text-primary" fill="currentColor" />}
                         </div>
                         <p className="text-[10px] text-primary">Trust Score: {profile.trust_score}</p>
                     </div>

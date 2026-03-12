@@ -1,16 +1,17 @@
 "use client";
 
 import { analyzeImage, saveItem } from "@/app/actions/scan-item"; // Import server actions
+import { getUserProfile } from "@/app/actions/user"; // Import user profile action
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Camera, Upload, Settings, RefreshCcw, Zap, Memory, Science, Info, Trash2 } from "@/components/icons";
+import { Camera, Upload, Settings, RefreshCcw, Zap, Memory, Science, Info, Trash2, MapPin, FileText, Box } from "@/components/icons";
 import { useRef, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 // Types
-type ReeItem = { name: string; value: string; percentage: number; color?: string };
+type ReeItem = { name: string; value: string; percentage: number; color?: string; estimatedValue?: string };
 type GradingResult = {
   id: string;
   classification: string;
@@ -18,8 +19,53 @@ type GradingResult = {
   condition: string;
   weight?: string;
   estimatedValue: string;
+  totalValue?: string; // New field
   reeContent: ReeItem[];
   image_url: string;
+  additional_images?: string[];
+  // New fields
+  title?: string;
+  description?: string;
+  location?: string;
+  duration?: string;
+  packaging?: string;
+  logistics?: string;
+  confidence?: number;
+  category?: string; // New field
+};
+
+// Helper for dynamic metal colors
+const getColorForMetal = (name: string) => {
+  const normalized = name.toLowerCase();
+  if (normalized.includes("gold") || normalized.includes("au")) return "bg-yellow-500";
+  if (normalized.includes("palladium") || normalized.includes("pd")) return "bg-gray-400";
+  if (normalized.includes("copper") || normalized.includes("cu")) return "bg-orange-600";
+  if (normalized.includes("silver") || normalized.includes("ag")) return "bg-gray-300";
+  if (normalized.includes("platinum") || normalized.includes("pt")) return "bg-slate-300";
+  // Fallbacks for others with distinct colors
+  const colors = [
+    "bg-blue-500", "bg-purple-500", "bg-indigo-500", "bg-teal-500",
+    "bg-rose-500", "bg-cyan-500", "bg-emerald-500", "bg-fuchsia-500"
+  ];
+  // Simple hash to consistently pick a color from the list
+  let hash = 0;
+  for (let i = 0; i < normalized.length; i++) {
+    hash = normalized.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return colors[Math.abs(hash) % colors.length];
+};
+
+// Logarithmic scale for better visibility of trace elements
+const getVisualProgress = (percentage: number) => {
+  if (!percentage || percentage <= 0) return 0;
+  // Maps 0.0001% .. 100% to 2% .. 100%
+  // Using a slightly adjusted curve to make small values visible but distinct
+  const minLog = -4; // log10(0.0001)
+  const maxLog = 2;  // log10(100)
+  const val = Math.max(percentage, 0.0001);
+  const logVal = Math.log10(val);
+  const normalized = (logVal - minLog) / (maxLog - minLog);
+  return Math.max(2, Math.min(100, 2 + normalized * 98));
 };
 
 export default function ScanPage() {
@@ -38,6 +84,18 @@ export default function ScanPage() {
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  // Edit State
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
+  const [userDefaultLocation, setUserDefaultLocation] = useState("");
+  const [duration, setDuration] = useState("24h");
+  const [packaging, setPackaging] = useState("Box");
+  const [logistics, setLogistics] = useState("Shipping");
+
+
   // Computed
   const hasImages = currentSessionImages.length > 0;
   const batchCount = batchItems.length;
@@ -45,6 +103,37 @@ export default function ScanPage() {
 
   // Ref for scrolling to new items
   const thumbnailsRef = useRef<HTMLDivElement>(null);
+
+  // Fetch User Profile on Mount
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const profile = await getUserProfile();
+        if (profile.location) {
+          setUserDefaultLocation(profile.location);
+          setLocation(profile.location); // Default sets to user location
+        }
+      } catch (e) {
+        console.error("Failed to fetch user profile", e);
+      }
+    }
+    fetchProfile();
+  }, []);
+
+  // Set default description/title on analysis result
+  useEffect(() => {
+    if (analysisResult) {
+      setEditedName(analysisResult.classification);
+      setCategory(analysisResult.category || ""); // Set category from AI
+      setDescription(analysisResult.description || ""); // Set description from AI or reset
+      // Keep location as is (either user default or previously entered if we want persistence across batch? 
+      // Let's reset to default for new item unless user wants otherwise. 
+      // Ideally, batch items might be from same location, so maybe keep current 'location' state?
+      // For now, let's keep the 'location' state as is, so if they change it, it stays for next item in batch.
+      if (!location && userDefaultLocation) setLocation(userDefaultLocation);
+    }
+  }, [analysisResult, userDefaultLocation]);
+
 
   // Auto-switch to new image on capture/upload
   useEffect(() => {
@@ -116,8 +205,10 @@ export default function ScanPage() {
       setError(null);
     } catch (err) {
       console.error("Camera error:", err);
+      // Don't show error immediately on load if permissions denied, just fallback silently or show UI hint?
+      // For now, let's just set error state but maybe not popup alert
       setError("Camera access denied or unavailable. Using file upload instead.");
-      cameraInputRef.current?.click();
+      // cameraInputRef.current?.click(); // Auto-triggering file input might be annoying on load
     }
   }
 
@@ -193,6 +284,10 @@ export default function ScanPage() {
   async function analyzeCurrentSession() {
     if (currentSessionImages.length === 0) return;
 
+    // stop camera and switch to image view
+    stopCamera();
+    setIsCameraActive(false);
+
     setIsAnalyzing(true);
     setError(null);
     try {
@@ -207,6 +302,7 @@ export default function ScanPage() {
         id: crypto.randomUUID().slice(0, 8).toUpperCase(),
         ...analysis
       } as GradingResult);
+      // Names/Description/Location set via useEffect
 
     } catch (e: unknown) {
       console.error(e);
@@ -218,11 +314,36 @@ export default function ScanPage() {
 
   function addToBatch() {
     if (analysisResult) {
-      setBatchItems(prev => [...prev, analysisResult]);
+      if (!location.trim()) {
+        setError("Location is required.");
+        return;
+      }
+
+      const itemWithCustomName = {
+        ...analysisResult,
+        title: editedName || analysisResult.classification,
+        classification: analysisResult.classification,
+        category: category,
+        description: description,
+        location: location,
+        duration: duration,
+        packaging: packaging,
+        logistics: logistics,
+        confidence: analysisResult.confidence || 0.95
+      };
+      setBatchItems(prev => [...prev, itemWithCustomName]);
       // Reset for next item
       setCurrentSessionImages([]);
       setAnalysisResult(null);
+      setEditedName("");
+      setCategory("");
+      setDescription("");
+      // Location stays? Yes for batch.
+      setIsEditingName(false);
       setError(null);
+
+      // Restart camera for next item
+      startCamera();
     }
   }
 
@@ -230,13 +351,14 @@ export default function ScanPage() {
     setCurrentSessionImages([]);
     setAnalysisResult(null);
     setError(null);
+    startCamera();
   }
 
-  async function submitBatch() {
+  async function submitBatch(status: "listed" | "pending" = "listed") {
     setIsSaving(true);
     try {
       for (const item of batchItems) {
-        await saveItem(item);
+        await saveItem(item, status);
       }
       router.push("/dealer/inventory");
     } catch (e) {
@@ -250,6 +372,7 @@ export default function ScanPage() {
 
   function removeImage(index: number) {
     if (index < 0 || index >= currentSessionImages.length) return;
+    if (isAnalyzing || analysisResult) return; // Prevent removal during/after analysis
 
     setCurrentSessionImages(prev => {
       const newImages = [...prev];
@@ -293,6 +416,7 @@ export default function ScanPage() {
               accept="image/*"
               capture="environment"
               className="hidden"
+              disabled={isAnalyzing || !!analysisResult}
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) handleFileUpload(file);
@@ -304,6 +428,7 @@ export default function ScanPage() {
               type="file"
               accept="image/*"
               className="hidden"
+              disabled={isAnalyzing || !!analysisResult}
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) handleFileUpload(file);
@@ -314,6 +439,7 @@ export default function ScanPage() {
               size="sm"
               className="bg-surface-darker border-white/5"
               onClick={() => fileInputRef.current?.click()}
+              disabled={isAnalyzing || !!analysisResult}
             >
               <Upload className="mr-2" size={16} /> Upload
             </Button>
@@ -374,6 +500,22 @@ export default function ScanPage() {
             </div>
           </div>
 
+
+          {/* Source Indicator Badge */}
+          <div className="absolute top-4 left-4 z-40 flex items-center gap-2 pointer-events-none">
+            {isCameraActive ? (
+              <div className="bg-red-500/20 backdrop-blur-md border border-red-500/30 text-red-500 px-3 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase flex items-center gap-2 shadow-lg animate-in fade-in slide-in-from-top-2">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
+                LIVE FEED
+              </div>
+            ) : (currentSessionImages.length > 0 && activeImage) ? (
+              <div className="bg-black/60 backdrop-blur-md border border-white/10 text-white/80 px-3 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase flex items-center gap-2 shadow-lg animate-in fade-in slide-in-from-top-2">
+                <FileText size={12} className="text-primary" />
+                IMAGE PREVIEW
+              </div>
+            ) : null}
+          </div>
+
           {/* Scanning Animation */}
           {isAnalyzing && (
             <div className="absolute inset-0 pointer-events-none z-20">
@@ -408,54 +550,74 @@ export default function ScanPage() {
           )}
 
           {/* Camera Controls */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6 bg-black/60 backdrop-blur-xl px-6 py-3 rounded-full border border-white/10 z-30">
-            <button className="text-white hover:text-primary transition-colors"><Zap size={20} /></button>
-            {isCameraActive && videoDevices.length > 1 && (
-              <div className="absolute top-4 right-4 z-40 flex flex-col items-end gap-2">
-                <button
-                  onClick={(e) => { e.stopPropagation(); setShowCameraList(!showCameraList); }}
-                  className="bg-black/50 p-3 rounded-full text-white hover:bg-black/70 backdrop-blur-md transition-all active:scale-95 border border-white/10"
-                >
-                  <RefreshCcw size={20} />
-                </button>
-
-                {showCameraList && (
-                  <div className="absolute right-0 bottom-full mb-4 bg-black/80 backdrop-blur-xl border border-white/10 rounded-xl min-w-[220px] max-h-[200px] overflow-y-auto custom-scrollbar shadow-2xl animate-in fade-in slide-in-from-bottom-2 z-50">
-                    <div className="px-4 py-2 text-[10px] uppercase tracking-widest text-gray-400 font-bold border-b border-white/5">Select Camera</div>
-                    {videoDevices.map((device, idx) => (
+          {(!isAnalyzing && !analysisResult) && (
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6 bg-black/60 backdrop-blur-xl px-6 py-3 rounded-full border border-white/10 z-30">
+              {isCameraActive ? (
+                <>
+                  {/* Camera Toggle and List */}
+                  {videoDevices.length > 1 && (
+                    <div className="relative">
                       <button
-                        key={device.deviceId}
                         onClick={(e) => {
                           e.stopPropagation();
-                          startCamera(device.deviceId);
-                          setShowCameraList(false);
+                          setShowCameraList(!showCameraList);
                         }}
                         className={cn(
-                          "w-full text-left px-4 py-3 text-sm text-white hover:bg-primary/20 transition-colors flex items-center gap-3",
-                          stream?.getVideoTracks()[0]?.getSettings().deviceId === device.deviceId && "text-primary font-bold bg-primary/10"
+                          "text-white hover:text-primary transition-colors p-3 rounded-full hover:bg-white/10",
+                          showCameraList && "bg-white/10 text-primary"
                         )}
+                        title="Switch Camera"
                       >
-                        <Camera size={14} className={stream?.getVideoTracks()[0]?.getSettings().deviceId === device.deviceId ? "text-primary" : "text-gray-400"} />
-                        <span className="truncate">{device.label || `Camera ${idx + 1}`}</span>
+                        <RefreshCcw size={20} />
                       </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
 
-            <button
-              onClick={() => isCameraActive ? capturePhoto() : startCamera()}
-              disabled={isAnalyzing || !!analysisResult}
-              className={cn(
-                "h-16 w-16 rounded-full border-4 border-white/20 flex items-center justify-center transition-all shadow-xl",
-                (isAnalyzing || analysisResult) ? "bg-gray-600 scale-95" : "bg-red-500 hover:bg-red-600 hover:scale-105"
+                      {/* Camera List Dropdown */}
+                      {showCameraList && (
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 bg-black/90 backdrop-blur-xl border border-white/10 rounded-xl min-w-[200px] max-h-[200px] overflow-y-auto custom-scrollbar shadow-2xl animate-in fade-in slide-in-from-bottom-2 z-50">
+                          <div className="px-4 py-3 text-[10px] uppercase tracking-widest text-gray-400 font-bold border-b border-white/5 bg-white/5">Select Camera</div>
+                          {videoDevices.map((device, idx) => (
+                            <button
+                              key={device.deviceId}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                startCamera(device.deviceId);
+                                setShowCameraList(false);
+                              }}
+                              className={cn(
+                                "w-full text-left px-4 py-3 text-xs text-white hover:bg-primary/20 transition-colors flex items-center gap-3 border-b border-white/5 last:border-0",
+                                stream?.getVideoTracks()[0]?.getSettings().deviceId === device.deviceId && "text-primary font-bold bg-primary/10"
+                              )}
+                            >
+                              <Camera size={14} className={stream?.getVideoTracks()[0]?.getSettings().deviceId === device.deviceId ? "text-primary" : "text-gray-500"} />
+                              <span className="truncate">{device.label || `Camera ${idx + 1}`}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Capture Button */}
+                  <button
+                    onClick={capturePhoto}
+                    disabled={isAnalyzing}
+                    className="h-16 w-16 rounded-full border-4 border-white/20 flex items-center justify-center transition-all shadow-xl bg-red-500 hover:bg-red-600 hover:scale-105 active:scale-95"
+                  >
+                    <div className="w-8 h-8 bg-white rounded-full" />
+                  </button>
+                </>
+              ) : (
+                /* Image Mode - Return to Camera */
+                <button
+                  onClick={() => startCamera()}
+                  className="flex items-center gap-3 text-white hover:text-primary transition-colors font-semibold px-2"
+                >
+                  <Camera size={20} />
+                  <span>Open Camera</span>
+                </button>
               )}
-            >
-              <div className={cn("rounded transition-all", isAnalyzing ? "w-6 h-6 bg-white" : "w-8 h-8 bg-white rounded-full")} />
-            </button>
-            <button onClick={reset} className="text-white hover:text-primary transition-colors"><RefreshCcw size={20} /></button>
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Thumbnails Batch View */}
@@ -473,12 +635,16 @@ export default function ScanPage() {
             </div>
           ))}
 
-          <div
-            onClick={() => fileInputRef.current?.click()}
-            className="min-w-[5rem] h-20 rounded-xl border-2 border-dashed border-white/10 flex items-center justify-center text-gray-500 hover:text-primary hover:border-primary/50 transition-colors cursor-pointer snap-start"
+          <button
+            onClick={() => !isAnalyzing && !analysisResult && fileInputRef.current?.click()}
+            disabled={isAnalyzing || !!analysisResult}
+            className={cn(
+              "min-w-[5rem] h-20 rounded-xl border-2 border-dashed border-white/10 flex items-center justify-center text-gray-500 transition-colors snap-start",
+              (isAnalyzing || analysisResult) ? "opacity-50 cursor-not-allowed" : "hover:text-primary hover:border-primary/50 cursor-pointer"
+            )}
           >
             <Upload size={24} />
-          </div>
+          </button>
         </div>
       </section>
 
@@ -535,24 +701,130 @@ export default function ScanPage() {
 
           {analysisResult && (
             <>
-              {/* Classification */}
-              <GlassCard className="p-6 border-white/5 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110 duration-500" />
-                <h3 className="text-[10px] font-bold text-gray-500 mb-4 uppercase tracking-widest flex items-center gap-2">
-                  <Memory size={14} className="text-primary" /> Classification
-                </h3>
-                <div className="space-y-2">
-                  <div className="text-3xl font-bold text-white">{analysisResult.classification}</div>
-                  <StatusBadge variant="primary" className="text-[10px]">{analysisResult.grade}</StatusBadge>
+              {/* Editable Fields Section */}
+              <GlassCard className="p-6 border-white/5 space-y-4">
+                <div>
+                  <label className="text-[10px] text-gray-500 uppercase tracking-widest mb-1 block flex items-center gap-1">
+                    <Box size={12} className="text-primary" /> Title
+                  </label>
+                  <input
+                    className="w-full bg-surface-dark border border-white/10 rounded-lg px-3 py-2 text-white font-bold focus:outline-none focus:border-primary/50 transition-colors placeholder:text-gray-600"
+                    value={editedName}
+                    onChange={(e) => setEditedName(e.target.value)}
+                    placeholder="Item Name"
+                  />
                 </div>
-                <div className="mt-6 pt-6 border-t border-white/5 grid grid-cols-2 gap-6">
+
+                <div>
+                  <label className="text-[10px] text-gray-500 uppercase tracking-widest mb-1 block flex items-center gap-1">
+                    <Box size={12} className="text-primary" /> Category <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    className="w-full bg-surface-dark border border-white/10 rounded-lg px-3 py-2 text-white/90 text-sm focus:outline-none focus:border-primary/50 transition-colors placeholder:text-gray-600"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    placeholder="E-Waste Category (e.g. PCB, Battery)"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] text-gray-500 uppercase tracking-widest mb-1 block flex items-center gap-1">
+                    <MapPin size={12} className="text-primary" /> Location <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    className="w-full bg-surface-dark border border-white/10 rounded-lg px-3 py-2 text-white/90 text-sm focus:outline-none focus:border-primary/50 transition-colors placeholder:text-gray-600"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="City, Country"
+                  />
+                  {userDefaultLocation && location === userDefaultLocation && (
+                    <p className="text-[10px] text-primary/70 mt-1">✓ Auto-filled from your profile</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="text-[10px] text-gray-500 uppercase tracking-widest mb-1 block flex items-center gap-1">
+                    <FileText size={12} className="text-primary" /> Description
+                  </label>
+                  <textarea
+                    className="w-full bg-surface-dark border border-white/10 rounded-lg px-3 py-2 text-white/80 text-sm focus:outline-none focus:border-primary/50 transition-colors placeholder:text-gray-600 resize-none h-20"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Add details about condition, origin, etc..."
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <span className="text-[10px] text-gray-500 uppercase block tracking-widest mb-1">Condition</span>
-                    <span className="text-sm font-semibold text-gray-200">{analysisResult.condition}</span>
+                    <label className="text-[10px] text-gray-500 uppercase tracking-widest mb-1 block">
+                      Auction Duration
+                    </label>
+                    <select
+                      className="w-full bg-surface-dark border border-white/10 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-primary/50"
+                      value={duration}
+                      onChange={(e) => setDuration(e.target.value)}
+                    >
+                      <option value="12h">12 Hours</option>
+                      <option value="24h">24 Hours</option>
+                      <option value="48h">48 Hours</option>
+                      <option value="7d">7 Days</option>
+                    </select>
                   </div>
                   <div>
-                    <span className="text-[10px] text-gray-500 uppercase block tracking-widest mb-1">Est. Weight</span>
-                    <span className="text-sm font-semibold text-gray-200">{analysisResult.weight}</span>
+                    <label className="text-[10px] text-gray-500 uppercase tracking-widest mb-1 block">
+                      Packaging
+                    </label>
+                    <select
+                      className="w-full bg-surface-dark border border-white/10 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-primary/50"
+                      value={packaging}
+                      onChange={(e) => setPackaging(e.target.value)}
+                    >
+                      <option value="Box">Box</option>
+                      <option value="Pallet">Pallet</option>
+                      <option value="Loose">Loose</option>
+                      <option value="Crate">Crate</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[10px] text-gray-500 uppercase tracking-widest mb-1 block">
+                    Logistics Preference
+                  </label>
+                  <select
+                    className="w-full bg-surface-dark border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-primary/50"
+                    value={logistics}
+                    onChange={(e) => setLogistics(e.target.value)}
+                  >
+                    <option value="Shipping">Seller Ships</option>
+                    <option value="Pickup">Buyer Pick-up</option>
+                    <option value="Managed">UrbanMine Managed</option>
+                  </select>
+                </div>
+              </GlassCard>
+
+              {/* Classification Summary */}
+              <GlassCard className="p-6 border-white/5 relative overflow-hidden group">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                      <Memory size={14} className="text-primary" /> AI Classification
+                    </h3>
+                    <StatusBadge variant="primary" className="text-[10px]">{analysisResult.grade}</StatusBadge>
+                  </div>
+                  <div className="text-xl font-bold text-white/90">
+                    {analysisResult.classification}
+                  </div>
+
+                  <div className="mt-4 pt-4 border-t border-white/5 grid grid-cols-2 gap-6">
+                    <div>
+                      <span className="text-[10px] text-gray-500 uppercase block tracking-widest mb-1">Condition</span>
+                      <span className="text-sm font-semibold text-gray-200">{analysisResult.condition}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-gray-500 uppercase block tracking-widest mb-1">Est. Weight</span>
+                      <span className="text-sm font-semibold text-gray-200">{analysisResult.weight}</span>
+                    </div>
                   </div>
                 </div>
               </GlassCard>
@@ -561,13 +833,15 @@ export default function ScanPage() {
               <GlassCard className="p-6 border-white/5">
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
-                    <Science size={14} className="text-primary" /> Est. Value
+                    <Science size={14} className="text-primary" /> Est. Total Value
                   </h3>
-                  <StatusBadge variant="success" className="bg-success/20">+2.4%</StatusBadge>
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold text-primary font-mono">{analysisResult.estimatedValue}</span>
-                  <span className="text-sm text-gray-500">/ kg</span>
+                  <span className="text-4xl font-bold text-primary font-mono">{analysisResult.totalValue || 'N/A'}</span>
+                  {analysisResult.totalValue && <span className="text-sm text-gray-500">Total</span>}
+                </div>
+                <div className="mt-2 text-xs text-gray-400">
+                  <span className="font-mono text-white/70">{analysisResult.estimatedValue}</span> / kg
                 </div>
                 <p className="text-[10px] text-gray-500 mt-4 leading-relaxed italic flex items-center gap-1.5">
                   <Info size={12} /> Based on current spot prices in Global market.
@@ -584,10 +858,18 @@ export default function ScanPage() {
                     <div key={item.name} className="space-y-2">
                       <div className="flex justify-between text-xs font-semibold">
                         <span className="text-gray-300">{item.name}</span>
-                        <span className="text-primary font-mono">{item.value}</span>
+                        <div className="text-right">
+                          <span className="text-primary font-mono block">{item.value}</span>
+                          {item.estimatedValue && (
+                            <span className="text-[10px] text-emerald-400 font-mono block">{item.estimatedValue}</span>
+                          )}
+                        </div>
                       </div>
-                      <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                        <div className={cn("h-full rounded-full", item.color ?? "bg-primary")} style={{ width: `${item.percentage}%` }} />
+                      <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                        <div
+                          className={cn("h-full rounded-full shadow-[0_0_10px_rgba(0,0,0,0.3)]", item.color || getColorForMetal(item.name))}
+                          style={{ width: `${getVisualProgress(item.percentage || 0)}%` }}
+                        />
                       </div>
                     </div>
                   ))}
@@ -604,6 +886,7 @@ export default function ScanPage() {
               <>
                 <Button variant="secondary" className="py-7 border-white/10"
                   onClick={addToBatch}
+                  disabled={!location}
                 >
                   <Upload className="mr-2" size={18} /> Add to Batch
                 </Button>
@@ -614,21 +897,34 @@ export default function ScanPage() {
                 </Button>
               </>
             ) : (
-              <>
-                <Button variant="secondary" className="py-7 border-white/10"
+              <div className="col-span-2 space-y-4">
+                <Button variant="secondary" className="w-full py-7 border-white/10"
                   onClick={analyzeCurrentSession}
                   disabled={isAnalyzing || currentSessionImages.length === 0}
                 >
                   <RefreshCcw className="mr-2" size={18} /> Analyze ({currentSessionImages.length})
                 </Button>
-                <Button
-                  className="py-7 shadow-glow-primary font-bold"
-                  onClick={submitBatch}
-                  disabled={isSaving || batchItems.length === 0}
-                >
-                  {isSaving ? "Saving..." : `Submit Batch (${batchItems.length})`}
-                </Button>
-              </>
+
+                {batchItems.length > 0 && (
+                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                    <Button
+                      variant="secondary"
+                      className="py-7 border-white/10"
+                      onClick={() => submitBatch('pending')}
+                      disabled={isSaving}
+                    >
+                      <Box className="mr-2" size={18} /> Add to Inventory
+                    </Button>
+                    <Button
+                      className="py-7 shadow-glow-primary font-bold"
+                      onClick={() => submitBatch('listed')}
+                      disabled={isSaving}
+                    >
+                      {isSaving ? "Saving..." : `Submit Batch (${batchItems.length})`}
+                    </Button>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>

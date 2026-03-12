@@ -1,12 +1,16 @@
 import { getUserProfile } from "@/app/actions/user";
 import { DashboardHeader } from "@/components/layout/DashboardHeader";
 import { RecyclerSidebar, MobileNav } from "@/components/recycler/Sidebar";
+import { requireRole } from "@/lib/auth";
 
 export default async function RecyclerLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Verify user has recycler role, redirect if not
+  await requireRole(['recycler']);
+
   const profile = await getUserProfile();
 
   return (
