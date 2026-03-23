@@ -35,7 +35,7 @@ export async function getRecyclerDashboardStats() {
         .in('status', ['paid', 'completed'])
         .gte('created_at', `${today}T00:00:00`)
 
-    const lotsWonToday = wonDeals?.length || 0
+    const lotsWonTodayFromTx = wonDeals?.length || 0
 
     // Pending Delivery: status paid but not completed?
     const { count: pendingDelivery } = await supabase
@@ -54,13 +54,34 @@ export async function getRecyclerDashboardStats() {
         .eq('buyer_id', user.id)
         .in('status', ['paid', 'completed'])
 
-    const capitalDeployed = allPaidDeals?.reduce((sum, deal) => sum + Number(deal.price_total), 0) || 0
+    const capitalDeployedFromTx = allPaidDeals?.reduce((sum, deal) => sum + Number(deal.price_total), 0) || 0
+
+    // Fallback for dashboards when transaction insertion is unavailable:
+    // rely on accepted bid metadata persisted on sold items.
+    const { data: acceptedItemFallback } = await supabase
+        .from('items')
+        .select('metadata')
+        .eq('status', 'sold')
+        .eq('metadata->>acceptedBidderId', user.id)
+
+    const acceptedWins = (acceptedItemFallback || [])
+        .map((item) => (item.metadata as ItemMetadata) || {})
+        .filter((meta) => meta.acceptedBidderId === user.id)
+
+    const lotsWonTodayFallback = acceptedWins.filter((meta) => {
+        if (!meta.acceptedAt) return false
+        return meta.acceptedAt.startsWith(today)
+    }).length
+
+    const capitalDeployedFallback = acceptedWins.reduce((sum, meta) => {
+        return sum + Number(meta.acceptedBidAmount || 0)
+    }, 0)
 
     return {
         activeBids: activeBids || 0,
-        lotsWonToday,
+        lotsWonToday: Math.max(lotsWonTodayFromTx, lotsWonTodayFallback),
         pendingDelivery: pendingDelivery || 0,
-        capitalDeployed
+        capitalDeployed: Math.max(capitalDeployedFromTx, capitalDeployedFallback)
     }
 }
 
@@ -72,6 +93,36 @@ interface ItemMetadata {
     type?: string;
     tags?: string[];
     reeContent?: Array<{ name: string; value: string; percentage: number }>;
+    acceptedBidId?: string;
+    acceptedBidderId?: string;
+    acceptedBidAmount?: number | string;
+    acceptedAt?: string;
+}
+
+export async function getRecyclerAcceptedDeals() {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return []
+
+    const { data: acceptedTx } = await supabase
+        .from('transactions')
+        .select('id, created_at, item_ids, price_total, status, material_breakdown')
+        .eq('buyer_id', user.id)
+        .in('status', ['agreed', 'paid', 'completed'])
+        .order('created_at', { ascending: false })
+        .limit(6)
+
+    return (acceptedTx || []).map((tx) => {
+        const meta = (tx.material_breakdown as ItemMetadata) || {}
+        return {
+            itemId: tx.item_ids?.[0] || tx.id,
+            title: meta.category || 'Material Lot',
+            location: 'From Dealer',
+            acceptedBidAmount: Number(tx.price_total || meta.acceptedBidAmount || 0),
+            acceptedAt: tx.created_at
+        }
+    })
 }
 
 export async function getMarketplaceItems() {

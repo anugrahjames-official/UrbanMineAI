@@ -4,11 +4,10 @@ import { Card, GlassCard } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
-import { getRecyclerDashboardStats, getMarketplaceItems, getRecyclerInventory } from "@/app/actions/recycler";
+import { getRecyclerAcceptedDeals, getRecyclerDashboardStats, getMarketplaceItems, getRecyclerInventory } from "@/app/actions/recycler";
 import { InventoryItemBids } from "@/components/dealer/InventoryItemBids";
 import { revalidatePath } from "next/cache";
 import { getLivePrices } from "@/services/pricing";
-import { formatDistanceToNow } from 'date-fns';
 import BidButton from "@/components/recycler/BidButton";
 import { getRecyclerBounties } from "@/app/actions/bounty";
 import { BountyFulfillments } from "@/components/recycler/BountyFulfillments";
@@ -27,10 +26,17 @@ interface MarketplaceItemData {
   composition: Array<{ name: string; value: string; percentage: number }>;
 }
 
+function formatStableUtcDateTime(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Unknown";
+  return `${date.toISOString().replace("T", " ").slice(0, 16)} UTC`;
+}
+
 export default async function RecyclerDashboard() {
   const stats = await getRecyclerDashboardStats();
   const marketplaceItems = (await getMarketplaceItems()) as MarketplaceItemData[];
   const myInventory = await getRecyclerInventory();
+  const acceptedDeals = await getRecyclerAcceptedDeals();
   const myBounties = await getRecyclerBounties();
   const prices = await getLivePrices();
 
@@ -91,7 +97,7 @@ export default async function RecyclerDashboard() {
                     desc={`${item.weight} at ${item.location}. Grade: ${item.grade}`}
                     grade={item.grade}
                     value={item.value.toString()}
-                    time={formatDistanceToNow(new Date(item.created_at))}
+                    time={formatStableUtcDateTime(item.created_at)}
                     image={item.image}
                     isEprCredit={item.isEprCredit}
                   />
@@ -181,6 +187,42 @@ export default async function RecyclerDashboard() {
             )}
           </section>
 
+          {/* Accepted Deals Section */}
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold flex items-center gap-2">
+                <Icons.CheckCircle className="text-success" size={18} /> Accepted Deals
+              </h2>
+            </div>
+            {acceptedDeals.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {acceptedDeals.map((deal: any) => (
+                  <GlassCard key={deal.itemId} className="p-4 border-white/5 bg-surface-darker/50 hover:bg-surface-darker/80 transition-all">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h4 className="font-bold text-white">{deal.title}</h4>
+                        <p className="text-[10px] text-gray-500 mt-0.5">
+                          {deal.location} • {formatStableUtcDateTime(deal.acceptedAt)}
+                        </p>
+                      </div>
+                      <StatusBadge variant="success">Accepted</StatusBadge>
+                    </div>
+                    <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                      <div>
+                        <p className="text-[8px] text-gray-500 uppercase tracking-widest">Final Bid</p>
+                        <p className="text-lg font-bold text-white font-mono">${deal.acceptedBidAmount.toLocaleString()}</p>
+                      </div>
+                    </div>
+                  </GlassCard>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-surface-darker/50 border border-white/5 border-dashed rounded-xl p-8 text-center text-gray-500 text-sm">
+                Accepted bids will appear here once a dealer accepts your offer.
+              </div>
+            )}
+          </section>
+
           <Card className="p-0 border-white/5 overflow-hidden flex flex-col h-[500px]">
             <div className="p-4 border-b border-white/5 flex flex-wrap gap-3 items-center justify-between bg-white/5">
               <div className="flex items-center gap-2">
@@ -220,7 +262,7 @@ export default async function RecyclerDashboard() {
                         loc={item.location}
                         weight={item.weight}
                         bid={item.value.toString()}
-                        time={formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
+                        time={formatStableUtcDateTime(item.created_at)}
                         comp={item.composition}
                         icon={item.isEprCredit ? null : <Icons.Cable size={18} className="text-gray-400" />} // Default icon
                       />
@@ -399,8 +441,8 @@ function LotCard({
             <p className="text-sm font-bold text-white font-mono">{value}</p>
           </div>
           <div className="text-right">
-            <p className="text-[8px] text-gray-500 uppercase font-bold tracking-widest mb-0.5">Starts In</p>
-            <p className="text-sm font-mono text-warning font-bold" suppressHydrationWarning>{time}</p>
+            <p className="text-[8px] text-gray-500 uppercase font-bold tracking-widest mb-0.5">Listed At</p>
+            <p className="text-sm font-mono text-warning font-bold">{time}</p>
           </div>
         </div>
         <div className="mt-4">
@@ -443,7 +485,7 @@ function MarketRow({
   icon: React.ReactNode;
 }) {
   return (
-    <tr className="hover:bg-primary/5 transition-colors group" suppressHydrationWarning>
+    <tr className="hover:bg-primary/5 transition-colors group">
       <td className="px-6 py-4">
         <div className="flex items-center gap-4">
           <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5">
@@ -481,7 +523,7 @@ function MarketRow({
         </div>
       </td>
       <td className="px-6 py-4">
-        <span className="px-2 py-0.5 rounded-md bg-error/10 text-error text-[10px] font-bold border border-error/20" suppressHydrationWarning>
+        <span className="px-2 py-0.5 rounded-md bg-error/10 text-error text-[10px] font-bold border border-error/20">
           {time}
         </span>
       </td>

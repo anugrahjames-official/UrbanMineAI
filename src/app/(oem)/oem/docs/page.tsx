@@ -4,7 +4,6 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Search, Download, Filter, FileText, Verified, AlertCircle, Link as LinkIcon, ChevronLeft, ChevronRight, UploadCloud, Lock } from "lucide-react";
 import { getComplianceDocs } from "@/app/actions/oem";
 import { format } from "date-fns";
-import { CopyHash } from "@/components/ui/copy-hash"; // We will create this or inline it. Let's inline a simple version or use client component wrapping the hash.
 
 // Let's create a small inline client component for the hash copy
 import ClientHashBadge from "./ClientHashBadge"; 

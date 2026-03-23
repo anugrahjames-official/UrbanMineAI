@@ -376,10 +376,23 @@ export async function acceptBid(bidId: string) {
         throw new Error('Only the item owner can accept a bid');
     }
 
-    // 3. Update the item status to 'sold'
+    // 3. Update the item status to 'sold' and persist accepted bid details
+    const existingMetadata =
+        // @ts-ignore
+        (bid.items?.metadata && typeof bid.items.metadata === 'object') ? bid.items.metadata : {};
+
     const { error: itemError } = await supabase
         .from('items')
-        .update({ status: 'sold' })
+        .update({
+            status: 'sold',
+            metadata: {
+                ...existingMetadata,
+                acceptedBidId: bid.id,
+                acceptedBidderId: bid.bidder_id,
+                acceptedBidAmount: bid.amount,
+                acceptedAt: new Date().toISOString()
+            }
+        })
         // @ts-ignore
         .eq('id', bid.item_id);
 

@@ -10,7 +10,6 @@ import { publishItems, unpublishItems, deleteInventoryItem } from "@/app/actions
 import { toast } from "sonner";
 import EditItemDialog from "./EditItemDialog";
 import { InventoryItemBids } from "./InventoryItemBids";
-import { revalidatePath } from "next/cache"; // This might not be needed in 'use client' but let's check
 
 interface InventoryItemData {
     id: string;
@@ -22,7 +21,7 @@ interface InventoryItemData {
     image: string;
     status?: string; // Add status to track listed vs pending
     description?: string;
-    bids: any[];
+    bids?: any[];
 }
 
 export default function InventoryManager({ inventory }: { inventory: InventoryItemData[] }) {
@@ -237,7 +236,7 @@ function InventoryCard({
                         <InventoryItemBids 
                             itemId={item.id} 
                             itemTitle={item.title}
-                            bids={item.bids}
+                            bids={item.bids ?? []}
                             onAcceptSuccess={() => {
                                 // Refresh the page is difficult in use client without a router refresh or similar
                                 // But the props should update if the server action revalidates the path
