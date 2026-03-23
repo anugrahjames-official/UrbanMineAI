@@ -25,9 +25,10 @@ export default async function MarketplacePage(props: {
 
     const view = typeof searchParams.view === 'string' ? searchParams.view : 'listings';
     const isBountiesView = view === 'bounties';
+    const isCreditsView = view === 'credits';
 
     // Fetch initial data based on view
-    const listingsProp = !isBountiesView ? await fetchListings(searchParams) : { data: [], count: 0 };
+    const listingsProp = !isBountiesView ? await fetchListings({ ...searchParams, view }) : { data: [], count: 0 };
     const bountiesProp = isBountiesView ? await fetchBounties(searchParams) : { data: [], count: 0 };
 
     // Fetch filter options dynamically
@@ -47,30 +48,40 @@ export default async function MarketplacePage(props: {
                         regions={currentOptions.regions}
                         grades={currentOptions.grades}
                         tiers={currentOptions.tiers}
-                        view={isBountiesView ? 'bounties' : 'listings'}
+                        view={isBountiesView ? 'bounties' : (isCreditsView ? 'credits' : 'listings')}
                     />
 
                     <div className="mt-6">
                         {/* Main Content Area */}
                         <section>
                             <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-                                <div className="flex items-center gap-4 bg-white/5 p-1 rounded-xl self-start">
+                                <div className="flex items-center gap-4 bg-white/5 p-1 rounded-xl self-start overflow-x-auto no-scrollbar max-w-full">
                                     <Link
                                         href="?view=listings"
                                         scroll={false}
                                         className={cn(
-                                            "px-6 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2",
-                                            !isBountiesView ? "bg-[#19e66b] text-[#112117] shadow-lg" : "text-white/60 hover:text-white hover:bg-white/5"
+                                            "px-4 md:px-6 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap",
+                                            view === 'listings' ? "bg-[#19e66b] text-[#112117] shadow-lg" : "text-white/60 hover:text-white hover:bg-white/5"
                                         )}
                                     >
                                         <Package size={16} /> Latest Listings
                                     </Link>
                                     <Link
+                                        href="?view=credits"
+                                        scroll={false}
+                                        className={cn(
+                                            "px-4 md:px-6 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap",
+                                            view === 'credits' ? "bg-[#19e66b] text-[#112117] shadow-lg" : "text-white/60 hover:text-white hover:bg-white/5"
+                                        )}
+                                    >
+                                        <Package size={16} /> EPR Credits
+                                    </Link>
+                                    <Link
                                         href="?view=bounties"
                                         scroll={false}
                                         className={cn(
-                                            "px-6 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2",
-                                            isBountiesView ? "bg-[#19e66b] text-[#112117] shadow-lg" : "text-white/60 hover:text-white hover:bg-white/5"
+                                            "px-4 md:px-6 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap",
+                                            view === 'bounties' ? "bg-[#19e66b] text-[#112117] shadow-lg" : "text-white/60 hover:text-white hover:bg-white/5"
                                         )}
                                     >
                                         <Target size={16} /> Open Bounties
@@ -78,7 +89,14 @@ export default async function MarketplacePage(props: {
                                 </div>
 
                                 <div className="flex items-center gap-3">
-                                    {userRole === 'recycler' && (
+                                    {userRole === 'recycler' && view !== 'bounties' && (
+                                        <Link href="/recycler/credits/new">
+                                            <button className="bg-[#19e66b] hover:bg-[#16cc5f] text-[#112117] font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-all shadow-md text-sm">
+                                                <Package size={16} /> List EPR Credit
+                                            </button>
+                                        </Link>
+                                    )}
+                                    {userRole === 'recycler' && isBountiesView && (
                                         <Link href="/recycler/bounties/new">
                                             <button className="bg-[#19e66b] hover:bg-[#16cc5f] text-[#112117] font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-all shadow-md text-sm">
                                                 <Target size={16} /> Post Bounty

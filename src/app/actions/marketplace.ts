@@ -40,6 +40,16 @@ export async function fetchListings(filters: any = {}, page: number = 1, limit: 
         .eq('status', 'listed')
         .range((page - 1) * limit, page * limit - 1);
 
+    // Filter by type (EPR Credit vs Material)
+    const view = filters.view || 'listings';
+    if (view === 'credits') {
+        query = query.eq('metadata->>type', 'epr_credit');
+    } else if (view === 'listings') {
+        // If it's a regular listing, we want to exclude EPR credits
+        // Note: existing items might not have a 'type' field at all
+        query = query.or('metadata->>type.is.null,metadata->>type.neq.epr_credit');
+    }
+
     // Apply sorting
     if (filters.sort === 'price_high') {
         query = query.order('price', { ascending: false });
@@ -49,12 +59,12 @@ export async function fetchListings(filters: any = {}, page: number = 1, limit: 
         query = query.order('created_at', { ascending: false });
     }
 
-    // Apply filters - Use 'l_' prefix for listings
-    const materialType = filters.l_materialType || filters.materialType;
-    const purityGrade = filters.l_purityGrade || filters.purityGrade;
-    const q = filters.l_q || filters.q;
-    const region = filters.l_region || filters.region;
-    const verificationLevel = filters.l_verificationLevel || filters.verificationLevel;
+    // Apply filters - Use 'l_' prefix for listings, 'c_' for credits
+    const materialType = filters.l_materialType || filters.c_materialType || filters.materialType;
+    const purityGrade = filters.l_purityGrade || filters.c_purityGrade || filters.purityGrade;
+    const q = filters.l_q || filters.c_q || filters.q;
+    const region = filters.l_region || filters.c_region || filters.region;
+    const verificationLevel = filters.l_verificationLevel || filters.c_verificationLevel || filters.verificationLevel;
 
     if (materialType && materialType !== 'All') {
         query = query.ilike('metadata->>category', `%${materialType}%`);
@@ -229,8 +239,8 @@ export async function placeBid(itemId: string, amount: number) {
         .eq('id', user.id)
         .single();
 
-    if (userError || userData?.role !== 'recycler') {
-        throw new Error('Only verified recyclers can place bids');
+    if (userError || (userData?.role !== 'recycler' && userData?.role !== 'oem')) {
+        throw new Error('Only verified recyclers and OEMs can execute trades');
     }
 
     // Get the item to check status and current bid
@@ -257,7 +267,7 @@ export async function placeBid(itemId: string, amount: number) {
             item_id: itemId,
             bidder_id: user.id,
             amount: amount,
-            bidder_alias: `Recycler_${user.id.slice(0, 4)}` // Simplified alias for now
+            bidder_alias: userData.role === 'oem' ? `OEM_${user.id.slice(0, 4)}` : `Recycler_${user.id.slice(0, 4)}` // Simplified alias for now
         })
         .select()
         .single();
@@ -275,6 +285,7 @@ export async function placeBid(itemId: string, amount: number) {
 
     revalidatePath('/marketplace');
     revalidatePath(`/item/${itemId}`);
+    revalidatePath('/dealer/dashboard');
 
     return { success: true, bid: newBid };
 }

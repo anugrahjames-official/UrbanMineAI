@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 import { getOEMComplianceStats, getComplianceLogs } from "@/app/actions/oem";
 import { formatDistanceToNow } from "date-fns";
+import Link from "next/link";
 
 interface ComplianceLog {
   id: string;
@@ -84,55 +85,73 @@ export default async function OEMDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Credit Velocity Chart Placeholder */}
+        {/* Credit Velocity Chart */}
         <Card className="lg:col-span-2 border-white/5 space-y-8">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-bold">EPR Credit Velocity</h3>
-            <select className="bg-white/5 border border-white/10 text-[10px] uppercase font-bold text-gray-400 rounded-lg px-3 py-2 outline-none focus:border-primary cursor-pointer">
-              <option>Last 6 Months</option>
-              <option>Fiscal Year</option>
-            </select>
+            <h3 className="text-lg font-bold">EPR Credit Velocity (Recent)</h3>
           </div>
-          <div className="h-64 flex items-center justify-center border border-dashed border-white/10 rounded-xl bg-surface-dark/30">
-            <p className="text-sm text-gray-500">Not enough data for visualization.</p>
+          <div className="h-64 flex items-end justify-between border border-dashed border-white/10 rounded-xl bg-surface-dark/30 p-6 gap-2">
+            {logs.length > 0 ? (
+                [...logs].reverse().map((log: ComplianceLog) => {
+                  const qty = log.metadata?.quantity || 0;
+                  const maxQty = Math.max(...logs.map((l: any) => l.metadata?.quantity || 0), 100);
+                  const heightPercentage = Math.max((qty / maxQty) * 100, 5);
+
+                  return (
+                    <div key={log.id} className="relative flex-1 flex flex-col justify-end items-center group h-full">
+                      <div 
+                        className="w-full max-w-[40px] bg-primary/20 hover:bg-primary/40 rounded-t-sm transition-all relative border-t border-primary/50" 
+                        style={{ height: `${heightPercentage}%` }}
+                      >
+                         <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 bg-surface-dark px-2 py-1 rounded text-[10px] whitespace-nowrap border border-white/10 z-10 transition-opacity">
+                            {qty} kg
+                         </div>
+                      </div>
+                      <div className="mt-4 text-[10px] text-gray-500 font-medium rotate-45 md:rotate-0 origin-left">
+                         {new Date(log.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                   <p className="text-sm text-gray-500">Not enough data for visualization.</p>
+                </div>
+              )}
           </div>
         </Card>
 
         {/* Purchase Tool */}
-        <Card className="border-white/5 space-y-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-              <Icons.RefreshCw size={20} />
+        <Card className="border-white/5 space-y-6 flex flex-col justify-between">
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                <Icons.RefreshCw size={20} />
+              </div>
+              <div>
+                <h3 className="font-bold text-sm uppercase tracking-widest">Marketplace Access</h3>
+                <p className="text-[10px] text-gray-500 font-medium">Discover & Execute Trades</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-bold text-sm uppercase tracking-widest">Purchase Credits</h3>
-              <p className="text-[10px] text-gray-500 font-medium">Instant trade execution</p>
+            <div className="space-y-4">
+              <p className="text-sm text-gray-400">
+                Fulfill your Extended Producer Responsibility (EPR) mandates by purchasing verified e-waste credits directly from certified recyclers.
+              </p>
+              <div className="p-4 bg-background-dark/50 rounded-xl border border-white/5 space-y-3">
+                <div className="flex items-start gap-3">
+                   <Icons.ShieldCheck size={16} className="text-primary mt-0.5 shrink-0" />
+                   <p className="text-xs text-gray-300">All credits are cryptographically verified and bound to Form-6 documentation.</p>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest ml-1">Waste Category</label>
-              <select className="w-full bg-white/5 border border-white/5 rounded-xl p-3 text-sm text-gray-300 focus:ring-1 focus:ring-primary outline-none">
-                <option>Li-ion Batteries</option>
-                <option>Consumer Electronics</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest ml-1">Quantity (kg)</label>
-              <input type="number" placeholder="0.00" className="w-full bg-white/5 border border-white/5 rounded-xl p-3 text-sm text-white focus:ring-1 focus:ring-primary outline-none" />
-            </div>
-            <div className="p-4 bg-background-dark/50 rounded-xl border border-white/5 space-y-2">
-              <div className="flex justify-between text-[10px] font-bold">
-                <span className="text-gray-500 uppercase tracking-widest">Market Rate</span>
-                <span className="text-white">$0.15 / kg</span>
-              </div>
-              <div className="flex justify-between text-sm font-bold pt-2 border-t border-white/5">
-                <span className="text-gray-500">Total Est.</span>
-                <span className="text-primary">$ 0.00</span>
-              </div>
-            </div>
-            <Button className="w-full py-7 font-bold shadow-glow-primary">Execute Trade</Button>
-            <p className="text-center text-[8px] text-gray-600 font-medium">* Trades subject to real-time audit verification.</p>
+          <div className="space-y-3 pt-4 border-t border-white/5">
+            <Link href="/marketplace">
+              <Button className="w-full py-7 font-bold shadow-glow-primary gap-2">
+                Go to Global Marketplace <Icons.ArrowRight size={16} />
+              </Button>
+            </Link>
+            <p className="text-center text-[8px] text-gray-600 font-medium">* Trades are subject to real-time audit verification.</p>
           </div>
         </Card>
       </div>

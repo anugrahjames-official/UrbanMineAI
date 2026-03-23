@@ -5,9 +5,9 @@ import { redirect } from "next/navigation";
 import { getUserProfile } from "@/app/actions/user";
 import { getOrCreateChatTransaction } from "@/app/actions/chat";
 
-export default async function ChatPage({ params }: { params: Promise<{ transactionId: string }> }) {
+export default async function RecyclerChatPage({ params }: { params: Promise<{ transactionId: string }> }) {
   const { transactionId: rawId } = await params;
-  
+
   // Resolve or create transaction if needed
   let transactionId: string;
   try {
@@ -34,11 +34,10 @@ export default async function ChatPage({ params }: { params: Promise<{ transacti
     .single();
 
   if (error || !transaction) {
-    // Handle error or redirect
     return <div>Transaction not found</div>;
   }
 
-  // Verify access
+  // Verify access (either buyer or supplier)
   if (transaction.supplier_id !== user.id && transaction.buyer_id !== user.id) {
     return <div>Unauthorized access to this transaction</div>;
   }
@@ -52,7 +51,7 @@ export default async function ChatPage({ params }: { params: Promise<{ transacti
 
   const profile = await getUserProfile();
 
-  // Format messages for AI SDK (id, role, content)
+  // Format messages for AI SDK
   const initialMessages = messages?.map(m => ({
     id: m.id,
     role: m.role,
@@ -61,10 +60,12 @@ export default async function ChatPage({ params }: { params: Promise<{ transacti
   })) || [];
 
   return (
-    <ChatInterface
-      transaction={transaction}
-      initialMessages={initialMessages}
-      userProfile={profile}
-    />
+    <div className="h-[calc(100vh-120px)]">
+      <ChatInterface
+        transaction={transaction}
+        initialMessages={initialMessages}
+        userProfile={profile}
+      />
+    </div>
   );
 }

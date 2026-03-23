@@ -209,3 +209,132 @@ export async function placeBid(itemId: string) {
 
     redirect(`/recycler/negotiate/${transaction.id}`)
 }
+
+export async function listEprCredit(formData: FormData) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error("Unauthorized");
+
+    const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+    if (profile?.role !== 'recycler') {
+        throw new Error("Only recyclers can list EPR credits");
+    }
+
+    const title = formData.get('title') as string;
+    const category = formData.get('category') as string;
+    const weight = formData.get('weight') as string;
+    const estimatedValue = formData.get('estimatedValue') as string;
+    const description = formData.get('description') as string;
+
+    const { data: item, error } = await supabase
+        .from('items')
+        .insert({
+            user_id: user.id,
+            status: 'listed',
+            metadata: {
+                type: 'epr_credit',
+                title,
+                category,
+                weight,
+                estimatedValue,
+                description,
+                tags: ['EPR Credit', 'Verified Recycled']
+            }
+        })
+        .select()
+        .single();
+
+    if (error) {
+        console.error("Listing Error Details:", error);
+        throw new Error(`Failed to list EPR credit: ${error.message}`);
+    }
+    
+    redirect('/marketplace');
+}
+
+export async function getRecyclerActiveBidsDetails() {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return { bids: [], totalValue: 0 }
+
+    const { data, error } = await supabase
+        .from('transactions')
+        .select(`
+            *,
+            supplier:users!supplier_id (
+                business_name,
+                first_name,
+                last_name,
+                avatar_url
+            )
+        `)
+        .eq('buyer_id', user.id)
+        .in('status', ['negotiating', 'agreed', 'pending'])
+        .order('created_at', { ascending: false })
+
+    if (error) {
+        console.error('Error fetching recycler active bids:', error)
+        return { bids: [], totalValue: 0 }
+    }
+
+    // Also fetch the recycler's individual bids (Auctions)
+    const { data: userBids, error: bidsError } = await supabase
+        .from('bids')
+        .select(`
+            *,
+            item:items (
+                id,
+                user_id,
+                metadata,
+                supplier:users (
+                    business_name,
+                    first_name,
+                    last_name,
+                    avatar_url
+                )
+            )
+        `)
+        .eq('bidder_id', user.id)
+        .order('created_at', { ascending: false });
+
+    if (bidsError) {
+        console.error('Error fetching recycler individual bids:', bidsError)
+    }
+
+    // Process bids: group by item_id and take ONLY the highest bid per item
+    const bidsMap = new Map();
+    (userBids || []).forEach((bid: any) => {
+        const itemId = bid.item_id;
+        if (!bidsMap.has(itemId) || bidsMap.get(itemId).amount < bid.amount) {
+            bidsMap.set(itemId, {
+                id: bid.id,
+                isAuction: true,
+                created_at: bid.created_at,
+                price_total: bid.amount,
+                status: 'negotiating',
+                supplier: bid.item?.supplier || { business_name: 'Unknown Supplier' },
+                material_breakdown: { ...(bid.item?.metadata as any), title: bid.item?.metadata?.title || bid.item?.title || 'Auction Lot' },
+                item_id: itemId
+            });
+        }
+    });
+
+    const auctionBids = Array.from(bidsMap.values());
+
+    // Combine transactions and auction bids
+    const combined = [...data, ...auctionBids].sort((a, b) => 
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
+    // Calculate total value based only on highest bids/negotiations
+    const totalValue = combined.reduce((sum, bid) => sum + Number(bid.price_total || 0), 0)
+
+    return { bids: combined, totalValue };
+}

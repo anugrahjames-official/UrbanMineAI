@@ -1,7 +1,8 @@
 "use client";
 
-import { useChat } from "ai/react";
-import { useEffect, useRef } from "react";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { User, Zap, Send, Mic, Paperclip, MoreVertical, Box } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -16,14 +17,26 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({ transaction, initialMessages, userProfile }: ChatInterfaceProps) {
-    const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-        api: "/api/broker",
-        body: { transactionId: transaction.id },
-        initialMessages,
+    const [input, setInput] = useState("");
+    const { messages, sendMessage, status } = useChat({
+        transport: new DefaultChatTransport({
+            api: "/api/broker",
+            body: { transactionId: transaction.id },
+        }),
+        messages: initialMessages,
         onError: (error) => {
             toast.error("Failed to send message: " + error.message);
         },
     });
+    const isLoading = status === 'streaming' || status === 'submitted';
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!input.trim()) return;
+        const text = input;
+        setInput("");
+        await sendMessage({ text });
+    };
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -67,7 +80,7 @@ export function ChatInterface({ transaction, initialMessages, userProfile }: Cha
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Link href="/dealer/inventory">
+                    <Link href={`/${userProfile.role}/inventory`}>
                         <Button variant="secondary" size="sm" className="h-8 text-[10px] hidden md:flex">
                             <Box size={14} className="mr-1" /> Inventory
                         </Button>
@@ -126,7 +139,7 @@ export function ChatInterface({ transaction, initialMessages, userProfile }: Cha
                                     {m.role === "assistant" ? "UrbanMine AI" : "You"}
                                 </span>
                                 <span className="text-[10px] text-gray-600">
-                                    {m.createdAt ? new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                                    {m.metadata && (m.metadata as any).createdAt ? new Date((m.metadata as any).createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                                 </span>
                             </div>
 
@@ -136,7 +149,9 @@ export function ChatInterface({ transaction, initialMessages, userProfile }: Cha
                                     ? "bg-primary/5 border-primary/20 text-gray-200 rounded-tr-none"
                                     : "bg-surface-dark border-white/5 text-gray-200 rounded-tl-none"
                             )}>
-                                {m.content}
+                                {m.parts
+                                    .filter((p) => p.type === 'text')
+                                    .map((p, i) => p.type === 'text' ? <span key={i}>{p.text}</span> : null)}
                             </div>
                         </div>
                     </div>
@@ -183,7 +198,7 @@ export function ChatInterface({ transaction, initialMessages, userProfile }: Cha
                             placeholder="Type your message or let AI draft a response..."
                             rows={1}
                             value={input}
-                            onChange={handleInputChange}
+                            onChange={(e) => setInput(e.target.value)}
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter' && !e.shiftKey) {
                                     e.preventDefault();

@@ -1,44 +1,16 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Search, Download, Filter, FileText, Verified, AlertCircle, Copy, Link as LinkIcon, ChevronLeft, ChevronRight, UploadCloud, Lock } from "lucide-react";
-import { useState } from "react";
+import { Search, Download, Filter, FileText, Verified, AlertCircle, Link as LinkIcon, ChevronLeft, ChevronRight, UploadCloud, Lock } from "lucide-react";
+import { getComplianceDocs } from "@/app/actions/oem";
+import { format } from "date-fns";
+import { CopyHash } from "@/components/ui/copy-hash"; // We will create this or inline it. Let's inline a simple version or use client component wrapping the hash.
 
-export default function ComplianceVaultPage() {
-  const [downloading, setDownloading] = useState<string | null>(null);
+// Let's create a small inline client component for the hash copy
+import ClientHashBadge from "./ClientHashBadge"; 
 
-  async function downloadForm6() {
-    setDownloading("form6");
-    try {
-      const res = await fetch("/api/docs/form6", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          transactionId: "TXN-DEMO-8839",
-          supplierName: "Dealer (Demo)",
-          buyerName: "OEM (Demo)",
-          materialType: "Mixed PCB",
-          weightKg: 500,
-        }),
-      });
-      const blob = await res.blob();
-      const hash = res.headers.get("X-Document-Hash") ?? "";
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "UrbanMineAI-Form6-TXN-DEMO-8839.pdf";
-      a.click();
-      URL.revokeObjectURL(url);
-      if (hash) {
-        // best-effort: copy hash to clipboard for quick verification flows
-        await navigator.clipboard.writeText(hash);
-      }
-    } finally {
-      setDownloading(null);
-    }
-  }
+export default async function ComplianceVaultPage() {
+  const docs = await getComplianceDocs() as any[];
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 p-8">
@@ -65,8 +37,8 @@ export default function ComplianceVaultPage() {
       {/* Stats Overview */}
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard title="Compliance Score" value="98%" icon={<Verified size={24} className="text-primary" />} />
-        <StatCard title="Total Documents" value="1,248" icon={<FileText size={24} className="text-blue-400" />} />
-        <StatCard title="Pending Review" value="3" icon={<AlertCircle size={24} className="text-warning" />} />
+        <StatCard title="Total Documents" value={docs.length.toString()} icon={<FileText size={24} className="text-blue-400" />} />
+        <StatCard title="Pending Review" value="0" icon={<AlertCircle size={24} className="text-warning" />} />
       </div>
 
       {/* Filters & Actions */}
@@ -106,51 +78,48 @@ export default function ComplianceVaultPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 text-sm">
-              <DocRow
-                name="Form-6 Submission"
-                id="UM-F6-2023-892"
-                type="Govt Compliance"
-                date="Oct 24, 2023"
-                time="14:30 PM"
-                hash="0x7f...3a2"
-                status="verified"
-                onDownload={downloadForm6}
-                downloading={downloading === "form6"}
-              />
-              <DocRow
-                name="EPR Certificate 2024"
-                id="EPR-KL-4421"
-                type="Certification"
-                date="Oct 22, 2023"
-                time="09:15 AM"
-                hash="0x8a...9b1"
-                status="verified"
-              />
-              <DocRow
-                name="Transport Manifest #4492"
-                id="Kochi -> Trivandrum"
-                type="Logistics"
-                date="Oct 21, 2023"
-                time="18:00 PM"
-                hash="Processing..."
-                status="pending"
-              />
+              {docs.length > 0 ? (
+                docs.map((doc) => {
+                  const d = new Date(doc.created_at);
+                  return (
+                    <DocRow
+                      key={doc.id}
+                      name={`${doc.doc_type || 'Form-6'} Submission`}
+                      id={`UM-${doc.id.substring(0, 8)}`}
+                      type={doc.doc_type || "Govt Compliance"}
+                      date={format(d, "MMM dd, yyyy")}
+                      time={format(d, "HH:mm a")}
+                      hash={doc.hash ? `${doc.hash.substring(0, 8)}...${doc.hash.slice(-4)}` : "Pending"}
+                      fullHash={doc.hash}
+                      status="verified"
+                      pdfUrl={doc.pdf_url}
+                    />
+                  );
+                })
+              ) : (
+                <tr>
+                   <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                      No compliance documents found yet.
+                   </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
 
-        {/* Pagination */}
-        <div className="px-6 py-4 border-t border-white/5 flex items-center justify-between bg-white/5">
-          <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
-            Showing <span className="text-white">1</span> to <span className="text-white">3</span> of <span className="text-white">1,248</span> results
-          </p>
-          <div className="flex gap-2">
-            <Button variant="secondary" size="icon" className="h-8 w-8 rounded-lg border-white/5"><ChevronLeft size={14} /></Button>
-            <Button variant="secondary" size="sm" className="h-8 rounded-lg border-primary/30 bg-primary/10 text-primary font-bold px-3">1</Button>
-            <Button variant="secondary" size="sm" className="h-8 rounded-lg border-white/5 px-3">2</Button>
-            <Button variant="secondary" size="icon" className="h-8 w-8 rounded-lg border-white/5"><ChevronRight size={14} /></Button>
+        {/* Pagination - static for now */}
+        {docs.length > 0 && (
+          <div className="px-6 py-4 border-t border-white/5 flex items-center justify-between bg-white/5">
+            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
+              Showing <span className="text-white">1</span> to <span className="text-white">{docs.length}</span> of <span className="text-white">{docs.length}</span> results
+            </p>
+            <div className="flex gap-2">
+              <Button variant="secondary" size="icon" className="h-8 w-8 rounded-lg border-white/5"><ChevronLeft size={14} /></Button>
+              <Button variant="secondary" size="sm" className="h-8 rounded-lg border-primary/30 bg-primary/10 text-primary font-bold px-3">1</Button>
+              <Button variant="secondary" size="icon" className="h-8 w-8 rounded-lg border-white/5"><ChevronRight size={14} /></Button>
+            </div>
           </div>
-        </div>
+        )}
       </Card>
 
       {/* Security Footer */}
@@ -191,9 +160,9 @@ function DocRow({
   date,
   time,
   hash,
+  fullHash,
   status,
-  onDownload,
-  downloading,
+  pdfUrl
 }: {
   name: string;
   id: string;
@@ -201,9 +170,9 @@ function DocRow({
   date: string;
   time: string;
   hash: string;
+  fullHash: string;
   status: "verified" | "pending";
-  onDownload?: () => void | Promise<void>;
-  downloading?: boolean;
+  pdfUrl?: string;
 }) {
   return (
     <tr className="hover:bg-white/5 transition-colors group">
@@ -228,12 +197,7 @@ function DocRow({
         <p className="text-[10px] text-gray-500">{time}</p>
       </td>
       <td className="px-6 py-4">
-        <div className="flex items-center gap-2 cursor-pointer group/hash">
-          <span className="font-mono text-xs text-primary bg-primary/5 px-2 py-1 rounded-lg border border-primary/10">
-            {hash}
-          </span>
-          <Copy size={12} className="text-gray-600 opacity-0 group-hover/hash:opacity-100 transition-opacity" />
-        </div>
+        <ClientHashBadge shortHash={hash} fullHash={fullHash} />
       </td>
       <td className="px-6 py-4 text-center">
         <StatusBadge variant={status === 'verified' ? 'success' : 'warning'}>
@@ -242,16 +206,27 @@ function DocRow({
       </td>
       <td className="px-6 py-4 text-right">
         <div className="flex items-center justify-end gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-9 w-9 text-gray-500 hover:text-primary transition-colors"
-            onClick={onDownload}
-            disabled={!!downloading || !onDownload}
-            title={downloading ? "Generating..." : "Download"}
-          >
-            <Download size={18} />
-          </Button>
+          {pdfUrl ? (
+             <a href={pdfUrl} target="_blank" rel="noreferrer">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 text-gray-500 hover:text-primary transition-colors"
+                  title="Download Document"
+                >
+                  <Download size={18} />
+                </Button>
+             </a>
+          ) : (
+              <Button
+                variant="ghost"
+                size="icon"
+                disabled
+                className="h-9 w-9 text-gray-500 opacity-50 transition-colors"
+              >
+                <Download size={18} />
+              </Button>
+          )}
           <Button variant="ghost" size="icon" className="h-9 w-9 text-gray-500 hover:text-primary transition-colors">
             <LinkIcon size={18} />
           </Button>

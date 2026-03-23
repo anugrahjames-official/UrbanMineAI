@@ -1,5 +1,3 @@
-"use client";
-
 import { getComplianceLogs } from "@/app/actions/oem";
 import { Card } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";

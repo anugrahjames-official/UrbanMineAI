@@ -69,7 +69,7 @@ interface FiltersProps {
     regions: string[];
     grades: string[];
     tiers: string[];
-    view: 'listings' | 'bounties';
+    view: 'listings' | 'bounties' | 'credits';
 }
 
 export default function Filters({ materials, regions, grades, tiers, view }: FiltersProps) {
@@ -79,7 +79,7 @@ export default function Filters({ materials, regions, grades, tiers, view }: Fil
     const [searchQuery, setSearchQuery] = useState('');
 
     // Prefix for URL parameters based on current view
-    const prefix = view === 'listings' ? 'l_' : 'b_';
+    const prefix = view === 'listings' ? 'l_' : (view === 'bounties' ? 'b_' : 'c_');
 
     // Initialize search query from URL on mount or view change
     useEffect(() => {
@@ -121,7 +121,7 @@ export default function Filters({ materials, regions, grades, tiers, view }: Fil
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" size={16} />
                         <input
                             type="text"
-                            placeholder={view === 'listings' ? "Search listings..." : "Search bounties..."}
+                            placeholder={view === 'listings' ? "Search listings..." : (view === 'credits' ? "Search EPR credits..." : "Search bounties...")}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#19e66b]/50 transition-all placeholder:text-white/30"

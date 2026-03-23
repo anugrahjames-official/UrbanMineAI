@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, GlassCard } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Camera, Wallet, Handshake, History, ArrowRight, Zap, MoreVertical, PackageX } from "lucide-react";
+import { Camera, Wallet, Handshake, History, ArrowRight, Zap, MoreVertical, PackageX, User } from "lucide-react";
+import { Icons } from "@/components/icons";
 import Link from "next/link";
-import { getDealerAnalytics, getRecentDealerInventory, getDealerProfile } from "@/app/actions/dealer";
+import { getDealerAnalytics, getRecentDealerInventory, getDealerProfile, getDealerActiveDeals } from "@/app/actions/dealer";
 import { formatDistanceToNow } from 'date-fns';
 import { TrustScoreCard } from "@/components/trust/TrustScoreCard";
 import { TrustHistoryList } from "@/components/trust/TrustHistoryList";
@@ -23,6 +24,7 @@ export default async function DealerDashboard() {
   const stats = await getDealerAnalytics();
   const recentInventory = (await getRecentDealerInventory()) as DealerInventoryItem[];
   const profile = await getDealerProfile();
+  const activeDeals = await getDealerActiveDeals();
   // We need the ID for history, getDealerProfile might not return ID if I didn't add it.
   // Actually getDealerProfile calls getUserProfile which has ID but getDealerProfile filters fields.
   // Let's check dealer.ts again. It returns name, email, trustScore, trustFlags, tier.
@@ -149,6 +151,67 @@ export default async function DealerDashboard() {
               </Link>
             </div>
           )}
+
+          {/* Incoming Bids / Active Negotiations section */}
+          <div className="pt-4 space-y-4">
+            <h3 className="text-xl font-bold flex items-center gap-2">
+              Active Negotiations
+              <span className="text-[10px] font-normal text-success bg-success/10 px-2 py-0.5 rounded-md border border-success/20 uppercase tracking-wider">Incoming Bids</span>
+            </h3>
+
+            {activeDeals.length > 0 ? (
+              <div className="space-y-3">
+                {activeDeals.map((deal: any) => (
+                  <GlassCard key={deal.id} className="p-4 hover:border-primary/30 transition-all group border-white/5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
+                          {deal.buyer?.avatar_url ? (
+                            <img src={deal.buyer.avatar_url} alt="avatar" className="w-full h-full object-cover" />
+                          ) : (
+                            <Icons.User className="text-gray-500" size={20} />
+                          )}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-bold text-white group-hover:text-primary transition-colors">
+                              {deal.buyer?.business_name || `${deal.buyer?.first_name} ${deal.buyer?.last_name}`}
+                            </h4>
+                            <StatusBadge variant="success" className="text-[8px] py-0 px-1.5 h-4">BID</StatusBadge>
+                            {deal.isAuction && (
+                              <StatusBadge variant="info" className="text-[8px] py-0 px-1.5 h-4 bg-primary/10 text-primary border-primary/20 uppercase tracking-widest">Auction</StatusBadge>
+                            )}
+                          </div>
+                          <p className="text-[10px] text-gray-400 mt-0.5 font-medium italic">
+                            {deal.item_title || 'Material Lot'}
+                          </p>
+                          <p className="text-[10px] text-gray-500 mt-0.5">
+                            Placed {formatDistanceToNow(new Date(deal.created_at), { addSuffix: true })}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[8px] text-gray-500 uppercase tracking-widest font-bold">Current Offer</p>
+                        <p className="text-lg font-bold text-primary font-mono">{formatCurrency(deal.price_total)}</p>
+                      </div>
+                      <div className="pl-4">
+                        <Link href={`/dealer/chat/${deal.id}`}>
+                          <Button variant="secondary" size="sm" className="h-9 px-4 border-white/10 bg-white/5 hover:bg-white/10 transition-all font-bold text-xs flex items-center gap-2">
+                             <Icons.MessageSquare size={14} className="text-primary" />
+                             Chat
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </GlassCard>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-surface-darker/30 border border-white/5 rounded-2xl p-8 text-center">
+                <p className="text-gray-500 text-sm">No active bids on your items yet.</p>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Trust History Sidebar (1/3 width) */}

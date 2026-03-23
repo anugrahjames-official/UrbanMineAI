@@ -1,0 +1,18 @@
+src/app/api/broker/route.ts(90,17): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type '({ price, reason }: { price: any; reason: any; }) => Promise<string>' is not assignable to type 'undefined'.
+src/app/api/broker/route.ts(90,35): error TS7031: Binding element 'price' implicitly has an 'any' type.
+src/app/api/broker/route.ts(90,42): error TS7031: Binding element 'reason' implicitly has an 'any' type.
+src/app/api/broker/route.ts(106,17): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type '({ final_price }: { final_price: any; }) => Promise<string>' is not assignable to type 'undefined'.
+src/app/api/broker/route.ts(106,35): error TS7031: Binding element 'final_price' implicitly has an 'any' type.
+src/app/api/broker/route.ts(142,19): error TS2551: Property 'toDataStreamResponse' does not exist on type 'StreamTextResult<{ update_price: Tool<any, any>; close_deal: Tool<any, any>; }, Output<string, string, never>>'. Did you mean 'toTextStreamResponse'?
+src/components/chat/ChatInterface.tsx(19,23): error TS2339: Property 'input' does not exist on type 'UseChatHelpers<UIMessage<unknown, UIDataTypes, UITools>>'.
+src/components/chat/ChatInterface.tsx(19,30): error TS2339: Property 'handleInputChange' does not exist on type 'UseChatHelpers<UIMessage<unknown, UIDataTypes, UITools>>'.
+src/components/chat/ChatInterface.tsx(19,49): error TS2339: Property 'handleSubmit' does not exist on type 'UseChatHelpers<UIMessage<unknown, UIDataTypes, UITools>>'.
+src/components/chat/ChatInterface.tsx(19,63): error TS2339: Property 'isLoading' does not exist on type 'UseChatHelpers<UIMessage<unknown, UIDataTypes, UITools>>'.
+src/components/chat/ChatInterface.tsx(20,9): error TS2353: Object literal may only specify known properties, and 'api' does not exist in type 'UseChatOptions<UIMessage<unknown, UIDataTypes, UITools>>'.
+src/components/chat/ChatInterface.tsx(129,40): error TS2339: Property 'createdAt' does not exist on type 'UIMessage<unknown, UIDataTypes, UITools>'.
+src/components/chat/ChatInterface.tsx(129,63): error TS2339: Property 'createdAt' does not exist on type 'UIMessage<unknown, UIDataTypes, UITools>'.
+src/components/chat/ChatInterface.tsx(139,36): error TS2339: Property 'content' does not exist on type 'UIMessage<unknown, UIDataTypes, UITools>'.

@@ -4,7 +4,7 @@ import { Card, GlassCard } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
-import { getRecyclerDashboardStats, getMarketplaceItems } from "@/app/actions/recycler";
+import { getRecyclerDashboardStats, getMarketplaceItems, getRecyclerActiveBidsDetails } from "@/app/actions/recycler";
 import { getLivePrices } from "@/services/pricing";
 import { formatDistanceToNow } from 'date-fns';
 import BidButton from "@/components/recycler/BidButton";
@@ -25,6 +25,7 @@ interface MarketplaceItemData {
 export default async function RecyclerDashboard() {
   const stats = await getRecyclerDashboardStats();
   const marketplaceItems = (await getMarketplaceItems()) as MarketplaceItemData[];
+  const { bids: activeBids, totalValue } = await getRecyclerActiveBidsDetails();
   const prices = await getLivePrices();
 
   return (
@@ -57,6 +58,12 @@ export default async function RecyclerDashboard() {
           trend=""
           trendColor="text-error"
           trendSub="total deployed"
+        />
+        <SummaryCard
+          title="Total Bid Value"
+          value={`$${totalValue.toLocaleString()}`}
+          icon={<Icons.Gavel className="text-primary" size={20} />}
+          sub="active offers"
         />
       </div>
 
@@ -151,6 +158,60 @@ export default async function RecyclerDashboard() {
               </table>
             </div>
           </Card>
+
+          {/* My Active Bids Section */}
+          <section className="mt-8 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold flex items-center gap-2">
+                <Icons.Gavel className="text-primary" size={18} /> My Active Bids
+              </h2>
+            </div>
+
+            {activeBids.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {activeBids.map((bid: any) => (
+                  <GlassCard key={bid.id} className="p-4 hover:border-primary/30 transition-all group border-white/5 bg-surface-darker/40">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
+                          <Icons.Box className="text-primary" size={16} />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold text-white group-hover:text-primary transition-colors line-clamp-1">
+                            {bid.material_breakdown?.title || bid.id.substring(0, 8)}
+                          </h4>
+                          <p className="text-[10px] text-gray-500">
+                            Seller: {bid.supplier?.business_name || 'Dealer'}
+                          </p>
+                        </div>
+                      </div>
+                      <StatusBadge variant="success" className="text-[8px] py-0 px-1.5 h-4 uppercase">active</StatusBadge>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-3 border-t border-white/5">
+                      <div>
+                        <p className="text-[8px] text-gray-400 uppercase tracking-widest font-bold">My Bid</p>
+                        <p className="text-lg font-bold text-white font-mono">${bid.price_total.toLocaleString()}</p>
+                      </div>
+                      <Link href={`/recycler/chat/${bid.id}`}>
+                        <Button variant="secondary" size="sm" className="h-8 text-[10px] font-bold border-white/10 bg-white/5 hover:bg-white/10 transition-all flex items-center gap-1.5">
+                           <Icons.MessageSquare size={12} className="text-primary" />
+                           Chat
+                        </Button>
+                      </Link>
+                    </div>
+                  </GlassCard>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-surface-darker/30 border border-white/5 border-dashed rounded-xl p-8 text-center">
+                <p className="text-gray-500 text-sm">You haven't placed any bids yet.</p>
+                <Link href="/marketplace">
+                  <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 mt-2">Browse Marketplace</Button>
+                </Link>
+              </div>
+            )}
+          </section>
         </div>
 
         {/* Right Column: Analytics & Tools */}

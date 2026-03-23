@@ -1,4 +1,6 @@
 import OEMDashboard from "../dashboard/page";
 
-// Route alias to match the MVP plan: /oem/compliance
-export default OEMDashboard;
+// Explicit component wrapper to resolve Turbopack module instantiation issues
+export default async function CompliancePage() {
+  return <OEMDashboard />;
+}
