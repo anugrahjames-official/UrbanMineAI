@@ -57,7 +57,10 @@ import {
   MemoryStick,
   ShoppingBag,
   Cable,
-  Trash2
+  Trash2,
+  Check,
+  X,
+  Loader2
 } from "lucide-react";
 
 export const Icons = {
@@ -119,7 +122,10 @@ export const Icons = {
   MemoryStick,
   ShoppingBag,
   Cable,
-  Trash2
+  Trash2,
+  Check,
+  X,
+  Loader2
 };
 
 export {
@@ -181,5 +187,8 @@ export {
   MemoryStick,
   ShoppingBag,
   Cable,
-  Trash2
+  Trash2,
+  Check,
+  X,
+  Loader2
 };

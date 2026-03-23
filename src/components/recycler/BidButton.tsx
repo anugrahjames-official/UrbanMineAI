@@ -9,12 +9,24 @@ export default function BidButton({ itemId }: { itemId: string }) {
     const [loading, setLoading] = useState(false)
 
     const handleBid = async () => {
+        const amountStr = window.prompt("Enter your bid amount ($):");
+        if (!amountStr) return;
+        
+        const amount = parseFloat(amountStr);
+        if (isNaN(amount) || amount <= 0) {
+            toast.error("Please enter a valid amount");
+            return;
+        }
+
         setLoading(true)
         try {
-            await placeBid(itemId)
-        } catch (error) {
+            const result = await placeBid(itemId, amount)
+            if (result.success) {
+                toast.success(`Bid of $${amount} placed successfully!`)
+            }
+        } catch (error: any) {
             console.error("Bid failed", error)
-            // toast.error("Failed to place bid")
+            toast.error(error.message || "Failed to place bid")
         } finally {
             setLoading(false)
         }

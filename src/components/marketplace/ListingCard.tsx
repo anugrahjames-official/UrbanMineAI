@@ -29,7 +29,10 @@ export default function ListingCard({ item, isLoggedIn = false, userRole }: List
     const currentBid = item.current_bid ? `$${item.current_bid}` : estValue;
     const imageUrl = item.image_url || '';
     const description = metadata.description || item.description || '';
-    const isEprCredit = metadata.type === 'epr_credit';
+    const isEprCredit = metadata.type === 'epr_credit' || 
+                       (Array.isArray(metadata.tags) && metadata.tags.includes('EPR Credit')) ||
+                       item.category === 'epr_credit';
+    const mainImageUrl = isEprCredit ? '' : (item.image_url || metadata.image_url || '');
 
     // User Details
     const seller = item.users || {};
@@ -51,40 +54,39 @@ export default function ListingCard({ item, isLoggedIn = false, userRole }: List
 
     return (
         <article className="glass-card rounded-[24px] overflow-hidden group hover:-translate-y-1 transition-transform duration-300 border border-white/10 bg-[#112117]/50 flex flex-col h-full">
-            {!isEprCredit && (
-                <div className="relative h-48 overflow-hidden shrink-0 bg-[#1a2f23] flex items-center justify-center">
-                    <ListingImage
-                        title={title}
-                        mainImage={imageUrl}
-                        additionalImages={metadata.additional_images}
-                    />
+            <div className="relative h-48 overflow-hidden shrink-0 bg-[#1a2f23] flex items-center justify-center">
+                <ListingImage
+                    mainImage={mainImageUrl}
+                    additionalImages={metadata.additional_images || []}
+                    title={title}
+                    isEprCredit={isEprCredit}
+                />
 
-                    {item.status === 'auction' && (
-                        <div className="absolute top-3 left-3 bg-[#112117]/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#19e66b] animate-pulse"></span>
-                            <span className="text-[10px] font-bold tracking-wider text-white uppercase">Live Auction</span>
-                        </div>
-                    )}
-
-                    <div className="absolute bottom-3 right-3 flex gap-2 flex-wrap justify-end">
-                        {metadata.tags && metadata.tags.map((tag: string) => (
-                            <span key={tag} className="bg-black/60 backdrop-blur-md text-[#19e66b] text-[10px] font-bold px-2 py-1 rounded-md border border-[#19e66b]/20 shadow-[0_0_10px_rgba(25,230,107,0.2)]">
-                                {tag}
-                            </span>
-                        ))}
-                        {isVerified && (
-                            <span className="bg-[#19e66b]/20 backdrop-blur-md text-[#19e66b] text-[10px] font-bold px-2 py-1 rounded-md border border-[#19e66b]/20 shadow-[0_0_10px_rgba(25,230,107,0.2)]">
-                                Verified
-                            </span>
-                        )}
-                        {!metadata.tags && !isVerified && (
-                            <span className="bg-black/60 backdrop-blur-md text-white/80 text-[10px] font-bold px-2 py-1 rounded-md border border-white/10">
-                                Standard
-                            </span>
-                        )}
+                {!isEprCredit && item.status === 'auction' && (
+                    <div className="absolute top-3 left-3 bg-[#112117]/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#19e66b] animate-pulse"></span>
+                        <span className="text-[10px] font-bold tracking-wider text-white uppercase">Live Auction</span>
                     </div>
+                )}
+
+                <div className="absolute bottom-3 right-3 flex gap-2 flex-wrap justify-end">
+                    {metadata.tags && metadata.tags.map((tag: string) => (
+                        <span key={tag} className="bg-black/60 backdrop-blur-md text-[#19e66b] text-[10px] font-bold px-2 py-1 rounded-md border border-[#19e66b]/20 shadow-[0_0_10px_rgba(25,230,107,0.2)]">
+                            {tag}
+                        </span>
+                    ))}
+                    {isVerified && (
+                        <span className="bg-[#19e66b]/20 backdrop-blur-md text-[#19e66b] text-[10px] font-bold px-2 py-1 rounded-md border border-[#19e66b]/20 shadow-[0_0_10px_rgba(25,230,107,0.2)]">
+                            Verified
+                        </span>
+                    )}
+                    {!metadata.tags && !isVerified && (
+                        <span className="bg-black/60 backdrop-blur-md text-white/80 text-[10px] font-bold px-2 py-1 rounded-md border border-white/10">
+                            Standard
+                        </span>
+                    )}
                 </div>
-            )}
+            </div>
 
             <div className="p-5 flex flex-col flex-1">
                 {isEprCredit && (

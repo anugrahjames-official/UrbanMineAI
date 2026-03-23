@@ -15,10 +15,12 @@ interface BountyCardProps {
 
 import { useState } from 'react';
 import AuthModal from '../auth/AuthModal';
+import FulfillBountyModal from './FulfillBountyModal';
 
 export default function BountyCard({ bounty, isLoggedIn = false, userRole }: BountyCardProps) {
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [showRoleModal, setShowRoleModal] = useState(false);
+    const [showFulfillModal, setShowFulfillModal] = useState(false);
 
     const material = bounty.material || 'Unknown Material';
     const quantity = bounty.quantity || 0;
@@ -151,7 +153,7 @@ export default function BountyCard({ bounty, isLoggedIn = false, userRole }: Bou
                             } else if (userRole !== 'dealer') {
                                 setShowRoleModal(true);
                             } else {
-                                // Handle fulfill action
+                                setShowFulfillModal(true);
                             }
                         }}
                         className={cn(
@@ -167,6 +169,11 @@ export default function BountyCard({ bounty, isLoggedIn = false, userRole }: Bou
             </div>
 
             <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+            <FulfillBountyModal 
+                isOpen={showFulfillModal} 
+                onClose={() => setShowFulfillModal(false)} 
+                bounty={bounty} 
+            />
             <RoleRestrictionModal
                 isOpen={showRoleModal}
                 onClose={() => setShowRoleModal(false)}

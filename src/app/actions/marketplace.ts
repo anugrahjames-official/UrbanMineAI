@@ -285,7 +285,6 @@ export async function placeBid(itemId: string, amount: number) {
 
     revalidatePath('/marketplace');
     revalidatePath(`/item/${itemId}`);
-    revalidatePath('/dealer/dashboard');
 
     return { success: true, bid: newBid };
 }
@@ -325,4 +324,91 @@ export async function incrementViewCount(itemId: string) {
     // We don't revalidate the specific item path here to avoid full page reload if not needed, 
     // but for real-time feel on other clients, it might be good. 
     // For now, let's keep it minimal.
+}
+
+export async function fetchBidsForItem(itemId: string) {
+    const supabase = await createClient();
+    
+    const { data, error } = await supabase
+        .from('bids')
+        .select(`
+            *,
+            users:bidder_id (
+                business_name,
+                first_name,
+                last_name,
+                trust_score,
+                avatar_url,
+                location,
+                tier,
+                trust_flags
+            )
+        `)
+        .eq('item_id', itemId)
+        .order('amount', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching bids:', error);
+        return { data: [], error: error.message };
+    }
+
+    return { data };
+}
+
+export async function acceptBid(bidId: string) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error('Unauthorized');
+
+    // 1. Get the bid and its associated item
+    const { data: bid, error: bidError } = await supabase
+        .from('bids')
+        .select('*, items(*)')
+        .eq('id', bidId)
+        .single();
+
+    if (bidError || !bid) throw new Error('Bid not found');
+
+    // 2. Verify the current user is the owner of the item
+    // @ts-ignore - items is joined
+    if (bid.items.user_id !== user.id) {
+        throw new Error('Only the item owner can accept a bid');
+    }
+
+    // 3. Update the item status to 'sold'
+    const { error: itemError } = await supabase
+        .from('items')
+        .update({ status: 'sold' })
+        // @ts-ignore
+        .eq('id', bid.item_id);
+
+    if (itemError) throw new Error('Failed to update item status');
+
+    // 4. Create a transaction record
+    const { error: txError } = await supabase
+        .from('transactions')
+        .insert({
+            // @ts-ignore
+            supplier_id: bid.items.user_id,
+            buyer_id: bid.bidder_id,
+            // @ts-ignore
+            item_ids: [bid.item_id],
+            price_total: bid.amount,
+            status: 'completed',
+            // @ts-ignore
+            material_breakdown: bid.items.metadata
+        });
+
+    if (txError) {
+        console.error('Transaction creation error:', txError);
+        // We don't throw here to avoid half-committed state if possible, 
+        // but ideally this should be a transaction itself.
+    }
+
+    revalidatePath('/dealer/dashboard');
+    revalidatePath('/recycler/dashboard');
+    revalidatePath('/marketplace');
+
+    return { success: true };
 }

@@ -1,14 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, GlassCard } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Camera, Wallet, Handshake, History, ArrowRight, Zap, MoreVertical, PackageX, User } from "lucide-react";
-import { Icons } from "@/components/icons";
+import { Camera, Wallet, Handshake, History, ArrowRight, Zap, MoreVertical, PackageX } from "lucide-react";
 import Link from "next/link";
-import { getDealerAnalytics, getRecentDealerInventory, getDealerProfile, getDealerActiveDeals } from "@/app/actions/dealer";
+import { getDealerAnalytics, getRecentDealerInventory, getDealerProfile, getDealerFulfillments } from "@/app/actions/dealer";
 import { formatDistanceToNow } from 'date-fns';
 import { TrustScoreCard } from "@/components/trust/TrustScoreCard";
 import { TrustHistoryList } from "@/components/trust/TrustHistoryList";
 import { getUserProfile } from "@/app/actions/user";
+import { InventoryItemBids } from "@/components/dealer/InventoryItemBids";
+import { revalidatePath } from "next/cache";
 
 interface DealerInventoryItem {
   id: string;
@@ -18,13 +19,14 @@ interface DealerInventoryItem {
   grade: string;
   created_at: string;
   image: string;
+  bids: any[];
 }
 
 export default async function DealerDashboard() {
   const stats = await getDealerAnalytics();
   const recentInventory = (await getRecentDealerInventory()) as DealerInventoryItem[];
   const profile = await getDealerProfile();
-  const activeDeals = await getDealerActiveDeals();
+  const fulfillments = await getDealerFulfillments();
   // We need the ID for history, getDealerProfile might not return ID if I didn't add it.
   // Actually getDealerProfile calls getUserProfile which has ID but getDealerProfile filters fields.
   // Let's check dealer.ts again. It returns name, email, trustScore, trustFlags, tier.
@@ -133,9 +135,11 @@ export default async function DealerDashboard() {
                   weight={item.weight}
                   value={item.value.toString()}
                   grade={item.grade}
-                  time={formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
+                  time={formatDistanceToNow(new Date(item.created_at || Date.now()), { addSuffix: true })}
                   image={item.image}
                   variant={item.grade?.includes('A') ? 'success' : item.grade?.includes('B') ? 'warning' : 'error'}
+                  bids={item.bids}
+                  itemId={item.id}
                 />
               ))}
             </div>
@@ -151,70 +155,55 @@ export default async function DealerDashboard() {
               </Link>
             </div>
           )}
-
-          {/* Incoming Bids / Active Negotiations section */}
-          <div className="pt-4 space-y-4">
+        </div>
+        
+        {/* Bounty Offers Section (Full width below inventory) */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="flex items-center justify-between">
             <h3 className="text-xl font-bold flex items-center gap-2">
-              Active Negotiations
-              <span className="text-[10px] font-normal text-success bg-success/10 px-2 py-0.5 rounded-md border border-success/20 uppercase tracking-wider">Incoming Bids</span>
+              My Bounty Offers
+              <span className="text-xs font-normal text-gray-400 bg-surface-darker px-2 py-1 rounded-md border border-white/5">Active Requests</span>
             </h3>
-
-            {activeDeals.length > 0 ? (
-              <div className="space-y-3">
-                {activeDeals.map((deal: any) => (
-                  <GlassCard key={deal.id} className="p-4 hover:border-primary/30 transition-all group border-white/5">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
-                          {deal.buyer?.avatar_url ? (
-                            <img src={deal.buyer.avatar_url} alt="avatar" className="w-full h-full object-cover" />
-                          ) : (
-                            <Icons.User className="text-gray-500" size={20} />
-                          )}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-bold text-white group-hover:text-primary transition-colors">
-                              {deal.buyer?.business_name || `${deal.buyer?.first_name} ${deal.buyer?.last_name}`}
-                            </h4>
-                            <StatusBadge variant="success" className="text-[8px] py-0 px-1.5 h-4">BID</StatusBadge>
-                            {deal.isAuction && (
-                              <StatusBadge variant="info" className="text-[8px] py-0 px-1.5 h-4 bg-primary/10 text-primary border-primary/20 uppercase tracking-widest">Auction</StatusBadge>
-                            )}
-                          </div>
-                          <p className="text-[10px] text-gray-400 mt-0.5 font-medium italic">
-                            {deal.item_title || 'Material Lot'}
-                          </p>
-                          <p className="text-[10px] text-gray-500 mt-0.5">
-                            Placed {formatDistanceToNow(new Date(deal.created_at), { addSuffix: true })}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-[8px] text-gray-500 uppercase tracking-widest font-bold">Current Offer</p>
-                        <p className="text-lg font-bold text-primary font-mono">{formatCurrency(deal.price_total)}</p>
-                      </div>
-                      <div className="pl-4">
-                        <Link href={`/dealer/chat/${deal.id}`}>
-                          <Button variant="secondary" size="sm" className="h-9 px-4 border-white/10 bg-white/5 hover:bg-white/10 transition-all font-bold text-xs flex items-center gap-2">
-                             <Icons.MessageSquare size={14} className="text-primary" />
-                             Chat
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-                  </GlassCard>
-                ))}
-              </div>
-            ) : (
-              <div className="bg-surface-darker/30 border border-white/5 rounded-2xl p-8 text-center">
-                <p className="text-gray-500 text-sm">No active bids on your items yet.</p>
-              </div>
-            )}
           </div>
+
+          {fulfillments.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {fulfillments.map((f: any) => (
+                <GlassCard key={f.id} className="p-4 border-white/5 group hover:border-[#19e66b]/30 transition-all">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h4 className="font-bold text-white group-hover:text-[#19e66b] transition-colors">{f.bounty.material}</h4>
+                      <p className="text-[10px] text-white/40 uppercase tracking-wider">{f.bounty.quantity} {f.bounty.unit}</p>
+                    </div>
+                    <StatusBadge variant={
+                      f.status === 'accepted' ? 'success' : 
+                      f.status === 'rejected' ? 'error' : 
+                      f.status === 'pending' ? 'warning' : 'info'
+                    }>
+                      {f.status}
+                    </StatusBadge>
+                  </div>
+                  <div className="flex justify-between items-end pt-3 border-t border-white/5">
+                    <div>
+                      <p className="text-[8px] text-white/40 uppercase">Your Offer</p>
+                      <p className="text-lg font-black text-[#19e66b]">${f.amount}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[8px] text-white/40 uppercase">Target Price</p>
+                      <p className="text-sm font-bold text-white/60">${f.bounty.target_price}</p>
+                    </div>
+                  </div>
+                </GlassCard>
+              ))}
+            </div>
+          ) : (
+            <div className="p-8 bg-surface-darker/30 rounded-2xl border border-white/5 border-dashed text-center">
+              <p className="text-sm text-white/40 italic">No active bounty offers. Visit the marketplace to find fulfillments.</p>
+            </div>
+          )}
         </div>
 
-        {/* Trust History Sidebar (1/3 width) */}
+        {/* Trust History Sidebar (1/3 width) - Moves down if screen becomes vertical */}
         <div className="lg:col-span-1 space-y-4">
           <h3 className="text-xl font-bold">Reputation Log</h3>
           <TrustHistoryList userId={userFullProfile.id} />
@@ -274,6 +263,8 @@ function InventoryItemCard({
   time,
   image,
   variant = "primary",
+  bids,
+  itemId,
 }: {
   title: string;
   weight: string;
@@ -282,6 +273,8 @@ function InventoryItemCard({
   time: string;
   image: string;
   variant?: BadgeVariant;
+  bids: any[];
+  itemId: string;
 }) {
   return (
     <GlassCard className="p-0 overflow-hidden group hover:translate-y-[-4px] transition-all duration-300 border-white/5">
@@ -307,9 +300,14 @@ function InventoryItemCard({
             <p className="text-[8px] text-gray-500 uppercase tracking-widest">Est. Value / kg</p>
             <p className="text-lg font-bold text-primary">{value}</p>
           </div>
-          <Button variant="primary" size="sm" className="h-8 w-8 p-0 rounded-lg">
-            <Handshake size={14} />
-          </Button>
+          <InventoryItemBids 
+            itemId={itemId} 
+            bids={bids}
+            onAcceptSuccess={async () => {
+              "use server"
+              revalidatePath('/dealer/dashboard')
+            }}
+          />
         </div>
       </div>
     </GlassCard>

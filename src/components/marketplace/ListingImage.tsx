@@ -8,9 +8,10 @@ interface ListingImageProps {
     title: string;
     mainImage: string;
     additionalImages?: string[];
+    isEprCredit?: boolean;
 }
 
-export default function ListingImage({ title, mainImage, additionalImages = [] }: ListingImageProps) {
+export default function ListingImage({ title, mainImage, additionalImages = [], isEprCredit }: ListingImageProps) {
     const [imageError, setImageError] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -46,11 +47,22 @@ export default function ListingImage({ title, mainImage, additionalImages = [] }
     // For now, if current image fails, we show fallback for that specific view.
     // If main image is missing initially, `allImages` might be empty if filter(Boolean) removes it.
 
+    if (isEprCredit) {
+        return (
+            <div className="flex flex-col items-center justify-center text-[#19e66b]/30 h-full w-full bg-[#112117]">
+                <div className="w-16 h-16 rounded-full border-2 border-[#19e66b]/10 flex items-center justify-center mb-3 shadow-inner">
+                    <span className="text-2xl font-black text-[#19e66b]">€</span>
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#19e66b]/40">EPR Registry</span>
+            </div>
+        );
+    }
+
     if (allImages.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center text-white/20 h-full w-full bg-[#1a2f23]">
                 <div className="w-12 h-12 rounded-full border-2 border-white/10 flex items-center justify-center mb-2">
-                    <span className="text-xl font-bold">{title.charAt(0)}</span>
+                    <span className="text-xl font-bold">{title?.charAt(0) || '?'}</span>
                 </div>
                 <span className="text-[10px] uppercase tracking-wider">No Image</span>
             </div>

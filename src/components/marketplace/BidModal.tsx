@@ -196,7 +196,11 @@ export default function BidModal({ children, item }: BidModalProps) {
         }
     };
 
+    const isEprCredit = metadata.type === 'epr_credit' || 
+                       (Array.isArray(metadata.tags) && metadata.tags.includes('EPR Credit')) ||
+                       item.category === 'epr_credit';
     const highestBidAmount = localBids.length > 0 ? Math.max(...localBids.map((b: any) => b.amount)) : 0;
+    const mainImageUrl = isEprCredit ? '' : (item.image_url || metadata.image_url || '');
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -210,25 +214,23 @@ export default function BidModal({ children, item }: BidModalProps) {
                         Place a bid on {title}. Current highest bid is ${highestBidAmount.toLocaleString()}.
                     </DialogDescription>
                 </DialogHeader>
-                <div className="flex flex-col md:flex-row w-full h-full md:overflow-hidden">
-                    {/* LEFT PANEL: Product Details */}
-                    <div className="w-full md:w-7/12 lg:w-2/3 flex flex-col border-b md:border-b-0 md:border-r border-[#19e66b]/10 bg-black/20 h-auto md:h-full overflow-visible md:overflow-y-auto custom-scrollbar">
-                        {/* Hero Image Area */}
-                        <div className="relative w-full aspect-video md:aspect-[21/9] group overflow-hidden shrink-0">
-                            <div className="absolute inset-0">
-                                <ListingImage
-                                    title={title}
-                                    mainImage={item.image_url || 'https://lh3.googleusercontent.com/placeholder'}
-                                    additionalImages={metadata.additional_images}
-                                />
-                            </div>
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#050a07]/90 via-transparent to-transparent pointer-events-none"></div>
+                <div className="flex flex-col md:flex-row h-full w-full">
+                    {/* Image Section */}
+                    <div className="w-full md:w-[55%] relative bg-[#112117] min-h-[400px]">
+                        <div className="absolute inset-0">
+                            <ListingImage
+                                title={title}
+                                mainImage={mainImageUrl}
+                                additionalImages={metadata.additional_images || []}
+                                isEprCredit={isEprCredit}
+                            />
 
-                            {/* Overlay Badges */}
                             <div className="absolute top-6 left-6 flex gap-3 z-20">
-                                <span className="bg-[#19e66b]/90 text-[#050a07] text-[10px] font-bold px-3 py-1.5 rounded-full backdrop-blur-md shadow-[0_0_15px_rgba(25,230,107,0.4)] tracking-wider">
-                                    LIVE AUCTION
-                                </span>
+                                {!isEprCredit && (
+                                    <span className="bg-[#19e66b]/90 text-[#050a07] text-[10px] font-bold px-3 py-1.5 rounded-full backdrop-blur-md shadow-[0_0_15px_rgba(25,230,107,0.4)] tracking-wider">
+                                        LIVE AUCTION
+                                    </span>
+                                )}
                                 <span className="bg-black/60 text-white text-[10px] font-medium px-3 py-1.5 rounded-full backdrop-blur-md border border-white/10 flex items-center gap-1.5">
                                     <Eye size={14} /> {views} Watching
                                 </span>
@@ -243,10 +245,12 @@ export default function BidModal({ children, item }: BidModalProps) {
                                 </div>
                                 <h1 className="text-2xl md:text-4xl font-bold text-white tracking-tight leading-none mb-4">{title}</h1>
                                 <div className="flex flex-wrap gap-4 text-xs text-white/80 items-center">
-                                    <span className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1.5 rounded-lg border border-white/10">
-                                        <Award size={16} className="text-[#19e66b]" />
-                                        Grade: <span className="text-white font-bold">{grade}</span>
-                                    </span>
+                                    {!isEprCredit && (
+                                        <span className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1.5 rounded-lg border border-white/10">
+                                            <Award size={16} className="text-[#19e66b]" />
+                                            Grade: <span className="text-white font-bold">{grade}</span>
+                                        </span>
+                                    )}
                                     {totalEstimatedValue > 0 && (
                                         <span className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1.5 rounded-lg border border-white/10">
                                             <DollarSign size={16} className="text-[#19e66b]" />
@@ -266,33 +270,35 @@ export default function BidModal({ children, item }: BidModalProps) {
                         </div>
 
                         {/* Product Intelligence / Details */}
-                        <div className="p-6 md:p-8 space-y-8">
-                            <YieldAnalysis yields={finalYields} confidence={metadata.ai_confidence || item.confidence} />
+                        {!isEprCredit && (
+                            <div className="p-6 md:p-8 space-y-8">
+                                <YieldAnalysis yields={finalYields} confidence={metadata.ai_confidence || item.confidence} />
 
-                            {/* Additional Metadata Grid */}
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 pt-6 border-t border-white/10">
-                                <div>
-                                    <p className="text-[10px] text-white/40 uppercase tracking-widest mb-1.5">Condition</p>
-                                    <p className="text-sm font-semibold text-white">{metadata.condition || 'Unsorted / Raw'}</p>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] text-white/40 uppercase tracking-widest mb-1.5">Packaging</p>
-                                    <p className="text-sm font-semibold text-white">{metadata.packaging || 'Gaylord Box'}</p>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] text-white/40 uppercase tracking-widest mb-1.5">Logistics</p>
-                                    <p className="text-sm font-semibold text-white">{metadata.logistics || 'FOB Destination'}</p>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] text-white/40 uppercase tracking-widest mb-1.5">Inspection</p>
-                                    <p className="text-sm font-semibold text-white">{metadata.inspection || 'AI Verified'}</p>
+                                {/* Additional Metadata Grid */}
+                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 pt-6 border-t border-white/10">
+                                    <div>
+                                        <p className="text-[10px] text-white/40 uppercase tracking-widest mb-1.5">Condition</p>
+                                        <p className="text-sm font-semibold text-white">{metadata.condition || 'Unsorted / Raw'}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] text-white/40 uppercase tracking-widest mb-1.5">Packaging</p>
+                                        <p className="text-sm font-semibold text-white">{metadata.packaging || 'Gaylord Box'}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] text-white/40 uppercase tracking-widest mb-1.5">Logistics</p>
+                                        <p className="text-sm font-semibold text-white">{metadata.logistics || 'FOB Destination'}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] text-white/40 uppercase tracking-widest mb-1.5">Inspection</p>
+                                        <p className="text-sm font-semibold text-white">{metadata.inspection || 'AI Verified'}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
                     </div>
 
                     {/* RIGHT PANEL: Bidding Console */}
-                    <div className="w-full md:w-5/12 lg:w-1/3 flex flex-col bg-[#102218]/40 backdrop-blur-xl relative h-auto md:h-full">
+                    <div className="w-full md:w-[45%] flex flex-col bg-[#102218]/40 backdrop-blur-xl relative h-auto md:h-full">
                         {/* Close Button handled by Dialog component */}
 
                         {/* Timer Header */}

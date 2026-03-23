@@ -43,7 +43,7 @@ export async function getDealerInventory() {
 
     const { data: items, error } = await supabase
         .from('items')
-        .select('*')
+        .select('*, bids(*, users(*))')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
 
@@ -64,7 +64,9 @@ export async function getDealerInventory() {
             image: item.image_url,
             created_at: item.created_at,
             status: item.status,
-            variant: meta?.grade?.includes('A') ? 'success' : meta?.grade?.includes('B') ? 'warning' : 'error'
+            variant: meta?.grade?.includes('A') ? 'success' : meta?.grade?.includes('B') ? 'warning' : 'error',
+            // @ts-ignore
+            bids: item.bids || []
         }
     })
 }
@@ -77,7 +79,7 @@ export async function getRecentDealerInventory() {
 
     const { data: items } = await supabase
         .from('items')
-        .select('*')
+        .select('*, bids(*, users(*))')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(4)
@@ -92,7 +94,9 @@ export async function getRecentDealerInventory() {
             grade: meta?.grade || 'Ungraded',
             image: item.image_url,
             created_at: item.created_at,
-            variant: meta?.grade?.includes('A') ? 'success' : meta?.grade?.includes('B') ? 'warning' : 'error'
+            variant: meta?.grade?.includes('A') ? 'success' : meta?.grade?.includes('B') ? 'warning' : 'error',
+            // @ts-ignore
+            bids: item.bids || []
         }
     }) || []
 }
@@ -377,86 +381,25 @@ export async function deleteInventoryItem(itemId: string) {
     return { success: true }
 }
 
-export async function getDealerActiveDeals() {
+export async function getDealerFulfillments() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-
     if (!user) return []
 
-    // 1. Fetch direct transactions (Negotiations)
-    const { data: transactions, error: transError } = await supabase
-        .from('transactions')
-        .select(`
-            *,
-            buyer:users!buyer_id (
-                business_name,
-                first_name,
-                last_name,
-                avatar_url
-            )
-        `)
-        .eq('supplier_id', user.id)
-        .in('status', ['negotiating', 'agreed', 'pending'])
-        .order('created_at', { ascending: false })
+    try {
+        const { data, error } = await supabase
+            .from('bounty_fulfillments')
+            .select(`
+                *,
+                bounty:bounties(*)
+            `)
+            .eq('dealer_id', user.id)
+            .order('created_at', { ascending: false })
 
-    if (transError) {
-        console.error('Error fetching dealer transactions:', transError)
+        if (error) throw error
+        return data || []
+    } catch (error) {
+        console.error('Error fetching dealer fulfillments:', error)
+        return []
     }
-
-    // 2. Fetch auction bids directly from bids table (inner join with dealer's items)
-    const { data: rawBids, error: bidsError } = await supabase
-        .from('bids')
-        .select(`
-            *,
-            item:items!inner (
-                id,
-                user_id,
-                metadata
-            ),
-            buyer:users!bidder_id (
-                business_name,
-                first_name,
-                last_name,
-                avatar_url
-            )
-        `)
-        .eq('item.user_id', user.id)
-        .order('amount', { ascending: false });
-
-    if (bidsError) {
-        console.error('Error fetching dealer bids:', bidsError)
-    }
-
-    // 3. Combine and group targets
-    const finalDealsMap = new Map();
-    
-    // Add transactions first
-    (transactions || []).forEach((deal: any) => {
-        finalDealsMap.set(`trans_${deal.id}`, {
-            ...deal,
-            item_title: deal.material_breakdown?.title || 'Material Lot'
-        });
-    });
-    
-    // Add bids (grouping by item_id, keeping only the highest bid)
-    (rawBids || []).forEach((bid: any) => {
-        const itemId = bid.item_id;
-        const key = `item_${itemId}`;
-        if (!finalDealsMap.has(key) || finalDealsMap.get(key).price_total < bid.amount) {
-            finalDealsMap.set(key, {
-                id: itemId,
-                isAuction: true,
-                created_at: bid.created_at,
-                price_total: bid.amount,
-                status: 'negotiating',
-                buyer: bid.buyer || { business_name: bid.bidder_alias || 'Unknown Bidder' },
-                item_title: bid.item?.metadata?.title || 'Auction Item'
-            });
-        }
-    });
-
-    // Return combined list sorted by most recent activity
-    return Array.from(finalDealsMap.values()).sort((a, b) => 
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
 }

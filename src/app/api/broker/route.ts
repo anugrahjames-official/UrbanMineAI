@@ -33,28 +33,18 @@ export async function POST(req: Request) {
         return new Response('Transaction not found', { status: 404 });
     }
 
-    // Fetch User Profile
-    const { data: profile } = await supabase
-        .from('users')
-        .select('role, business_name')
-        .eq('id', user.id)
-        .single();
-
-    // Fetch Market Prices
+    // Fetch Market Prices (optional, for context)
     const { data: marketPrices } = await supabase
         .from('market_prices')
         .select('*');
 
-    const isDealer = profile?.role === 'dealer';
-    const item = transaction.items?.[0] || {};
+    // Construct System Context
+    const item = transaction.items?.[0] || {}; // Assuming single item for now or handling arrays
     const itemMetadata = item.metadata as any || {};
 
     const systemContext = `
     You are the "UrbanMine AI Broker", an autonomous negotiation agent for e-waste recycling.
-    ${isDealer 
-        ? `You are negotiating with a Dealer (${profile?.business_name || 'User'}) on behalf of a Recycler hub. Your goal is to get the best deal for the recycler while remaining fair to the dealer.`
-        : `You are assisting a Recycler (${profile?.business_name || 'User'}) as their personal negotiation co-pilot. Help them evaluate the items, analyze market trends, and draft optimal responses to the Dealer's bids.`
-    }
+    You are negotiating with a Dealer (User) on behalf of a Recycler/Aggregator hub.
 
     **Transaction Context:**
     - Item: ${itemMetadata.category || 'Unknown E-waste'}
@@ -67,11 +57,13 @@ export async function POST(req: Request) {
     ${marketPrices?.map(p => `- ${p.name} (${p.symbol}): $${p.price}/${p.unit}`).join('\n') || 'Market data unavailable.'}
 
     **Goals:**
-    1. Negotiate a fair price based on grade and market rates.
-    2. Use data (composition, weight, market rates) to back up arguments.
-    3. If the user offers a price comfortably within margin (+/- 10%), you can suggest accepting it.
-    4. Be professional, concise, and futuristic.
-    5. Role: ${isDealer ? 'Broker/Opponent' : 'Assistant/Co-pilot'}.
+    1. Negotiate a fair price for the e-waste based on grade and market rates.
+    2. If the user offers a price comfortably within margin (e.g. +/- 10% of current offer), accept it using 'update_price'.
+    3. If the user agrees to the price, finalize the deal using 'close_deal'.
+    4. Be professional, concise, and use data to back up your arguments.
+    5. Do not hallucinate values. Use the provided context.
+
+    **Tone:** Professional, Efficient, "Eco-Futuristic".
   `;
 
     // Persist User Message (AI SDK 5: extract text from the last message's parts)

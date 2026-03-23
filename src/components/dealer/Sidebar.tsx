@@ -1,6 +1,6 @@
 "use client";
 
-import { Recycle, LayoutDashboard, Camera, MessageSquare, Box, BarChart3, Settings, ShieldCheck, CheckCircle } from "@/components/icons";
+import { Recycle, LayoutDashboard, Camera, Box, BarChart3, Settings, ShieldCheck, CheckCircle } from "@/components/icons";
 import { UserAvatar } from "@/components/ui/UserAvatar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 const dealerNavItems = [
     { name: "Dashboard", href: "/dealer/dashboard", icon: LayoutDashboard },
     { name: "Scan", href: "/dealer/scan", icon: Camera },
-    { name: "Chat", href: "/dealer/chat", icon: MessageSquare, badge: 2 },
     { name: "Inventory", href: "/dealer/inventory", icon: Box },
     { name: "Analytics", href: "/dealer/analytics", icon: BarChart3 },
 ];
@@ -44,11 +43,6 @@ export function DealerSidebar({ profile }: { profile: any }) {
                         >
                             <item.icon size={20} className={cn("transition-transform group-hover:scale-110", pathname === item.href && "text-primary")} />
                             <span className="ml-3 font-medium">{item.name}</span>
-                            {item.badge && (
-                                <span className="ml-auto w-5 h-5 bg-primary text-background-dark text-[10px] font-bold rounded-full flex items-center justify-center">
-                                    {item.badge}
-                                </span>
-                            )}
                         </Link>
                     ))}
 

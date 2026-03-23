@@ -74,7 +74,7 @@ export default async function MarketplacePage(props: {
                                             view === 'credits' ? "bg-[#19e66b] text-[#112117] shadow-lg" : "text-white/60 hover:text-white hover:bg-white/5"
                                         )}
                                     >
-                                        <Package size={16} /> EPR Credits
+                                        EPR Credits
                                     </Link>
                                     <Link
                                         href="?view=bounties"
@@ -92,7 +92,7 @@ export default async function MarketplacePage(props: {
                                     {userRole === 'recycler' && view !== 'bounties' && (
                                         <Link href="/recycler/credits/new">
                                             <button className="bg-[#19e66b] hover:bg-[#16cc5f] text-[#112117] font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-all shadow-md text-sm">
-                                                <Package size={16} /> List EPR Credit
+                                                List EPR Credit
                                             </button>
                                         </Link>
                                     )}

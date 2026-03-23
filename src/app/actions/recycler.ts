@@ -20,12 +20,11 @@ export async function getRecyclerDashboardStats() {
         return null
     }
 
-    // Active Bids: Count of transactions where recycler is buyer and status is negotiating
+    // Active Bids: Count of bids made by this recycler
     const { count: activeBids } = await supabase
-        .from('transactions')
+        .from('bids')
         .select('*', { count: 'exact', head: true })
-        .eq('buyer_id', user.id)
-        .eq('status', 'negotiating')
+        .eq('bidder_id', user.id)
 
     // Lots Won Today: Transactions completed/paid today
     const today = new Date().toISOString().split('T')[0]
@@ -70,6 +69,8 @@ interface ItemMetadata {
     weight?: string;
     estimatedValue?: string | number;
     grade?: string;
+    type?: string;
+    tags?: string[];
     reeContent?: Array<{ name: string; value: string; percentage: number }>;
 }
 
@@ -99,6 +100,7 @@ export async function getMarketplaceItems() {
             created_at: item.created_at,
             grade: meta?.grade || 'N/A',
             image: item.image_url,
+            isEprCredit: meta?.type === 'epr_credit' || (Array.isArray(meta?.tags) && meta.tags.includes('EPR Credit')),
             composition: meta?.reeContent || []
         }
     }) || []
@@ -124,7 +126,23 @@ export async function getRecyclerInventory() {
 
     const { data: items } = await supabase
         .from('items')
-        .select('*')
+        .select(`
+            *,
+            bids (
+                id,
+                amount,
+                created_at,
+                bidder_alias,
+                users (
+                    id,
+                    first_name,
+                    last_name,
+                    business_name,
+                    avatar_url,
+                    trust_score
+                )
+            )
+        `)
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
 
@@ -148,66 +166,26 @@ export async function getRecyclerLogistics() {
     return deliveries || []
 }
 
-export async function placeBid(itemId: string) {
+export async function placeBid(itemId: string, amount: number) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) throw new Error("Unauthorized")
 
-    // Verify user is a recycler
+    // Verify user is a recycler or oem (any buyer)
     const { data: profile } = await supabase
         .from('users')
         .select('role')
         .eq('id', user.id)
         .single()
 
-    if (profile?.role !== 'recycler') {
-        throw new Error("Unauthorized. Only recyclers can place bids.")
+    if (!profile || (profile.role !== 'recycler' && profile.role !== 'oem')) {
+        throw new Error("Unauthorized. Only buyers can place bids.")
     }
 
-    // Get item details
-    const { data: item } = await supabase
-        .from('items')
-        .select('user_id, metadata')
-        .eq('id', itemId)
-        .single()
-
-    if (!item) throw new Error("Item not found")
-
-    // Check if open transaction exists
-    const { data: existing } = await supabase
-        .from('transactions')
-        .select('id')
-        .eq('buyer_id', user.id)
-        .contains('item_ids', [itemId])
-        .in('status', ['negotiating', 'agreed', 'pending'])
-        .single()
-
-    if (existing) {
-        redirect(`/recycler/negotiate/${existing.id}`)
-    }
-
-    // Create new transaction
-    const { data: transaction, error } = await supabase
-        .from('transactions')
-        .insert({
-            supplier_id: item.user_id, // Dealer
-            buyer_id: user.id, // Recycler
-            item_ids: [itemId],
-            price_total: 0, // Initial bid 0 or parsed from metadata
-            status: 'negotiating',
-            // Ensure we're passing a plain object for jsonb
-            material_breakdown: { ...(item.metadata as any) }
-        })
-        .select()
-        .single()
-
-    if (error) {
-        console.error("Bid Error Details:", error)
-        throw new Error(`Failed to place bid: ${error.message}`)
-    }
-
-    redirect(`/recycler/negotiate/${transaction.id}`)
+    // Call the generic marketplace bid action
+    const { placeBid: marketplaceBid } = await import('./marketplace')
+    return await marketplaceBid(itemId, amount)
 }
 
 export async function listEprCredit(formData: FormData) {
@@ -236,6 +214,7 @@ export async function listEprCredit(formData: FormData) {
         .from('items')
         .insert({
             user_id: user.id,
+            image_url: '', // No images for EPR credits as per requirement
             status: 'listed',
             metadata: {
                 type: 'epr_credit',
@@ -256,85 +235,4 @@ export async function listEprCredit(formData: FormData) {
     }
     
     redirect('/marketplace');
-}
-
-export async function getRecyclerActiveBidsDetails() {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) return { bids: [], totalValue: 0 }
-
-    const { data, error } = await supabase
-        .from('transactions')
-        .select(`
-            *,
-            supplier:users!supplier_id (
-                business_name,
-                first_name,
-                last_name,
-                avatar_url
-            )
-        `)
-        .eq('buyer_id', user.id)
-        .in('status', ['negotiating', 'agreed', 'pending'])
-        .order('created_at', { ascending: false })
-
-    if (error) {
-        console.error('Error fetching recycler active bids:', error)
-        return { bids: [], totalValue: 0 }
-    }
-
-    // Also fetch the recycler's individual bids (Auctions)
-    const { data: userBids, error: bidsError } = await supabase
-        .from('bids')
-        .select(`
-            *,
-            item:items (
-                id,
-                user_id,
-                metadata,
-                supplier:users (
-                    business_name,
-                    first_name,
-                    last_name,
-                    avatar_url
-                )
-            )
-        `)
-        .eq('bidder_id', user.id)
-        .order('created_at', { ascending: false });
-
-    if (bidsError) {
-        console.error('Error fetching recycler individual bids:', bidsError)
-    }
-
-    // Process bids: group by item_id and take ONLY the highest bid per item
-    const bidsMap = new Map();
-    (userBids || []).forEach((bid: any) => {
-        const itemId = bid.item_id;
-        if (!bidsMap.has(itemId) || bidsMap.get(itemId).amount < bid.amount) {
-            bidsMap.set(itemId, {
-                id: bid.id,
-                isAuction: true,
-                created_at: bid.created_at,
-                price_total: bid.amount,
-                status: 'negotiating',
-                supplier: bid.item?.supplier || { business_name: 'Unknown Supplier' },
-                material_breakdown: { ...(bid.item?.metadata as any), title: bid.item?.metadata?.title || bid.item?.title || 'Auction Lot' },
-                item_id: itemId
-            });
-        }
-    });
-
-    const auctionBids = Array.from(bidsMap.values());
-
-    // Combine transactions and auction bids
-    const combined = [...data, ...auctionBids].sort((a, b) => 
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
-
-    // Calculate total value based only on highest bids/negotiations
-    const totalValue = combined.reduce((sum, bid) => sum + Number(bid.price_total || 0), 0)
-
-    return { bids: combined, totalValue };
 }

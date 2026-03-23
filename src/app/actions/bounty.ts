@@ -213,3 +213,154 @@ export async function deleteBounty(id: string) {
     revalidatePath('/recycler/procurement')
     return { success: true }
 }
+
+export async function fulfillBounty(bountyId: string, amount: number) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Unauthorized' }
+
+    // Check role - only dealers can fulfill
+    const { data: userData } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+    if (userData?.role !== 'dealer') {
+        return { error: 'Only dealers can fulfill bounties' }
+    }
+
+    try {
+        const { error } = await supabase
+            .from('bounty_fulfillments')
+            .insert({
+                bounty_id: bountyId,
+                dealer_id: user.id,
+                amount: amount,
+                status: 'pending'
+            })
+
+        if (error) throw error
+    } catch (error) {
+        console.error('Fulfillment error:', error)
+        return { error: 'Failed to submit fulfillment' }
+    }
+
+    revalidatePath('/dealer/dashboard')
+    revalidatePath('/marketplace') // To update UI if needed
+    return { success: true }
+}
+
+export async function getBountyFulfillments(bountyId: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Unauthorized' }
+
+    try {
+        const { data, error } = await supabase
+            .from('bounty_fulfillments')
+            .select(`
+                *,
+                dealer:users(id, first_name, last_name, business_name, avatar_url, trust_score)
+            `)
+            .eq('bounty_id', bountyId)
+            .order('amount', { ascending: true })
+
+        if (error) throw error
+        return { data }
+    } catch (error) {
+        console.error('Fetch fulfillments error:', error)
+        return { error: 'Failed to fetch fulfillments' }
+    }
+}
+
+export async function acceptBountyFulfillment(fulfillmentId: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Unauthorized' }
+
+    try {
+        // 1. Get the fulfillment to find the bounty_id
+        const { data: fulfillment, error: fetchError } = await supabase
+            .from('bounty_fulfillments')
+            .select('bounty_id, dealer_id, amount')
+            .eq('id', fulfillmentId)
+            .single()
+
+        if (fetchError || !fulfillment) throw new Error('Fulfillment not found')
+
+        // 2. Security check: Only the recycler who owns the bounty can accept
+        const { data: bounty, error: bountyError } = await supabase
+            .from('bounties')
+            .select('recycler_id')
+            .eq('id', fulfillment.bounty_id)
+            .single()
+
+        if (bountyError || bounty.recycler_id !== user.id) {
+            return { error: 'Unauthorized: You do not own this bounty' }
+        }
+
+        // 3. Update the accepted fulfillment status
+        const { error: updateAcceptedError } = await supabase
+            .from('bounty_fulfillments')
+            .update({ status: 'accepted' })
+            .eq('id', fulfillmentId)
+
+        if (updateAcceptedError) throw updateAcceptedError
+
+        // 4. Update other fulfillments for this bounty to 'rejected'
+        await supabase
+            .from('bounty_fulfillments')
+            .update({ status: 'rejected' })
+            .eq('bounty_id', fulfillment.bounty_id)
+            .neq('id', fulfillmentId)
+
+        // 5. Update bounty status to 'completed' (or 'fulfilled')
+        await supabase
+            .from('bounties')
+            .update({ status: 'completed' })
+            .eq('id', fulfillment.bounty_id)
+
+        // 6. Create a transaction (Placeholder for actual transaction logic)
+        // In a real app, this would trigger payment/escrow or record a closed deal.
+        await supabase
+            .from('transactions')
+            .insert({
+                buyer_id: user.id,
+                seller_id: fulfillment.dealer_id,
+                amount: fulfillment.amount,
+                type: 'bounty_fulfillment',
+                metadata: { bounty_id: fulfillment.bounty_id, fulfillment_id: fulfillmentId }
+            })
+
+    } catch (error) {
+        console.error('Accept fulfillment error:', error)
+        return { error: 'Failed to accept fulfillment' }
+    }
+
+    revalidatePath('/recycler/procurement')
+    return { success: true }
+}
+
+export async function getRecyclerBounties() {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Unauthorized' }
+
+    try {
+        const { data, error } = await supabase
+            .from('bounties')
+            .select(`
+                *,
+                fulfillments:bounty_fulfillments(count)
+            `)
+            .eq('recycler_id', user.id)
+            .order('created_at', { ascending: false })
+
+        if (error) throw error
+        return { data }
+    } catch (error) {
+        console.error('Fetch recycler bounties error:', error)
+        return { error: 'Failed to fetch bounties' }
+    }
+}

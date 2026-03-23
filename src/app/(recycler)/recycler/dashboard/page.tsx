@@ -4,10 +4,14 @@ import { Card, GlassCard } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
-import { getRecyclerDashboardStats, getMarketplaceItems, getRecyclerActiveBidsDetails } from "@/app/actions/recycler";
+import { getRecyclerDashboardStats, getMarketplaceItems, getRecyclerInventory } from "@/app/actions/recycler";
+import { InventoryItemBids } from "@/components/dealer/InventoryItemBids";
+import { revalidatePath } from "next/cache";
 import { getLivePrices } from "@/services/pricing";
 import { formatDistanceToNow } from 'date-fns';
 import BidButton from "@/components/recycler/BidButton";
+import { getRecyclerBounties } from "@/app/actions/bounty";
+import { BountyFulfillments } from "@/components/recycler/BountyFulfillments";
 
 interface MarketplaceItemData {
   id: string;
@@ -19,13 +23,15 @@ interface MarketplaceItemData {
   created_at: string;
   grade: string;
   image: string;
+  isEprCredit?: boolean;
   composition: Array<{ name: string; value: string; percentage: number }>;
 }
 
 export default async function RecyclerDashboard() {
   const stats = await getRecyclerDashboardStats();
   const marketplaceItems = (await getMarketplaceItems()) as MarketplaceItemData[];
-  const { bids: activeBids, totalValue } = await getRecyclerActiveBidsDetails();
+  const myInventory = await getRecyclerInventory();
+  const myBounties = await getRecyclerBounties();
   const prices = await getLivePrices();
 
   return (
@@ -59,12 +65,6 @@ export default async function RecyclerDashboard() {
           trendColor="text-error"
           trendSub="total deployed"
         />
-        <SummaryCard
-          title="Total Bid Value"
-          value={`$${totalValue.toLocaleString()}`}
-          icon={<Icons.Gavel className="text-primary" size={20} />}
-          sub="active offers"
-        />
       </div>
 
       {/* Main Content Grid */}
@@ -93,12 +93,90 @@ export default async function RecyclerDashboard() {
                     value={item.value.toString()}
                     time={formatDistanceToNow(new Date(item.created_at))}
                     image={item.image}
+                    isEprCredit={item.isEprCredit}
                   />
                 ))}
               </div>
             ) : (
               <div className="bg-surface-darker/50 border border-white/5 border-dashed rounded-xl p-8 text-center text-gray-500 text-sm">
                 No active lots available at the moment.
+              </div>
+            )}
+          </section>
+
+          {/* My Procurement Bounties Section */}
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold flex items-center gap-2">
+                <Icons.Search className="text-[#19e66b]" size={18} /> My Procurement Bounties
+              </h2>
+            </div>
+            {myBounties.data && myBounties.data.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {myBounties.data.map((bounty: any) => (
+                  <GlassCard key={bounty.id} className="p-4 border-white/5 bg-surface-darker/50 hover:bg-surface-darker/80 transition-all">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h4 className="font-bold text-white">{bounty.title || bounty.material}</h4>
+                        <p className="text-[10px] text-gray-500 mt-0.5">
+                          {bounty.status} • {bounty.quantity} {bounty.unit}
+                        </p>
+                      </div>
+                      <StatusBadge variant={
+                        bounty.status === 'completed' ? 'success' : 
+                        bounty.status === 'expired' ? 'error' : 
+                        bounty.status === 'open' ? 'warning' : 'info'
+                      }>
+                        {bounty.status}
+                      </StatusBadge>
+                    </div>
+                    
+                    <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                      <div>
+                        <p className="text-[8px] text-gray-500 uppercase tracking-widest">Target Price</p>
+                        <p className="text-lg font-bold text-white font-mono">${bounty.price_floor || bounty.target_price || 'N/A'}</p>
+                      </div>
+                      <BountyFulfillments 
+                        bountyId={bounty.id} 
+                        fulfillmentCount={bounty.fulfillments?.[0]?.count || 0}
+                        onAcceptSuccess={async () => {
+                          "use server"
+                          revalidatePath('/recycler/dashboard')
+                        }}
+                      />
+                    </div>
+                  </GlassCard>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-surface-darker/50 border border-white/5 border-dashed rounded-xl p-8 text-center text-gray-500 text-sm">
+                You haven't posted any procurement requests.
+                <Button variant="link" className="text-primary font-bold ml-1 px-0" asChild>
+                  <Link href="/recycler/procurement">Create one now</Link>
+                </Button>
+              </div>
+            )}
+          </section>
+
+          {/* My Listings Section */}
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold flex items-center gap-2">
+                <Icons.Box className="text-primary" size={18} /> My Listings & Credits
+              </h2>
+            </div>
+            {myInventory.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {myInventory.map((item: any) => (
+                  <MyListingCard
+                    key={item.id}
+                    item={item}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="bg-surface-darker/50 border border-white/5 border-dashed rounded-xl p-8 text-center text-gray-500 text-sm">
+                You haven't listed any materials or credits yet.
               </div>
             )}
           </section>
@@ -144,7 +222,7 @@ export default async function RecyclerDashboard() {
                         bid={item.value.toString()}
                         time={formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
                         comp={item.composition}
-                        icon={<Icons.Cable size={18} className="text-gray-400" />} // Default icon
+                        icon={item.isEprCredit ? null : <Icons.Cable size={18} className="text-gray-400" />} // Default icon
                       />
                     ))
                   ) : (
@@ -158,60 +236,6 @@ export default async function RecyclerDashboard() {
               </table>
             </div>
           </Card>
-
-          {/* My Active Bids Section */}
-          <section className="mt-8 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold flex items-center gap-2">
-                <Icons.Gavel className="text-primary" size={18} /> My Active Bids
-              </h2>
-            </div>
-
-            {activeBids.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {activeBids.map((bid: any) => (
-                  <GlassCard key={bid.id} className="p-4 hover:border-primary/30 transition-all group border-white/5 bg-surface-darker/40">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
-                          <Icons.Box className="text-primary" size={16} />
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-bold text-white group-hover:text-primary transition-colors line-clamp-1">
-                            {bid.material_breakdown?.title || bid.id.substring(0, 8)}
-                          </h4>
-                          <p className="text-[10px] text-gray-500">
-                            Seller: {bid.supplier?.business_name || 'Dealer'}
-                          </p>
-                        </div>
-                      </div>
-                      <StatusBadge variant="success" className="text-[8px] py-0 px-1.5 h-4 uppercase">active</StatusBadge>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-3 border-t border-white/5">
-                      <div>
-                        <p className="text-[8px] text-gray-400 uppercase tracking-widest font-bold">My Bid</p>
-                        <p className="text-lg font-bold text-white font-mono">${bid.price_total.toLocaleString()}</p>
-                      </div>
-                      <Link href={`/recycler/chat/${bid.id}`}>
-                        <Button variant="secondary" size="sm" className="h-8 text-[10px] font-bold border-white/10 bg-white/5 hover:bg-white/10 transition-all flex items-center gap-1.5">
-                           <Icons.MessageSquare size={12} className="text-primary" />
-                           Chat
-                        </Button>
-                      </Link>
-                    </div>
-                  </GlassCard>
-                ))}
-              </div>
-            ) : (
-              <div className="bg-surface-darker/30 border border-white/5 border-dashed rounded-xl p-8 text-center">
-                <p className="text-gray-500 text-sm">You haven't placed any bids yet.</p>
-                <Link href="/marketplace">
-                  <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 mt-2">Browse Marketplace</Button>
-                </Link>
-              </div>
-            )}
-          </section>
         </div>
 
         {/* Right Column: Analytics & Tools */}
@@ -224,7 +248,7 @@ export default async function RecyclerDashboard() {
 
             <div className="flex-1 space-y-3 overflow-y-auto custom-scrollbar pr-1">
               {prices.length > 0 ? (
-                prices.slice(0, 3).map((p) => (
+                prices.slice(0, 3).map((p: any) => (
                   <div key={p.symbol} className="flex items-center justify-between group/trend">
                     <div>
                       <p className="text-xs font-bold text-white group-hover/trend:text-primary transition-colors">{p.name}</p>
@@ -336,6 +360,7 @@ function LotCard({
   value,
   time,
   image,
+  isEprCredit,
 }: {
   id: string;
   fullId: string;
@@ -345,17 +370,20 @@ function LotCard({
   value: string;
   time: string;
   image: string;
+  isEprCredit?: boolean;
 }) {
   return (
     <GlassCard className="p-3 flex gap-4 hover:border-primary/40 transition-all cursor-pointer group border-white/5 bg-surface-darker/50 hover:bg-surface-darker/80 items-stretch">
-      <div className="w-28 flex-shrink-0 rounded-lg overflow-hidden bg-gray-900 relative border border-white/5">
-        <img src={image} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity scale-100 group-hover:scale-105 duration-500" alt="lot" />
-        <div className="absolute top-0 right-0 p-1.5">
-          <div className="bg-black/60 backdrop-blur-md text-white text-[8px] font-bold px-2 py-0.5 rounded border border-white/10 uppercase tracking-wider">
-            {grade}
+      {!isEprCredit && (
+        <div className="w-28 flex-shrink-0 rounded-lg overflow-hidden bg-gray-900 relative border border-white/5">
+          <img src={image} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity scale-100 group-hover:scale-105 duration-500" alt="lot" />
+          <div className="absolute top-0 right-0 p-1.5">
+            <div className="bg-black/60 backdrop-blur-md text-white text-[8px] font-bold px-2 py-0.5 rounded border border-white/10 uppercase tracking-wider">
+              {grade}
+            </div>
           </div>
         </div>
-      </div>
+      )}
       <div className="flex-1 flex flex-col justify-between py-1">
         <div>
           <div className="flex justify-between items-start mb-1">
@@ -372,7 +400,7 @@ function LotCard({
           </div>
           <div className="text-right">
             <p className="text-[8px] text-gray-500 uppercase font-bold tracking-widest mb-0.5">Starts In</p>
-            <p className="text-sm font-mono text-warning font-bold">{time}</p>
+            <p className="text-sm font-mono text-warning font-bold" suppressHydrationWarning>{time}</p>
           </div>
         </div>
         <div className="mt-4">
@@ -415,7 +443,7 @@ function MarketRow({
   icon: React.ReactNode;
 }) {
   return (
-    <tr className="hover:bg-primary/5 transition-colors group">
+    <tr className="hover:bg-primary/5 transition-colors group" suppressHydrationWarning>
       <td className="px-6 py-4">
         <div className="flex items-center gap-4">
           <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5">
@@ -453,7 +481,7 @@ function MarketRow({
         </div>
       </td>
       <td className="px-6 py-4">
-        <span className="px-2 py-0.5 rounded-md bg-error/10 text-error text-[10px] font-bold border border-error/20">
+        <span className="px-2 py-0.5 rounded-md bg-error/10 text-error text-[10px] font-bold border border-error/20" suppressHydrationWarning>
           {time}
         </span>
       </td>
@@ -461,5 +489,38 @@ function MarketRow({
         <BidButton itemId={id} />
       </td>
     </tr>
+  );
+}
+function MyListingCard({ item }: { item: any }) {
+  const meta = item.metadata;
+  return (
+    <GlassCard className="p-4 border-white/5 bg-surface-darker/50 hover:bg-surface-darker/80 transition-all">
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <h4 className="font-bold text-white">{meta?.title || meta?.category || 'Untitled Listing'}</h4>
+          <p className="text-[10px] text-gray-500 mt-0.5">
+            {item.status === 'listed' ? 'Live on Marketplace' : 'Pending'} • {meta?.weight || 'N/A'}
+          </p>
+        </div>
+        <StatusBadge variant={item.status === 'listed' ? 'success' : 'warning'}>
+          {item.status}
+        </StatusBadge>
+      </div>
+      
+      <div className="flex items-center justify-between pt-4 border-t border-white/5">
+        <div>
+          <p className="text-[8px] text-gray-500 uppercase tracking-widest">Target Value</p>
+          <p className="text-lg font-bold text-white font-mono">{meta?.estimatedValue || 'N/A'}</p>
+        </div>
+        <InventoryItemBids 
+          itemId={item.id} 
+          bids={item.bids || []}
+          onAcceptSuccess={async () => {
+            "use server"
+            revalidatePath('/recycler/dashboard')
+          }}
+        />
+      </div>
+    </GlassCard>
   );
 }
